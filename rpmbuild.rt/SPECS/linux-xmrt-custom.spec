@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-custom
 Version:        6.1.54
-Release:        100
+Release:        101
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -153,8 +153,11 @@ Linux kernel build files
 
 cp %{SOURCE1} .config
 
-# Note: If preempt is desired, choose preempt or preempt_rt.
-#       preempt_rt overrides preempt knobs if both enabled
+# Enable WINESYNC driver for fast kernel-backed Wine.
+scripts/config -e WINESYNC
+
+# If preempt is desired, choose preempt or preempt_rt.
+# preempt_rt overrides preempt knobs if both enabled
 
 # Enable preempt.
 %if 0

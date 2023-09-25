@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-default
 Version:        6.1.54
-Release:        100
+Release:        101
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -151,7 +151,12 @@ Linux kernel build files
 #Serie.patch.end
 
 
-cp %{SOURCE1} config
+cp %{SOURCE1} .config
+
+# Enable WINESYNC driver for fast kernel-backed Wine.
+scripts/config -e WINESYNC
+
+mv .config config
 
 %build
 BuildKernel() {

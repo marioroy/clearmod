@@ -1,6 +1,9 @@
 # ClearMod
 
-Run [XanMod](https://github.com/xanmod) kernels on [Clear Linux](https://www.clearlinux.org) with ease.
+Run [XanMod](https://github.com/xanmod) Kernels on [Clear Linux](https://www.clearlinux.org) with ease.
+
+The motivation for this project is that I like the XanMod kernel. It works reasonably
+well on Clear Linux. I enabled the WineSync driver for fast kernel-backed Wine.
 
 ## Preparation and configuration
 
@@ -104,20 +107,22 @@ boot into another kernel before removal via `xm-uninstall`.
 ./xm-list-kernels 
 XanMod boot-manager entries
 Password: 
-* org.clearlinux.xmrt-preempt.6.1.54-100
+* org.clearlinux.xmlts-preempt.6.1.55-101
+  org.clearlinux.xmrt-preempt.6.1.54-101
 
 XanMod packages, exluding dev,extra,license
-* linux-xmrt-preempt-6.1.54-100
+* linux-xmlts-preempt-6.1.55-101
+  linux-xmrt-preempt-6.1.54-101
 ```
 
-The `xm-install` and `xm-uninstall` commands except an optional argument to
-specify the release number e.g. 100. By default, `xm-install` installs the most
+The `xm-install` and `xm-uninstall` commands accept an optional argument to
+specify the release number e.g. 101. By default, `xm-install` installs the most
 recent build. Omitting the 2nd argument, the `xm-uninstall` command uninstalls
 all releases for the specified variant e.g. rt-preempt.
 
 ```bash
-./xm-uninstall rt-preempt 100
-Removing org.clearlinux.xmrt-preempt.6.1.54-100
+./xm-uninstall rt-preempt 101
+Removing org.clearlinux.xmrt-preempt.6.1.54-101
 ```
 
 ## Epilogue

@@ -8,7 +8,7 @@
 
 Name:           linux-xmedge-custom
 Version:        6.5.5
-Release:        100
+Release:        101
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -203,6 +203,9 @@ fi
 
 
 cp %{SOURCE1} .config
+
+# Enable WINESYNC driver for fast kernel-backed Wine.
+scripts/config -e WINESYNC
 
 # Enable preempt.
 %if 0

@@ -8,7 +8,7 @@
 
 Name:           linux-xmlts-custom
 Version:        6.1.55
-Release:        100
+Release:        101
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -189,6 +189,9 @@ Linux kernel build files
 
 
 cp %{SOURCE1} .config
+
+# Enable WINESYNC driver for fast kernel-backed Wine.
+scripts/config -e WINESYNC
 
 # Enable preempt.
 %if 0
