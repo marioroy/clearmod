@@ -2,8 +2,9 @@
 
 Run [XanMod](https://github.com/xanmod) Kernels on [Clear Linux](https://www.clearlinux.org) with ease.
 
-The motivation for this project is that I like the XanMod kernel. It works reasonably
-well on Clear Linux. I enabled the WineSync driver for fast kernel-backed Wine.
+The motivation for this project is that I like the XanMod kernel and opportunity to
+run a preempt-enabled kernel. The XanMod kernels run reasonably well on Clear Linux.
+I enabled the WineSync driver for fast kernel-backed Wine.
 
 ## Preparation and configuration
 
