@@ -1,4 +1,4 @@
-# xanmod-on-clear-linux
+# ClearMod
 
 Run [XanMod](https://github.com/xanmod) kernels on [Clear Linux](https://www.clearlinux.org) with ease.
 
