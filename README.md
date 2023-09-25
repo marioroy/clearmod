@@ -2,9 +2,9 @@
 
 Run [XanMod](https://github.com/xanmod) Kernels on [Clear Linux](https://www.clearlinux.org) with ease.
 
-The motivation for this project is that I like the XanMod kernel and opportunity to
-run a preempt-enabled kernel. The XanMod kernels run reasonably well on Clear Linux.
-I enabled the WineSync driver for fast kernel-backed Wine.
+The motivation for this project is that I like the XanMod kernel and opportunity
+to run a preempt-enabled Linux kernel. The XanMod kernels run reasonably well on
+Clear Linux. I enabled the WineSync driver for fast kernel-backed Wine.
 
 ## Preparation and configuration
 
@@ -39,9 +39,9 @@ false
 EOF
 ```
 
-To run a realtime kernel using NVIDIA graphics, the driver modules will not
-build unless a variable is set. You may skip this step if not planning on
-running the XanMod `preempt_rt` kernel.
+From testing, the XanMod `preempt_rt` kernel works with NVIDIA graphics.
+Set a system-wide environment variable to have the driver installer ignore
+`PREEMPT_RT` presense.
 
 ```bash
 sudo mkdir -p "/etc/environment.d"
@@ -91,8 +91,7 @@ Intel and XanMod, respectively. The optional release argument is described below
 
 For my desktop computer, I prefer the `rt-preempt` variant. This XanMod kernel
 is fast and closest to running like a realtime kernel. The following are the
-commands to fetch the RT sources, build the kernel, and most exciting of all,
-installation.
+commands to fetch the RT sources, build the XanMod kernel, and installation.
 
 ```bash
 ./fetch-src rt
@@ -100,8 +99,8 @@ installation.
 ./xm-install rt-preempt
 ```
 
-The XanMod 6.5 kernel with preempt enabled is another consideration including
-sustaining low latency.
+The XanMod 6.5 kernel with preempt enabled is another consideration,
+including sustaining low latency.
 
 ```bash
 ./fetch-src edge
@@ -110,8 +109,8 @@ sustaining low latency.
 ```
 
 The `xm-list-kernels` command lists XanMod kernels only. An asterisk indicates
-the kernel is live or running. One may not install over it or uninstall. Simply
-boot into another kernel before removal via `xm-uninstall`.
+the kernel is live or running. One may not install over it or uninstall.
+Boot into another kernel before removal via `xm-uninstall`.
 
 ```bash
 ./xm-list-kernels 
@@ -126,9 +125,9 @@ XanMod packages, exluding dev,extra,license
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
-specify the release number e.g. 101. By default, `xm-install` installs the most
-recent build. Omitting the 2nd argument, the `xm-uninstall` command uninstalls
-all releases for the specified variant e.g. rt-preempt.
+specify the release number. By default, `xm-install` installs the most recent
+build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
+Though, skip the running kernel.
 
 ```bash
 ./xm-uninstall rt-preempt 101
@@ -137,14 +136,14 @@ Removing org.clearlinux.xmrt-preempt.6.1.54-101
 
 ## Epilogue
 
-The default variant is apples-to-apples to Clear's kernel. Basically, no overrides.
-The preempt variant enables (`preempt` or `preempt_rt`) and `rcu_boost`. As described
-above, the custom variant is your local copy and safe from `git pull`. It contains 
-the same overrides as preempt, but disabled in the spec file.
+The default variants are apples-to-apples to Clear's kernels. Basically, no overrides.
+The preempt variants enable (`preempt` or `preempt_rt`) and `rcu_boost`. As described
+above, the custom variants are your local copies and safe from `git pull`. This means
+updating the version manually inside the spec file.
 
 The `/boot` partition has limited space. So, no reason to install many XanMod
-kernels. Build the one you want and enjoy the XanMod kernel. If later changing
-your mind, remember to manage and uninstall any unused XanMod kernels.
+kernels. Build the one you want and enjoy the XanMod kernel. If changing your mind
+later, remember to manage and uninstall any unused XanMod kernels.
 
 To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags` macro.
 Adjust the integer value to your liking.
