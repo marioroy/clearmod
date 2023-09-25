@@ -99,6 +99,15 @@ installation.
 ./xm-install rt-preempt
 ```
 
+The XanMod 6.5 kernel with preempt enabled is another consideration. This one
+too is fast including sustaining low latency.
+
+```bash
+./fetch-src edge
+./xm-build edge-preempt
+./xm-install edge-preempt
+```
+
 The `xm-list-kernels` command lists XanMod kernels only. An asterisk indicates
 the kernel is live or running. One may not install over it or uninstall. Simply
 boot into another kernel before removal via `xm-uninstall`.
@@ -107,22 +116,22 @@ boot into another kernel before removal via `xm-uninstall`.
 ./xm-list-kernels 
 XanMod boot-manager entries
 Password: 
-* org.clearlinux.xmlts-preempt.6.1.55-101
-  org.clearlinux.xmrt-preempt.6.1.54-100
+* org.clearlinux.xmedge-preempt.6.5.5-101
+  org.clearlinux.xmrt-preempt.6.1.54-101
 
 XanMod packages, exluding dev,extra,license
-* linux-xmlts-preempt-6.1.55-101
-  linux-xmrt-preempt-6.1.54-100
+* linux-xmedge-preempt-6.5.5-101
+  linux-xmrt-preempt-6.1.54-101
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
-specify the release number e.g. 100. By default, `xm-install` installs the most
+specify the release number e.g. 101. By default, `xm-install` installs the most
 recent build. Omitting the 2nd argument, the `xm-uninstall` command uninstalls
 all releases for the specified variant e.g. rt-preempt.
 
 ```bash
-./xm-uninstall rt-preempt 100
-Removing org.clearlinux.xmrt-preempt.6.1.54-100
+./xm-uninstall rt-preempt 101
+Removing org.clearlinux.xmrt-preempt.6.1.54-101
 ```
 
 ## Epilogue
