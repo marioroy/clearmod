@@ -100,8 +100,8 @@ installation.
 ./xm-install rt-preempt
 ```
 
-The XanMod 6.5 kernel with preempt enabled is another consideration. This one
-too is fast including sustaining low latency.
+The XanMod 6.5 kernel with preempt enabled is another consideration including
+sustaining low latency.
 
 ```bash
 ./fetch-src edge
