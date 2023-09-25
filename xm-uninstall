@@ -1,0 +1,89 @@
+#!/bin/bash
+# -----------------------------------------------------------------------
+#   Uninstall XanMod kernel.
+#
+#   Author: Mario Roy - http://github.com/marioroy
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, version 2 or later of the License.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# -----------------------------------------------------------------------
+
+# shellcheck disable=SC2046
+
+# Capture the live kernel release, for safety to not remove self.
+
+kversion="$(uname -r)"       # e.g 6.1.54-100.xmlts-preempt
+kvariant="${kversion}"
+kvariant="${kvariant##*.}"   # xmlts-preempt
+kversion="${kversion%.*}"    # 6.1.54-100
+
+function xm_uninstall {
+    variant="$1" release="$2"
+    echo "Uninstalling ${variant}."
+
+    if [[ -n "$release" ]]; then
+        # Uninstall given variant release (e.g. 100), skipping live kernel.
+
+        for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//"); do
+            if [[ "${kernel}z" =~ org.clearlinux.${variant}.*-${release}z ]]; then
+                if [[ "$kernel" == "org.clearlinux.${kvariant}.${kversion}" ]]; then
+                    echo "Skipping live kernel ${kernel}"
+                else
+                    echo "Removing ${kernel}"
+                    sudo clr-boot-manager remove-kernel "$kernel" || exit 2
+                fi
+            fi
+        done
+
+        sudo rpm -e $( rpm -qa |\
+            grep "^linux-${variant}-.*-${release}\.x86_64" |\
+            grep -v "^linux-${kvariant}-.*-${kversion}.x86_64$" ) 2>/dev/null
+
+    else
+        # Uninstall variant (all releases), skipping live kernel.
+
+        for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//"); do
+            if [[ "${kernel}" =~ org.clearlinux.${variant}. ]]; then
+                if [[ "$kernel" == "org.clearlinux.${kvariant}.${kversion}" ]]; then
+                    echo "Skipping live kernel ${kernel}"
+                else
+                    echo "Removing ${kernel}"
+                    sudo clr-boot-manager remove-kernel "$kernel" || exit 2
+                fi
+            fi
+        done
+
+        sudo rpm -e $( rpm -qa |\
+            grep "^linux-${variant}-" |\
+            grep -v "^linux-${kvariant}-.*-${kversion}.x86_64$" ) 2>/dev/null
+
+    fi
+
+    sync
+}
+
+case "$1" in
+    edge-custom | edge-default | edge-preempt )
+        xm_uninstall "xm${1}" "$2"
+        ;;
+    lts-custom | lts-default | lts-preempt )
+        xm_uninstall "xm${1}" "$2"
+        ;;
+    rt-custom | rt-default | rt-preempt | rt-preempt_rt )
+        xm_uninstall "xm${1}" "$2"
+        ;;
+    * ) echo "synopsis"
+        echo "   $0 edge-custom | edge-default | edge-preempt [<release>]"
+        echo "   $0 lts-custom | lts-default | lts-preempt [<release>]"
+        echo "   $0 rt-custom | rt-default | rt-preempt | rt-preempt_rt [<release>]"
+esac
+

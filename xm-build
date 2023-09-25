@@ -1,0 +1,60 @@
+#!/bin/bash
+# -----------------------------------------------------------------------
+#   Build XanMod kernel.
+#
+#   Author: Mario Roy - http://github.com/marioroy
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, version 2 or later of the License.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# -----------------------------------------------------------------------
+
+function xm_build {
+    variant="$1"
+    echo "Building ${variant}."
+
+    if [[ ! -d "SOURCES" ]]; then
+        echo "Please run fetch-src first and try again."
+        exit 2
+    fi
+
+    cp -a "../patches"/* "SOURCES"/
+
+    ( rpmbuild -bb "SPECS/linux-${variant}.spec" \
+          --define "abi_package %{nil}" \
+          --define "_topdir ${PWD}" \
+          --define "_sourcedir ${PWD}/SOURCES" \
+          --undefine "_disable_source_fetch" \
+      || { echo "Build failed"; kill $$; }
+    ) 2>&1 | grep -Ev '^((chmod|find):.* No such file or directory|warning: Empty %files)'
+
+    sync
+}
+
+case "$1" in
+    edge-custom | edge-default | edge-preempt )
+        cd "rpmbuild.edge" || exit 1
+        xm_build "xm${1}"
+        ;;
+    lts-custom | lts-default | lts-preempt )
+        cd "rpmbuild.lts" || exit 1
+        xm_build "xm${1}"
+        ;;
+    rt-custom | rt-default | rt-preempt | rt-preempt_rt )
+        cd "rpmbuild.rt" || exit 1
+        xm_build "xm${1}"
+        ;;
+    * ) echo "synopsis"
+        echo "   $0 edge-custom | edge-default | edge-preempt"
+        echo "   $0 lts-custom | lts-default | lts-preempt"
+        echo "   $0 rt-custom | rt-default | rt-preempt | rt-preempt_rt"
+esac
+

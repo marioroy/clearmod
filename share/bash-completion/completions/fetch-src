@@ -1,0 +1,13 @@
+# bash completion script - XanMod on Clear project
+
+_fetch-src()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    COMPREPLY=(
+        $(compgen -W 'all edge lts rt' -- "$cur")
+    )
+} &&
+    complete -F _fetch-src fetch-src
+

@@ -1,0 +1,63 @@
+#!/bin/bash
+# -----------------------------------------------------------------------
+#   Fetch Clear and XanMod kernel sources.
+#
+#   Author: Mario Roy - http://github.com/marioroy
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, version 2 or later of the License.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# -----------------------------------------------------------------------
+
+if [[ "$1" == "all" ]]; then
+    bash "$0" "edge" || exit $?
+    bash "$0" "lts"  || exit $?
+    bash "$0" "rt"   || exit $?
+    exit 0
+fi
+
+cl_url="https://cdn.download.clearlinux.org/releases/39990/clear/source/SRPMS"
+xm_url="https://github.com/xanmod/linux/archive/refs/tags"
+
+function xm_fetch {
+    cl_file="$1" xm_file="$2"
+    mkdir -p "SOURCES" && cd "SOURCES" || exit 1
+    if [[ ! -s "$cl_file" ]]; then
+        rm -f cmdline config ./*.patch ./*.patch.xz ./*.spec ./*.tar.xz linux-*.src.rpm
+        wget "${cl_url}/${cl_file}"
+        rpm2cpio "$cl_file" | cpio -i -d -u 2>/dev/null
+    fi
+    if [[ ! -s "$xm_file" ]]; then
+        rm -f [0-9]*-xanmod*.tar.gz
+        wget "${xm_url}/${xm_file}"
+    fi
+}
+
+case "$1" in
+    edge )
+        cd "rpmbuild.edge" || exit 1
+        echo "Fetching sources for XanMod edge."
+        xm_fetch "linux-6.5.4-1365.src.rpm" "6.5.5-xanmod1.tar.gz"
+        ;;
+    lts )
+        cd "rpmbuild.lts" || exit 1
+        echo "Fetching sources for XanMod lts."
+        xm_fetch "linux-ltscurrent-6.1.54-1314.src.rpm" "6.1.55-xanmod1.tar.gz"
+        ;;
+    rt )
+        cd "rpmbuild.rt" || exit 1
+        echo "Fetching sources for XanMod rt."
+        xm_fetch "linux-preempt-rt-6.1.38-105.src.rpm" "6.1.54-rt15-xanmod1.tar.gz"
+        ;;
+    * ) echo "synopsis"
+        echo "   $0 all | edge | lts | rt"
+esac
+

@@ -1,0 +1,93 @@
+#!/bin/bash
+# -----------------------------------------------------------------------
+#   Install XanMod kernel.
+#
+#   Author: Mario Roy - http://github.com/marioroy
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, version 2 or later of the License.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# -----------------------------------------------------------------------
+
+# shellcheck disable=SC2012
+
+# Capture the active kernel release, for safety to not replace self.
+
+kversion="$(uname -r)"       # e.g 6.1.54-100.xmlts-preempt
+kvariant="${kversion}"
+kvariant="${kvariant##*.}"   # xmlts-preempt
+kversion="${kversion%.*}"    # 6.1.54-100
+
+function xm_install {
+    variant="$1" release="$2" base_name="linux-${1}"
+    echo "Installing ${variant}."
+
+    if [[ -n "$release" ]]; then
+        # Install given xm_variant release (e.g. 100).
+        file1=$(ls -1t "${base_name}"-license-*-"${release}".x86_64.rpm | head -1)
+        file2=$(ls -1t "${base_name}"-[0-9]*-"${release}".x86_64.rpm | head -1)
+        file3=$(ls -1t "${base_name}"-extra-*-"${release}".x86_64.rpm | head -1)
+        file4=$(ls -1t "${base_name}"-dev-*-"${release}".x86_64.rpm | head -1)
+    else
+        # Install newest xm_variant (time stamp).
+        file1=$(ls -1t "${base_name}"-license-*.x86_64.rpm | head -1)
+        file2=$(ls -1t "${base_name}"-[0-9]*.x86_64.rpm | head -1)
+        file3=$(ls -1t "${base_name}"-extra-*.x86_64.rpm | head -1)
+        file4=$(ls -1t "${base_name}"-dev-*.x86_64.rpm | head -1)
+    fi
+
+    if [[ -z "$file1" || -z "$file2" || -z "$file3" || -z "$file4" ]]; then
+        echo "Aborting installation! One or more files are missing."
+        exit 2
+    fi
+    if [[ "$file2" == "linux-${kvariant}-${kversion}.x86_64.rpm" ]]; then
+        echo "Cannot replace live kernel ${file2//.x86_64.rpm/}"
+        exit 0
+    fi
+
+    sudo rpm -ivh --nodeps --force \
+        "$file1" "$file2" "$file3" "$file4" || exit 2
+
+    sudo clr-boot-manager update
+
+    if [[ -d "/var/lib/dkms/nvidia" ]]; then
+        echo "Building kernel drivers for NVIDIA graphics."
+        xm_variant=${base_name#*-}  # xmedge, xmlts, or xmrt
+        kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f4-).$xm_variant
+
+        sudo IGNORE_PREEMPT_RT_PRESENCE=1 \
+             dkms autoinstall -k "$kernel" --force >/dev/null
+
+        sudo depmod -A "$kernel"
+    fi
+
+    sync
+}
+
+case "$1" in
+    edge-custom | edge-default | edge-preempt )
+        cd "rpmbuild.edge/RPMS/x86_64" || exit 1
+        xm_install "xm${1}" "$2"
+        ;;
+    lts-custom | lts-default | lts-preempt )
+        cd "rpmbuild.lts/RPMS/x86_64" || exit 1
+        xm_install "xm${1}" "$2"
+        ;;
+    rt-custom | rt-default | rt-preempt | rt-preempt_rt )
+        cd "rpmbuild.rt/RPMS/x86_64" || exit 1
+        xm_install "xm${1}" "$2"
+        ;;
+    * ) echo "synopsis"
+        echo "   $0 edge-custom | edge-default | edge-preempt [<release>]"
+        echo "   $0 lts-custom | lts-default | lts-preempt [<release>]"
+        echo "   $0 rt-custom | rt-default | rt-preempt | rt-preempt_rt [<release>]"
+esac
+

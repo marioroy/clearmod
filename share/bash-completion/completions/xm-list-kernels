@@ -1,0 +1,13 @@
+# bash completion script - XanMod on Clear project
+
+_xm-list-kernels()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    COMPREPLY=(
+        $(compgen -W '' -- "$cur")
+    )
+} &&
+    complete -F _xm-list-kernels xm-list-kernels
+

@@ -1,0 +1,21 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+*.bak
+*.log
+*.old
+*.out
+*.swp
+*.tmp
+
+/rpmbuild.*/BUILD/
+/rpmbuild.*/BUILDROOT/
+/rpmbuild.*/RPMS/
+/rpmbuild.*/SPECS/*custom*
+/rpmbuild.*/SOURCES/
+/rpmbuild.*/SRPMS/
+

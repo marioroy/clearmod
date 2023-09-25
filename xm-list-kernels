@@ -1,0 +1,54 @@
+#!/bin/bash
+# -----------------------------------------------------------------------
+#   List XanMod installed kernels and base packages.
+#
+#   Author: Mario Roy - http://github.com/marioroy
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, version 2 or later of the License.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# -----------------------------------------------------------------------
+
+# Capture the active kernel release, to identify active kernel in output.
+
+kversion="$(uname -r)"       # e.g 6.1.54-100.xmlts-preempt
+kvariant="${kversion}"
+kvariant="${kvariant##*.}"   # xmlts-preempt
+kversion="${kversion%.*}"    # 6.1.54-100
+
+echo "XanMod boot-manager entries"
+pattern1="^org.clearlinux.xm(custom|edge|lts|rt)-"
+
+for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//" | sort); do
+    if [[ "$kernel" =~ $pattern1 ]]; then
+        if [[ "$kernel" == "org.clearlinux.${kvariant}.${kversion}" ]]; then
+            echo "* ${kernel}"
+        else
+            echo "  ${kernel}"
+        fi
+    fi
+done
+echo
+
+echo "XanMod packages, exluding dev,extra,license"
+pattern2="^linux-xm(custom|edge|lts|rt)-"
+
+for package in $(rpm -qa | grep -Ev -- "-(license|extra|dev)-" | sort); do
+    if [[ "$package" =~ $pattern2 ]]; then
+        if [[ "$package" == "linux-${kvariant}-${kversion}.x86_64" ]]; then
+            echo "* ${package//.x86_64/}"
+        else
+            echo "  ${package//.x86_64/}"
+        fi
+    fi
+done
+echo
+
