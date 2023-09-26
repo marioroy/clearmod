@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
-# shellcheck disable=SC2046
+# shellcheck disable=SC2012,SC2046
 
 # Capture the live kernel release, for safety to not remove self.
 
@@ -67,6 +67,12 @@ function xm_uninstall {
             grep -v "^linux-${kvariant}-.*-${kversion}.x86_64$" ) 2>/dev/null
 
     fi
+
+    # Create default symbolic link if another release exists on the system.
+
+    cd "/usr/lib/kernel" || exit 1
+    other_kernel=$(ls -1t "org.clearlinux.${variant}".* 2>/dev/null | head -1)
+    [[ -n "$other_kernel" ]] && sudo ln -sf "$other_kernel" "default-${variant}"
 
     sync
 }
