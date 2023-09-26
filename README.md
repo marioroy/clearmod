@@ -143,7 +143,8 @@ updating the version manually inside the spec file.
 
 The `/boot` partition has limited space. So, no reason to install many XanMod
 kernels. Build the one you want and enjoy the XanMod kernel. If changing your mind
-later, remember to manage and uninstall any unused XanMod kernels.
+later, remember to manage and uninstall any unused XanMod kernels. Keep at least one
+Clear kernel installed on the system.
 
 To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags` macro.
 Adjust the integer value to your liking.
