@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-preempt_rt
 Version:        6.1.54
-Release:        101
+Release:        102
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -43,7 +43,6 @@ Requires: linux-xmrt-preempt_rt-license = %{version}-%{release}
 # 0112-kernel-time-reduce-ntp-wakeups.patch
 # 0114-print-fsync-count-for-bootchart.patch
 # 0127-x86-microcode-echo-2-reload-to-force-load-ucode.patch
-
 # Clear patch not applied, sched_set_itmt_core_prio is same as LTS kernel.
 # 0119-add-scheduler-turbo3-patch.patch
 
@@ -76,7 +75,6 @@ Patch0129: 0129-nvme-workaround.patch
 Patch0130: 0130-Don-t-report-an-error-if-PowerClamp-run-on-other-CPU.patch
 Patch0131: 0131-overload-on-wakeup.patch
 Patch0133: 0133-xm-novector.patch
-Patch0162: 0162-xm-extra-optmization-flags.patch
 #Serie.end
 
 %description
@@ -147,11 +145,25 @@ Linux kernel build files
 %patch -P 130 -p1
 %patch -P 131 -p1
 %patch -P 133 -p1
-%patch -P 162 -p1
 #Serie.patch.end
 
 
 cp %{SOURCE1} .config
+
+# Run equally well on all x86-64 CPUs with min support of x86-64-v3.
+scripts/config -d MCORE2
+scripts/config -e GENERIC_CPU3
+
+# Change tick rate to 500 HZ, XanMod default.
+scripts/config -d HZ_1000
+scripts/config -e HZ_500
+scripts/config --set-val HZ 500
+
+# Disable tracers, XanMod default.
+scripts/config -d DMA_FENCE_TRACE
+scripts/config -d DRM_I915_LOW_LEVEL_TRACEPOINTS
+scripts/config -d RCU_TRACE
+scripts/config -d FTRACE
 
 # Enable WINESYNC driver for fast kernel-backed Wine.
 scripts/config -e WINESYNC

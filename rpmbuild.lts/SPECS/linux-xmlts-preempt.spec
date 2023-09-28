@@ -8,7 +8,7 @@
 
 Name:           linux-xmlts-preempt
 Version:        6.1.55
-Release:        101
+Release:        102
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -96,7 +96,6 @@ Patch0146: 0001-add-umonitor-umwait-C0.x-C-states.patch
 Patch0147: 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0149: netscale.patch
-Patch0162: 0162-xm-extra-optmization-flags.patch
 #Serie.end
 
 %description
@@ -184,11 +183,25 @@ Linux kernel build files
 %patch -P 147 -p1
 %patch -P 148 -p1
 %patch -P 149 -p1
-%patch -P 162 -p1
 #Serie.patch.end
 
 
 cp %{SOURCE1} .config
+
+# Run equally well on all x86-64 CPUs with min support of x86-64-v3.
+scripts/config -d MCORE2
+scripts/config -e GENERIC_CPU3
+
+# Change tick rate to 500 HZ, XanMod default.
+scripts/config -d HZ_1000
+scripts/config -e HZ_500
+scripts/config --set-val HZ 500
+
+# Disable tracers, XanMod default.
+scripts/config -d DMA_FENCE_TRACE
+scripts/config -d DRM_I915_LOW_LEVEL_TRACEPOINTS
+scripts/config -d RCU_TRACE
+scripts/config -d FTRACE
 
 # Enable WINESYNC driver for fast kernel-backed Wine.
 scripts/config -e WINESYNC

@@ -3,7 +3,7 @@
 Run [XanMod](https://github.com/xanmod) Kernels on [Clear Linux](https://www.clearlinux.org) with ease.
 
 The motivation for this project is that I like the XanMod kernel and opportunity
-to run a preempt-enabled Linux kernel. The XanMod kernels run reasonably well on
+to run a preempt-enabled Linux kernel. The XanMod kernels run superbly on
 Clear Linux. I enabled the WineSync driver for fast kernel-backed Wine.
 
 ## Preparation and configuration
@@ -17,13 +17,27 @@ bc bison c-basic devpkg-gmp devpkg-elfutils devpkg-openssl flex \
 kernel-install linux-firmware lz4 make package-utils wget xz
 ```
 
-Enable `sched_autogroup_enabled`. This option optimizes the scheduler to
-isolate aggressive CPU burners (like build jobs) from desktop applications.
-Optionally, skip this step for servers.
+Tweak scheduler to resolve the [kernel stalling](https://github.com/xanmod/linux/issues/402) on Clear Linux.
+The tweaks are compatible with Clear and XanMod kernels.
 
 ```bash
-echo "/proc/sys/kernel/sched_autogroup_enabled 1" |\
-sudo tee -a /etc/clr-power-tweaks.conf
+sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
+/sys/kernel/debug/sched/latency_ns 12000000
+/sys/kernel/debug/sched/min_granularity_ns 1500000
+/sys/kernel/debug/sched/wakeup_granularity_ns 3000000
+/sys/kernel/debug/sched/migration_cost_ns 500000
+EOF
+```
+
+Optionally, enable `sched_autogroup_enabled`. This option optimizes the scheduler
+to isolate aggressive CPU burners (like build jobs) from desktop applications.
+Under system load, I have found that this may help video playback or make it worst
+and the reason optional. Skip this step for servers or unsure.
+
+```bash
+sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
+/proc/sys/kernel/sched_autogroup_enabled 1
+EOF
 ```
 
 Set boot-timeout and system‐wide configuration to avoid `clr‐boot‐manager`

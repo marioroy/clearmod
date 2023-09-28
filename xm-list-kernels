@@ -41,7 +41,7 @@ echo
 echo "XanMod packages, exluding dev,extra,license"
 pattern2="^linux-xm(custom|edge|lts|rt)-"
 
-for package in $(rpm -qa | grep -Ev -- "-(license|extra|dev)-" | sort); do
+for package in $(rpm -qa | grep -Ev -- "-(license|extra|dev|cpio)-" | sort); do
     if [[ "$package" =~ $pattern2 ]]; then
         if [[ "$package" == "linux-${kvariant}-${kversion}.x86_64" ]]; then
             echo "* ${package//.x86_64/}"

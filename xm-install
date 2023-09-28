@@ -53,8 +53,20 @@ function xm_install {
         exit 0
     fi
 
-    sudo rpm -ivh --nodeps --force \
-        "$file1" "$file2" "$file3" "$file4" || exit 2
+    sudo rm -f "/usr/lib/default-${variant}"
+    sudo rpm -ivh --nodeps --force "$file1" "$file2" "$file3" "$file4"
+
+    if [[ $? -ne 0 ]]; then
+        # rpm failed: cleanup before exiting
+        # Create default symbolic link if another release exists on the system.
+
+        cd "/usr/lib/kernel" || exit 1
+        other_kernel=$(ls -1t "org.clearlinux.${variant}".* 2>/dev/null | head -1)
+        [[ -n "$other_kernel" ]] && sudo ln -sf "$other_kernel" "default-${variant}"
+
+        sync
+        exit 2
+    fi
 
     sudo clr-boot-manager update
 
