@@ -25,7 +25,7 @@ kvariant="${kvariant##*.}"   # xmlts-preempt
 kversion="${kversion%.*}"    # 6.1.54-100
 
 echo "XanMod boot-manager entries"
-pattern1="^org.clearlinux.xm(custom|edge|lts|rt)-"
+pattern1="^org\.clearlinux\.xm(custom|edge|lts|rt)-"
 
 for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//" | sort); do
     if [[ "$kernel" =~ $pattern1 ]]; then

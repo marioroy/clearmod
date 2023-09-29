@@ -34,7 +34,7 @@ function xm_uninstall {
         # Uninstall given variant release (e.g. 100), skipping live kernel.
 
         for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//"); do
-            if [[ "${kernel}z" =~ org.clearlinux.${variant}.*-${release}z ]]; then
+            if [[ "${kernel}z" =~ org\.clearlinux\.${variant}\..*-${release}z ]]; then
                 if [[ "$kernel" == "org.clearlinux.${kvariant}.${kversion}" ]]; then
                     echo "Skipping live kernel ${kernel}"
                 else
@@ -52,7 +52,7 @@ function xm_uninstall {
         # Uninstall variant (all releases), skipping live kernel.
 
         for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//"); do
-            if [[ "${kernel}" =~ org.clearlinux.${variant}. ]]; then
+            if [[ "${kernel}" =~ org\.clearlinux\.${variant}\. ]]; then
                 if [[ "$kernel" == "org.clearlinux.${kvariant}.${kversion}" ]]; then
                     echo "Skipping live kernel ${kernel}"
                 else
