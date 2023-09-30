@@ -71,6 +71,8 @@ function xm_uninstall {
     # Create default symbolic link if another release exists on the system.
 
     cd "/usr/lib/kernel" || exit 1
+    sudo rm -f "default-${variant}"
+
     other_kernel=$(ls -1t "org.clearlinux.${variant}".* 2>/dev/null | head -1)
     [[ -n "$other_kernel" ]] && sudo ln -sf "$other_kernel" "default-${variant}"
 
