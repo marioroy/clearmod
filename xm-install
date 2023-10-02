@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
-# shellcheck disable=SC2012
+# shellcheck disable=SC2012,SC2086
 
 # Capture the active kernel release, for safety to not replace self.
 
@@ -54,10 +54,9 @@ function xm_install {
     fi
 
     sudo rm -f "/usr/lib/default-${variant}"
-    sudo rpm -ivh --nodeps --force "$file1" "$file2" "$file3" "$file4"
 
-    if [[ $? -ne 0 ]]; then
-        # rpm failed: cleanup before exiting
+    if ! sudo rpm -ivh --nodeps --force "$file1" "$file2" "$file3" "$file4"; then
+        # Cleanup before exiting if the 'rpm' command failed.
         # Create default symbolic link if another release exists on the system.
 
         cd "/usr/lib/kernel" || exit 1
@@ -74,6 +73,9 @@ function xm_install {
         echo "Building kernel drivers for NVIDIA graphics."
         xm_variant=${base_name#*-}  # xmedge, xmlts, or xmrt
         kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f4-).$xm_variant
+
+        sudo rm -fr /var/lib/dkms/*/kernel-${kernel}-x86_64
+        sudo rm -fr /var/lib/dkms/*/*/${kernel}
 
         sudo IGNORE_PREEMPT_RT_PRESENCE=1 \
              dkms autoinstall -k "$kernel" --force >/dev/null
