@@ -48,13 +48,13 @@ case "$1" in
         cd "rpmbuild.lts" || exit 1
         xm_build "xm${1}"
         ;;
-    rt-custom | rt-default | rt-preempt | rt-preempt_rt )
+    rt-custom | rt-preempt | rt-preempt_rt )
         cd "rpmbuild.rt" || exit 1
         xm_build "xm${1}"
         ;;
     * ) echo "synopsis"
         echo "   $0 edge-custom | edge-default | edge-preempt"
         echo "   $0 lts-custom | lts-default | lts-preempt"
-        echo "   $0 rt-custom | rt-default | rt-preempt | rt-preempt_rt"
+        echo "   $0 rt-custom | rt-preempt | rt-preempt_rt"
 esac
 

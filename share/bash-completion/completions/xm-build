@@ -8,7 +8,7 @@ _xm-build()
     COMPREPLY=( $(compgen -W '
         edge-custom edge-default edge-preempt
         lts-custom lts-default lts-preempt
-        rt-custom rt-default rt-preempt rt-preempt_rt' -- "$cur")
+        rt-custom rt-preempt rt-preempt_rt' -- "$cur")
     )
 } &&
     complete -F _xm-build xm-build

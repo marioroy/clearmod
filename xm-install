@@ -93,13 +93,13 @@ case "$1" in
         cd "rpmbuild.lts/RPMS/x86_64" || exit 1
         xm_install "xm${1}" "$2"
         ;;
-    rt-custom | rt-default | rt-preempt | rt-preempt_rt )
+    rt-custom | rt-preempt | rt-preempt_rt )
         cd "rpmbuild.rt/RPMS/x86_64" || exit 1
         xm_install "xm${1}" "$2"
         ;;
     * ) echo "synopsis"
         echo "   $0 edge-custom | edge-default | edge-preempt [<release>]"
         echo "   $0 lts-custom | lts-default | lts-preempt [<release>]"
-        echo "   $0 rt-custom | rt-default | rt-preempt | rt-preempt_rt [<release>]"
+        echo "   $0 rt-custom | rt-preempt | rt-preempt_rt [<release>]"
 esac
 
