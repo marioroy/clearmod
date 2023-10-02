@@ -3,8 +3,10 @@
 Run [XanMod](https://github.com/xanmod) Kernels on [Clear Linux](https://www.clearlinux.org) with ease.
 
 The motivation for this project is that I like the XanMod kernel and opportunity
-to run a preempt-enabled Linux kernel. The XanMod kernels run superbly on
-Clear Linux. I enabled the WineSync driver for fast kernel-backed Wine.
+to run a preempt-enabled Linux kernel. The XanMod kernels are configured to run
+equally well on all x86-64 CPUs with minimum support of x86-64-v3. Additionally,
+I enabled FQ-PIE packet scheduling, NTFS3 file-system driver, and the WineSync
+module for fast kernel-backed Wine.
 
 ## Preparation and configuration
 
@@ -103,14 +105,13 @@ Intel and XanMod, respectively. The optional release argument is described below
 ./xm-list-kernels
 ```
 
-For my desktop computer, I prefer the `rt-preempt` variant. This XanMod kernel
-is fast and closest to running like a realtime kernel. The following are the
-commands to fetch the RT sources, build the XanMod kernel, and installation.
+I selected the lts-preempt variant for my desktop computer. The following are
+the commands to fetch the LTS sources, build, and install the XanMod kernel.
 
 ```bash
-./fetch-src rt
-./xm-build rt-preempt
-./xm-install rt-preempt
+./fetch-src lts
+./xm-build lts-preempt
+./xm-install lts-preempt
 ```
 
 The XanMod 6.5 kernel with preempt enabled is another consideration,
@@ -150,20 +151,20 @@ Removing org.clearlinux.xmrt-preempt.6.1.54-101
 
 ## Epilogue
 
-The default variants are apples-to-apples to Clear's kernels. Basically, no overrides.
-The preempt variants enable (`preempt` or `preempt_rt`) and `rcu_boost`. As described
-above, the custom variants are your local copies and safe from `git pull`. This means
-updating the version manually inside the spec file.
+The default variants are apples-to-apples to Clear's kernels. Basically,
+no overrides. The preempt variants enable (`preempt` or `preempt_rt`) and
+`rcu_boost`. Included are custom variants, your playground, for fine-tuning
+the kernel.
 
 The `/boot` partition has limited space. So, no reason to install many XanMod
-kernels. Build the one you want and enjoy the XanMod kernel. If changing your mind
-later, remember to manage and uninstall any unused XanMod kernels. Keep at least one
-Clear kernel installed on the system.
+kernels. Build the one you want and enjoy the XanMod kernel. If changing your
+mind later, remember to manage and uninstall any unused XanMod kernels.
+Keep at least one Clear kernel installed on the system.
 
-To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags` macro.
-Adjust the integer value to your liking.
+To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
+macro. Adjust the integer value to your liking.
 
 ```bash
-echo "%_smp_mflags -j8" >> ~/.rpmmacros
+echo "%_smp_mflags -j4" >> ~/.rpmmacros
 ```
 

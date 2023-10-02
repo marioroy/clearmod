@@ -8,7 +8,7 @@
 
 Name:           linux-xmedge-default
 Version:        6.5.5
-Release:        102
+Release:        103
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -208,19 +208,39 @@ cp %{SOURCE1} .config
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
-# Change tick rate to 500 HZ, XanMod default.
-scripts/config -d HZ_1000
-scripts/config -e HZ_500
-scripts/config --set-val HZ 500
-
 # Disable tracers, XanMod default.
 scripts/config -d DMA_FENCE_TRACE
 scripts/config -d DRM_I915_LOW_LEVEL_TRACEPOINTS
 scripts/config -d RCU_TRACE
 scripts/config -d FTRACE
 
+# Enable FQ-PIE Packet Scheduling.
+# https://datatracker.ietf.org/doc/html/rfc8033
+scripts/config -e NET_SCH_PIE
+scripts/config -e NET_SCH_FQ_PIE
+scripts/config -e NET_SCH_DEFAULT
+scripts/config -e DEFAULT_FQ_PIE
+
+# Enable NTFS3 file-system driver.
+# NTFS3 is a kernel NTFS implementation, which offers much faster performance
+# than the NTFS-3G FUSE based implementation. Note: ntfs3 requires the file
+# system type to mount. e.g. mount -t ntfs3 /dev/sdxY /mnt
+# https://www.paragon-software.com/home/ntfs3-driver-faq/
+# https://wiki.archlinux.org/title/NTFS
+scripts/config -m NTFS3_FS
+scripts/config -e NTFS3_LZX_XPRESS
+scripts/config -e NTFS3_FS_POSIX_ACL
+
+# Enable Google's BBRv3 (Bottleneck Bandwidth and RTT) TCP congestion control.
+# Enable Futex WAIT_MULTIPLE implementation for Wine / Proton Fsync.
+# Clear and XanMod defaults.
+scripts/config -e TCP_CONG_BBR
+scripts/config -e DEFAULT_BBR
+scripts/config -e FUTEX
+scripts/config -e FUTEX_PI
+
 # Enable WINESYNC driver for fast kernel-backed Wine.
-scripts/config -e WINESYNC
+scripts/config -m WINESYNC
 
 mv .config config
 
