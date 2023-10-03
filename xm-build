@@ -41,14 +41,17 @@ function xm_build {
 
 case "$1" in
     edge-custom | edge-default | edge-preempt )
+        ./fetch-src edge   || exit 1
         cd "rpmbuild.edge" || exit 1
         xm_build "xm${1}"
         ;;
     lts-custom | lts-default | lts-preempt )
+        ./fetch-src lts   || exit 1
         cd "rpmbuild.lts" || exit 1
         xm_build "xm${1}"
         ;;
     rt-custom | rt-preempt | rt-preempt_rt )
+        ./fetch-src rt   || exit 1
         cd "rpmbuild.rt" || exit 1
         xm_build "xm${1}"
         ;;
