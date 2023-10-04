@@ -8,7 +8,7 @@
 
 Name:           linux-xmlts-custom
 Version:        6.1.55
-Release:        103
+Release:        104
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -226,6 +226,23 @@ scripts/config -e FUTEX_PI
 # Enable WINESYNC driver for fast kernel-backed Wine.
 scripts/config -m WINESYNC
 
+# Offload RCU callback processing from boot-selected CPUs.
+# Clear defaults.
+scripts/config -e RCU_EXPERT
+scripts/config -e RCU_NOCB_CPU
+scripts/config -e RCU_NOCB_CPU_DEFAULT_ALL
+
+# Disable RCU expedited work in a real-time kthread.
+# CachyOS default.
+scripts/config -d RCU_EXP_KTHREAD
+
+# To save power, batch RCU callbacks and then flush them after a timed delay,
+# memory pressure, or callback list growing too big (can provide 5-10% power-
+# savings for idle or lightly-loaded systems, this is beneficial for laptops).
+# https://lore.kernel.org/lkml/20221016162305.2489629-3-joel@joelfernandes.org/
+# CachyOS and Ubuntu low-latency default.
+scripts/config -e RCU_LAZY
+
 # Enable preempt.
 %if 1
 scripts/config -e EXPERT
@@ -240,15 +257,10 @@ scripts/config -d RT_GROUP_SCHED
 
 # Enable RCU boost (depends on preempt).
 %if 1
-scripts/config -e RCU_NOCB_CPU
-scripts/config -e RCU_NOCB_CPU_DEFAULT_ALL
-scripts/config -e RCU_LAZY
 scripts/config -e RT_MUTEXES
 scripts/config -e PREEMPT_RCU
-scripts/config -e RCU_EXPERT
 scripts/config -e RCU_BOOST
 scripts/config --set-val RCU_BOOST_DELAY 500
-scripts/config -d RCU_EXP_KTHREAD
 %endif
 
 mv .config config
