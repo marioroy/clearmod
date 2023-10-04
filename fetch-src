@@ -24,7 +24,7 @@ if [[ "$1" == "all" ]]; then
     exit 0
 fi
 
-cl_url="https://cdn.download.clearlinux.org/releases/40040/clear/source/SRPMS"
+cl_url="https://cdn.download.clearlinux.org/releases/40050/clear/source/SRPMS"
 xm_url="https://github.com/xanmod/linux/archive/refs/tags"
 
 function xm_fetch {
