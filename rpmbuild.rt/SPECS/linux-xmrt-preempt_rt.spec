@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-preempt_rt
 Version:        6.1.54
-Release:        104
+Release:        105
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -75,6 +75,7 @@ Patch0129: 0129-nvme-workaround.patch
 Patch0130: 0130-Don-t-report-an-error-if-PowerClamp-run-on-other-CPU.patch
 Patch0131: 0131-overload-on-wakeup.patch
 Patch0133: 0133-xm-novector.patch
+Patch0162: 0162-xm-extra-optmization-flags.patch
 #Serie.end
 
 %description
@@ -145,14 +146,15 @@ Linux kernel build files
 %patch -P 130 -p1
 %patch -P 131 -p1
 %patch -P 133 -p1
+%patch -P 162 -p1
 #Serie.patch.end
 
 
 cp %{SOURCE1} .config
 
-# Run equally well on all x86-64 CPUs with min support of x86-64-v3.
+# Run equally well on all x86-64 CPUs with min support of Haswell.
 scripts/config -d MCORE2
-scripts/config -e GENERIC_CPU3
+scripts/config -e MHASWELL
 
 # Disable tracers, XanMod default.
 scripts/config -d DMA_FENCE_TRACE

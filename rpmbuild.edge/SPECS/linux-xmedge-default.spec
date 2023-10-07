@@ -8,7 +8,7 @@
 
 Name:           linux-xmedge-default
 Version:        6.5.5
-Release:        104
+Release:        105
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -43,8 +43,6 @@ Requires: linux-xmedge-default-license = %{version}-%{release}
 # 0132-prezero-20220308.patch
 # 0138-kdf-boottime.patch
 # 0200-mm-lru_cache_disable-use-synchronize_rcu_expedited.patch
-# Clear patch not applied. The ClearMod project enables GENERIC_CPU3.
-# 0162-extra-optmization-flags.patch
 
 # Clear patches omitted, due to inclusion in the XanMod kernel.
 # 0109-Initialize-ata-before-graphics.patch
@@ -94,6 +92,7 @@ Patch0155: ratelimit-sched-yield.patch
 Patch0158: 0158-clocksource-only-perform-extended-clocksource-checks.patch
 Patch0160: better_idle_balance.patch
 Patch0161: 0161-ACPI-align-slab-buffers-for-improved-memory-performa.patch
+Patch0162: 0162-xm-extra-optmization-flags.patch
 Patch0163: 0163-thermal-intel-powerclamp-check-MWAIT-first-use-pr_wa.patch
 #Serie.end
 
@@ -188,6 +187,7 @@ Linux kernel build files
 %patch -P 158 -p1
 %patch -P 160 -p1
 %patch -P 161 -p1
+%patch -P 162 -p1
 %patch -P 163 -p1
 #Serie.patch.end
 
@@ -204,9 +204,9 @@ fi
 
 cp %{SOURCE1} .config
 
-# Run equally well on all x86-64 CPUs with min support of x86-64-v3.
+# Run equally well on all x86-64 CPUs with min support of Haswell.
 scripts/config -d MCORE2
-scripts/config -e GENERIC_CPU3
+scripts/config -e MHASWELL
 
 # Disable tracers, XanMod default.
 scripts/config -d DMA_FENCE_TRACE

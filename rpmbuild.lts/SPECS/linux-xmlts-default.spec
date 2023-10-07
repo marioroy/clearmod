@@ -8,7 +8,7 @@
 
 Name:           linux-xmlts-default
 Version:        6.1.55
-Release:        104
+Release:        105
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -96,6 +96,7 @@ Patch0146: 0001-add-umonitor-umwait-C0.x-C-states.patch
 Patch0147: 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0149: netscale.patch
+Patch0162: 0162-xm-extra-optmization-flags.patch
 #Serie.end
 
 %description
@@ -183,14 +184,15 @@ Linux kernel build files
 %patch -P 147 -p1
 %patch -P 148 -p1
 %patch -P 149 -p1
+%patch -P 162 -p1
 #Serie.patch.end
 
 
 cp %{SOURCE1} .config
 
-# Run equally well on all x86-64 CPUs with min support of x86-64-v3.
+# Run equally well on all x86-64 CPUs with min support of Haswell.
 scripts/config -d MCORE2
-scripts/config -e GENERIC_CPU3
+scripts/config -e MHASWELL
 
 # Disable tracers, XanMod default.
 scripts/config -d DMA_FENCE_TRACE
