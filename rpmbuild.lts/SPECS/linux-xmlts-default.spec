@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmlts-default
-Version:        6.1.55
-Release:        105
+Version:        6.1.57
+Release:        106
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -45,7 +45,7 @@ Requires: linux-xmlts-default-license = %{version}-%{release}
 
 # Clear patches omitted, due to inclusion in the XanMod kernel.
 # 0103-silence-rapl.patch
-# 0109-Initialize-ata-before-graphics.patch
+# 0109-initialize-ata-before-graphics.patch
 # 0112-init-wait-for-partition-and-retry-scan.patch
 # 0115-enable-stateless-firmware-loading.patch
 # 0119-use-lfence-instead-of-rep-and-nop.patch
@@ -55,8 +55,10 @@ Requires: linux-xmlts-default-license = %{version}-%{release}
 # 0402-sched-hybrid2.patch
 # 0403-sched-hybrid3.patch
 # 0404-sched-hybrid4.patch
-# 0001-sched-migrate.patch
-# 0002-sched-migrate.patch (XanMod applied the SIS_CURRENT feature)
+
+# Clear patches omitted, due to removal in the XanMod kernel.
+# 0001-sched-migrate.patch (reverted in 6.1.57)
+# 0002-sched-migrate.patch (reverted in 6.1.57, SIS_CURRENT feature)
 
 #Serie.clr 01XX: Clear Linux patches
 Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch

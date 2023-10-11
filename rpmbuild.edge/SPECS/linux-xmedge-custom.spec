@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmedge-custom
-Version:        6.5.5
-Release:        105
+Version:        6.5.7
+Release:        106
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -45,14 +45,16 @@ Requires: linux-xmedge-custom-license = %{version}-%{release}
 # 0200-mm-lru_cache_disable-use-synchronize_rcu_expedited.patch
 
 # Clear patches omitted, due to inclusion in the XanMod kernel.
-# 0109-Initialize-ata-before-graphics.patch
+# 0109-initialize-ata-before-graphics.patch
 # 0112-init-wait-for-partition-and-retry-scan.patch (refer to 0303 below)
 # 0115-enable-stateless-firmware-loading.patch
 # 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
 # 0121-locking-rwsem-spin-faster.patch
 # 0157-scale-net-alloc.patch (refer to 0301 and 0302 below)
-# 0001-sched-migrate.patch
-# 0002-sched-migrate.patch (XanMod applied the SIS_CURRENT feature)
+
+# Clear patches omitted, due to removal in the XanMod kernel.
+# 0001-sched-migrate.patch (reverted in 6.5.7)
+# 0002-sched-migrate.patch (reverted in 6.5.7, SIS_CURRENT feature)
 
 #Serie.clr 01XX: Clear Linux patches
 Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
@@ -94,6 +96,7 @@ Patch0160: better_idle_balance.patch
 Patch0161: 0161-ACPI-align-slab-buffers-for-improved-memory-performa.patch
 Patch0162: 0162-xm-extra-optmization-flags.patch
 Patch0163: 0163-thermal-intel-powerclamp-check-MWAIT-first-use-pr_wa.patch
+Patch0164: 0164-KVM-VMX-make-vmx-init-a-late-init-call-to-get-to-ini.patch
 #Serie.end
 
 #Serie.clr 01XX: Clear Linux conditional patches
@@ -189,6 +192,7 @@ Linux kernel build files
 %patch -P 161 -p1
 %patch -P 162 -p1
 %patch -P 163 -p1
+%patch -P 164 -p1
 #Serie.patch.end
 
 #Serie.patch.start Clear Linux conditional patches
