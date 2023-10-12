@@ -90,17 +90,17 @@ Intel and XanMod, respectively. The optional release argument is described below
 ```bash
 ./fetch-src all | edge | lts | rt
 
-./xm-build edge-custom | edge-default | edge-preempt
-./xm-build lts-custom | lts-default | lts-preempt
-./xm-build rt-custom | rt-preempt | rt-preempt_rt
+./xm-build edge-default | edge-preempt
+./xm-build lts-default | lts-preempt
+./xm-build rt-preempt | rt-preempt_rt
 
-./xm-install edge-custom | edge-default | edge-preempt [<release>]
-./xm-install lts-custom | lts-default | lts-preempt [<release>]
-./xm-install rt-custom | rt-preempt | rt-preempt_rt [<release>]
+./xm-install edge-default | edge-preempt [<release>]
+./xm-install lts-default | lts-preempt [<release>]
+./xm-install rt-preempt | rt-preempt_rt [<release>]
 
-./xm-uninstall edge-custom | edge-default | edge-preempt [<release>]
-./xm-uninstall lts-custom | lts-default | lts-preempt [<release>]
-./xm-uninstall rt-custom | rt-preempt | rt-preempt_rt [<release>]
+./xm-uninstall edge-default | edge-preempt [<release>]
+./xm-uninstall lts-default | lts-preempt [<release>]
+./xm-uninstall rt-preempt | rt-preempt_rt [<release>]
 
 ./xm-list-kernels
 ```
@@ -153,8 +153,7 @@ Removing org.clearlinux.xmrt-preempt.6.1.54-101
 
 The default variants are apples-to-apples to Clear's kernels. Basically,
 no overrides. The preempt variants enable (`preempt` or `preempt_rt`) and
-`rcu_boost`. Included are custom variants, your playground, for fine-tuning
-the kernel.
+`rcu_boost`.
 
 The `/boot` partition has limited space. So, no reason to install many XanMod
 kernels. Build the one you want and enjoy the XanMod kernel. If changing your

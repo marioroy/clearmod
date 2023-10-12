@@ -40,24 +40,24 @@ function xm_build {
 }
 
 case "$1" in
-    edge-custom | edge-default | edge-preempt )
+    edge-default | edge-preempt )
         ./fetch-src edge   || exit 1
         cd "rpmbuild.edge" || exit 1
         xm_build "xm${1}"
         ;;
-    lts-custom | lts-default | lts-preempt )
+    lts-default | lts-preempt )
         ./fetch-src lts   || exit 1
         cd "rpmbuild.lts" || exit 1
         xm_build "xm${1}"
         ;;
-    rt-custom | rt-preempt | rt-preempt_rt )
+    rt-preempt | rt-preempt_rt )
         ./fetch-src rt   || exit 1
         cd "rpmbuild.rt" || exit 1
         xm_build "xm${1}"
         ;;
     * ) echo "synopsis"
-        echo "   $0 edge-custom | edge-default | edge-preempt"
-        echo "   $0 lts-custom | lts-default | lts-preempt"
-        echo "   $0 rt-custom | rt-preempt | rt-preempt_rt"
+        echo "   $0 edge-default | edge-preempt"
+        echo "   $0 lts-default | lts-preempt"
+        echo "   $0 rt-preempt | rt-preempt_rt"
 esac
 

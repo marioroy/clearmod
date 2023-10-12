@@ -15,7 +15,6 @@
 /rpmbuild.*/BUILD/
 /rpmbuild.*/BUILDROOT/
 /rpmbuild.*/RPMS/
-/rpmbuild.*/SPECS/*custom*
 /rpmbuild.*/SOURCES/
 /rpmbuild.*/SRPMS/
 
