@@ -92,15 +92,15 @@ Intel and XanMod, respectively. The optional release argument is described below
 
 ./xm-build edge-default | edge-preempt
 ./xm-build lts-default | lts-preempt
-./xm-build rt-preempt | rt-preempt_rt
+./xm-build rt-preempt
 
 ./xm-install edge-default | edge-preempt [<release>]
 ./xm-install lts-default | lts-preempt [<release>]
-./xm-install rt-preempt | rt-preempt_rt [<release>]
+./xm-install rt-preempt [<release>]
 
 ./xm-uninstall edge-default | edge-preempt [<release>]
 ./xm-uninstall lts-default | lts-preempt [<release>]
-./xm-uninstall rt-preempt | rt-preempt_rt [<release>]
+./xm-uninstall rt-preempt [<release>]
 
 ./xm-list-kernels
 ```

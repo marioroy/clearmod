@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-preempt
 Version:        6.1.54
-Release:        105
+Release:        106
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -207,17 +207,41 @@ scripts/config -d RCU_EXP_KTHREAD
 # CachyOS and Ubuntu low-latency default.
 scripts/config -e RCU_LAZY
 
-# Enable preempt.
+# Disable transparent hugepages.
+scripts/config -d ARCH_ENABLE_THP_MIGRATION
+scripts/config -d DEV_DAX
+scripts/config -d DEV_DAX_KMEM
+scripts/config -d DEV_DAX_PMEM
+scripts/config -d FS_DAX_PMD
+scripts/config -d READ_ONLY_THP_FOR_FS
+scripts/config -d THP_SWAP
+scripts/config -d TRANSPARENT_HUGEPAGE
+scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS
+scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE
+
+# Enable preempt_rt.
 scripts/config -e EXPERT
-scripts/config -e PREEMPT_BUILD
+scripts/config -d LEDS_TRIGGER_CPU
+scripts/config -d NET_RX_BUSY_POLL
+scripts/config -d NUMA_BALANCING
+scripts/config -d NUMA_BALANCING_DEFAULT_ENABLED
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
-scripts/config -e PREEMPT
+scripts/config -d PREEMPT_VOLUNTARY_BUILD
+scripts/config -d PREEMPT
+scripts/config -d QUEUED_RWLOCKS
+scripts/config -d SOFTIRQ_ON_OWN_STACK
+scripts/config -e ARCH_SUPPORTS_RT
+scripts/config --set-val COMPACT_UNEVICTABLE_DEFAULT 0
+scripts/config -e HAVE_ATOMIC_CONSOLE
+scripts/config -e HAVE_PREEMPT_LAZY
+scripts/config -e PREEMPT_LAZY
+scripts/config -e PREEMPT_RT
 scripts/config -e PREEMPT_COUNT
 scripts/config -e PREEMPTION
 scripts/config -d RT_GROUP_SCHED
 
-# Enable RCU boost (depends on preempt).
+# Enable RCU boost (depends on preempt_rt).
 scripts/config -e RT_MUTEXES
 scripts/config -e PREEMPT_RCU
 scripts/config -e RCU_BOOST
