@@ -265,9 +265,10 @@ scripts/config -e RCU_LAZY
 
 # Enable preempt.
 scripts/config -e EXPERT
-scripts/config -e PREEMPT_BUILD
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
+scripts/config -d PREEMPT_VOLUNTARY_BUILD
+scripts/config -e PREEMPT_BUILD
 scripts/config -e PREEMPT
 scripts/config -e PREEMPT_COUNT
 scripts/config -e PREEMPTION
