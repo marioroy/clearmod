@@ -131,22 +131,22 @@ Boot into another kernel before removal via `xm-uninstall`.
 ./xm-list-kernels 
 XanMod boot-manager entries
 Password: 
-* org.clearlinux.xmedge-preempt.6.5.7-106
-  org.clearlinux.xmlts-preempt.6.1.57-106
+  org.clearlinux.xmedge-preempt.6.5.7-107
+* org.clearlinux.xmlts-preempt.6.1.57-107
 
 XanMod packages, exluding dev,extra,license
-* linux-xmedge-preempt-6.5.7-106
-  linux-xmlts-preempt-6.1.57-106
+  linux-xmedge-preempt-6.5.7-107
+* linux-xmlts-preempt-6.1.57-107
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
 specify the release number. By default, `xm-install` installs the most recent
 build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
-Though, skip the running kernel.
+Though, skips the running kernel.
 
 ```bash
-./xm-uninstall lts-preempt 106
-Removing org.clearlinux.xmlts-preempt.6.1.57-106
+./xm-uninstall edge-preempt 107
+Removing org.clearlinux.xmedge-preempt.6.5.7-107
 ```
 
 ## Epilogue
