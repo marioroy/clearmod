@@ -5,11 +5,11 @@
 #
 
 %define xm_customver 1
-%define xm_customver_rt 15
+%define xm_customver_rt 16
 
 Name:           linux-xmrt-preempt
-Version:        6.1.54
-Release:        107
+Version:        6.1.59
+Release:        109
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
