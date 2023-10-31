@@ -24,7 +24,7 @@ if [[ "$1" == "all" ]]; then
     exit 0
 fi
 
-cl_url="https://cdn.download.clearlinux.org/releases/40250/clear/source/SRPMS"
+cl_url="https://cdn.download.clearlinux.org/releases/40260/clear/source/SRPMS"
 xm_url="https://github.com/xanmod/linux/archive/refs/tags"
 
 function xm_fetch {
@@ -45,7 +45,7 @@ case "$1" in
     edge )
         cd "rpmbuild.edge" || exit 1
         echo "Fetching sources for XanMod edge."
-        xm_fetch "linux-6.5.9-1373.src.rpm" "6.5.9-xanmod1.tar.gz"
+        xm_fetch "linux-6.5.9-1374.src.rpm" "6.5.9-xanmod1.tar.gz"
         ;;
     lts )
         cd "rpmbuild.lts" || exit 1
