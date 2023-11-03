@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmlts-default
-Version:        6.1.60
-Release:        110
+Version:        6.1.61
+Release:        111
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/

@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmedge-default
-Version:        6.5.9
-Release:        110
+Version:        6.5.10
+Release:        111
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
