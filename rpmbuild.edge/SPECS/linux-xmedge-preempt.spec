@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmedge-preempt
-Version:        6.5.10
-Release:        111
+Version:        6.6.1
+Release:        112
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -37,11 +37,12 @@ Requires: linux-xmedge-preempt-license = %{version}-%{release}
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
 #mainline.end
 
-# Clear patches commented out or not patched in Clear's 6.5 spec file.
+# Clear patches commented out or not patched in Clear's 6.6 spec file.
 # 0113-print-fsync-count-for-bootchart.patch
 # 0118-add-scheduler-turbo3-patch.patch
 # 0132-prezero-20220308.patch
 # 0138-kdf-boottime.patch
+# 0139-adlrdt.patch
 # 0200-mm-lru_cache_disable-use-synchronize_rcu_expedited.patch
 
 # Clear patches omitted, due to inclusion in the XanMod kernel.
@@ -80,13 +81,8 @@ Patch0134: 0134-md-raid6-algorithms-scale-test-duration-for-speedier.patch
 Patch0135: 0135-initcall-only-print-non-zero-initcall-debug-to-speed.patch
 Patch0136: scale.patch
 Patch0137: libsgrowdown.patch
-Patch0139: adlrdt.patch
 Patch0141: epp-retune.patch
 Patch0142: tcptuning.patch
-Patch0143: 0001-powerbump-functionality.patch
-Patch0144: 0002-add-networking-support-for-powerbump.patch
-Patch0145: 0003-futex-bump.patch
-Patch0146: 0001-add-umonitor-umwait-C0.x-C-states.patch
 Patch0147: 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0154: 0136-crypto-kdf-make-the-module-init-call-a-late-init-cal.patch
@@ -177,13 +173,8 @@ Linux kernel build files
 %patch -P 135 -p1
 %patch -P 136 -p1
 %patch -P 137 -p1
-%patch -P 139 -p1
 %patch -P 141 -p1
 %patch -P 142 -p1
-%patch -P 143 -p1
-%patch -P 144 -p1
-%patch -P 145 -p1
-%patch -P 146 -p1
 %patch -P 147 -p1
 %patch -P 148 -p1
 %patch -P 154 -p1
