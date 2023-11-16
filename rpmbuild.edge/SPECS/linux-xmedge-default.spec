@@ -8,7 +8,7 @@
 
 Name:           linux-xmedge-default
 Version:        6.6.1
-Release:        112
+Release:        113
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -94,6 +94,7 @@ Patch0162: 0162-xm-extra-optmization-flags.patch
 Patch0163: 0163-thermal-intel-powerclamp-check-MWAIT-first-use-pr_wa.patch
 Patch0164: 0164-KVM-VMX-make-vmx-init-a-late-init-call-to-get-to-ini.patch
 Patch0165: slack.patch
+Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
 #Serie.clr 01XX: Clear Linux conditional patches
@@ -186,6 +187,7 @@ Linux kernel build files
 %patch -P 163 -p1
 %patch -P 164 -p1
 %patch -P 165 -p1
+%patch -P 166 -p1
 #Serie.patch.end
 
 #Serie.patch.start Clear Linux conditional patches
