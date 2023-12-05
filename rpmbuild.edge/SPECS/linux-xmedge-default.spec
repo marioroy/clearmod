@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmedge-default
-Version:        6.6.2
-Release:        114
+Version:        6.6.4
+Release:        116
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -47,7 +47,6 @@ Requires: linux-xmedge-default-license = %{version}-%{release}
 
 # Clear patches omitted, due to inclusion in the XanMod kernel.
 # 0109-initialize-ata-before-graphics.patch
-# 0112-init-wait-for-partition-and-retry-scan.patch (refer to 0303 below)
 # 0115-enable-stateless-firmware-loading.patch
 # 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
 # 0121-locking-rwsem-spin-faster.patch
@@ -65,6 +64,7 @@ Patch0106: 0106-intel_idle-tweak-cpuidle-cstates.patch
 Patch0107: 0107-bootstats-add-printk-s-to-measure-boot-time-in-more-.patch
 Patch0108: 0108-smpboot-reuse-timer-calibration.patch
 Patch0111: 0111-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch
+Patch0112: 0112-init-wait-for-partition-and-retry-scan.patch
 Patch0114: 0114-add-boot-option-to-allow-unsigned-modules.patch
 Patch0116: 0116-migrate-some-systemd-defaults-to-the-kernel-defaults.patch
 Patch0117: 0117-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch
@@ -100,7 +100,6 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.clr 01XX: Clear Linux conditional patches
 Patch0301: scale-net-alloc-6.3.1.patch
 Patch0302: scale-net-alloc-6.5.4.patch
-Patch0303: 0112-xm-init-wait-for-partition-and-retry-scan.patch
 #Serie.end
 
 %description
@@ -158,6 +157,7 @@ Linux kernel build files
 %patch -P 107 -p1
 %patch -P 108 -p1
 %patch -P 111 -p1
+%patch -P 112 -p1
 %patch -P 114 -p1
 %patch -P 116 -p1
 %patch -P 117 -p1
@@ -196,7 +196,6 @@ then
 %patch -P 301 -p1
 else
 %patch -P 302 -p1
-%patch -P 303 -p1
 fi
 #Serie.patch.end
 

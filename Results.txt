@@ -1,0 +1,160 @@
+
+Results, running three commands simultaneously.
+AMD Threadripper 3970X, 3600 MHz DDR4 RAM
+December 5, 2023
+
+  Workload varied purposely (watch htop):
+    62 threads for cyclictest
+    32 threads for hackbench
+    64 threads for counting prime numbers
+
+#######################################################################
+
+# run cyclictest as super user in terminal one.
+  taskset -c 0-61 ./cyclictest -m -Sp99 -i200 -h400 -D30 -q
+
+# run hackbench as a normal user in terminal two.
+  taskset -c 0-31 ./hackbench -s 512 -l 51200 -P
+
+# run algorithm3.pl as a normal user in terminal three.
+# Perl code applies CPU affinity, via set_cpu_affinity.
+# https://github.com/marioroy/mce-sandbox
+  ./algorithm3.pl 1e12
+
+# optional, run htop in another window
+
+# Summary              count primes                  cyclictest latency
+                       algorithm3(s)  hackbench(s)    max(us)  avg(us)
+
+  Clear  6.1.65 LTS        23.564        25.094        2422     1510
+  Xanmod 6.1.65 Preempt    23.256        24.658         981      470
+  Xanmod 6.1.54 Realtime   24.439        46.921         160       50
+
+  Clear  6.6.4  Native     22.979        23.124        4602     2260
+  Xanmod 6.6.4  Preempt    22.862        23.288        3151     1206
+  Xanmod 6.5.13 Preempt    22.898        23.966        2042     1128
+  Nobara 6.6.3  Fsync      21.167        27.434        1523      601
+
+#######################################################################
+
+# Clear Linux 40440
+# 6.1.65-1325.ltscurrent kernel
+# https://www.clearlinux.org/
+
+  algorithm3.pl time: 23.564 seconds
+      hackbench time: 25.094 seconds
+
+  cyclictest max latencies: (2422 us max, 1510 us avg)
+      01493 01245 01803 01226 01697 01162 00849 01056
+      01383 01549 01509 01572 01844 01386 02109 01317
+      01677 01481 01277 01041 01233 00287 01299 01736
+      02422 01752 01583 02141 01539 01399 01292 01743
+      01408 01489 01353 01376 01528 01508 01742 01686
+      01593 01566 01714 01750 01620 01518 01692 01537
+      01129 01241 01592 01551 01623 01537 01521 01697
+      01579 01875 01476 01502 01576 01554
+
+# Clear Linux 40440
+# 6.1.65-115.xmlts-preempt kernel (PREEMPT enabled)
+# https://github.com/marioroy/clearmod
+
+  algorithm3.pl time: 23.256 seconds
+      hackbench time: 24.658 seconds
+
+  cyclictest max latencies: (981 us max, 470 us avg)
+      00545 00767 00770 00464 00743 00795 00715 00866
+      00160 00840 00754 00090 00754 00981 00092 00821
+      00072 00519 00128 00520 00433 00725 00594 00082
+      00764 00703 00682 00942 00777 00817 00860 00094
+      00122 00105 00121 00096 00456 00244 00091 00166
+      00092 00758 00119 00160 00340 00904 00467 00059
+      00344 00106 00555 00118 00847 00619 00083 00083
+      00465 00668 00899 00123 00725 00354
+
+# Clear Linux 40440
+# 6.1.64-111.xmrt-preempt kernel (REALTIME enabled)
+# https://github.com/marioroy/clearmod
+
+  algorithm3.pl time: 24.439 seconds
+      hackbench time: 46.921 seconds
+
+  cyclictest max latencies: (160 us max, 50 us avg)
+      00026 00025 00018 00017 00019 00021 00039 00014
+      00019 00019 00020 00030 00022 00020 00020 00023
+      00017 00018 00019 00017 00030 00017 00019 00020
+      00017 00018 00017 00018 00022 00020 00026 00022
+      00049 00062 00065 00051 00045 00116 00122 00106
+      00057 00083 00061 00160 00085 00060 00060 00036
+      00129 00096 00055 00046 00114 00058 00047 00143
+      00086 00090 00103 00065 00079 00119
+
+#######################################################################
+
+# Clear Linux 40440
+# 6.6.4-1389.native kernel
+# https://github.com/marioroy/clearmod
+
+  algorithm3.pl time: 22.979 seconds
+      hackbench time: 23.124 seconds
+
+  cyclictest max latencies: (4602 us max, 2260 us avg)
+      01938 02203 02103 02227 02391 02485 02324 02447
+      04481 04367 04602 04463 04426 04434 04299 04366
+      01456 01462 01428 01503 01917 01990 01907 01956
+      00822 00946 00786 04345 00778 03078 00949 00970
+      02336 02026 02300 02186 02391 02263 02354 02438
+      04485 04550 04454 04517 04363 04417 04504 04333
+      00393 00052 00305 00192 00350 00028 00084 00203
+      00991 00851 00124 00788 01090 00904
+
+# Clear Linux 40440
+# 6.6.4-116.xmedge-preempt kernel (PREEMPT enabled)
+# https://github.com/marioroy/clearmod
+
+  algorithm3.pl time: 22.862 seconds
+      hackbench time: 23.288 seconds
+
+  cyclictest max latencies: (3151 us max, 1206 us avg)
+      00363 00282 00212 00190 00163 00180 00318 00142
+      00095 00127 00122 00188 00179 00296 00192 00204
+      02757 02509 02698 02436 03151 03133 03112 02684
+      02262 02235 02411 01164 01702 01667 01621 01802
+      00343 00256 00348 00258 00292 00249 00220 00187
+      00013 00088 00021 00087 00100 00071 00013 00041
+      02755 02712 02662 02015 02125 01894 02078 03109
+      02282 02408 02342 02272 01589 01340
+
+# Clear Linux 40440
+# 6.5.13-115.xmedge-preempt kernel (PREEMPT enabled)
+# https://github.com/marioroy/clearmod
+
+  algorithm3.pl time: 22.898 seconds
+      hackbench time: 23.966 seconds
+
+  cyclictest max latencies: (2042 us max, 1128 us avg)
+      01353 00238 01964 00742 01141 00795 01850 00127
+      02042 01904 01942 01996 00376 01263 00263 02014
+      00128 00152 01463 01741 01860 00400 01963 01758
+      01416 01269 00796 01759 00945 01528 00131 01999
+      01671 00631 01846 01607 01943 00134 01734 01418
+      00913 00136 00236 00393 01852 00430 01739 01912
+      01920 00329 00134 00105 00359 01049 00959 02025
+      00117 01862 00129 00918 00224 01921
+
+# Nobara Linux 38
+# 6.6.3-203.fsync.fc38.x86_64 kernel
+# https://nobaraproject.org/
+
+  algorithm3.pl time: 21.167 seconds
+      hackbench time: 27.434 seconds
+
+  cyclictest max latencies: (1523 us max, 601 us avg)
+      00601 00530 00318 00498 00212 01012 00523 00691
+      00466 00488 00413 00469 00518 00340 00448 00276
+      00512 00601 00396 00545 00484 00485 00467 00413
+      00296 00321 00393 00501 00266 00841 00805 00340
+      00251 00768 01498 00520 00393 00456 00898 00360
+      00690 00373 00214 00723 01043 01523 01024 01065
+      00481 00473 00725 00755 00897 00908 00889 00897
+      00237 00251 01280 00629 01019 00542
+

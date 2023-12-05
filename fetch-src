@@ -24,17 +24,25 @@ if [[ "$1" == "all" ]]; then
     exit 0
 fi
 
-cl_url="https://cdn.download.clearlinux.org/releases/40390/clear/source/SRPMS"
+cl_url="https://cdn.download.clearlinux.org/releases"
 xm_url="https://github.com/xanmod/linux/archive/refs/tags"
 
-function xm_fetch {
-    cl_file="$1" xm_file="$2"
+function fetch {
+    local cl_rel="$1"
+    local cl_file="$2"
+    local xm_file="$3"
     mkdir -p "SOURCES" && cd "SOURCES" || exit 1
+
     if [[ ! -s "$cl_file" ]]; then
         rm -f cmdline config ./*.patch ./*.patch.xz ./*.spec ./*.tar.xz linux-*.src.rpm
-        wget "${cl_url}/${cl_file}"
+        if [[ "$xm_file" == *-rt* && -e "../../rpmbuild.lts/SOURCES/$cl_file" ]]; then
+            cp -a "../../rpmbuild.lts/SOURCES/$cl_file" .
+        else
+            wget "${cl_url}/${cl_rel}/clear/source/SRPMS/${cl_file}"
+        fi
         rpm2cpio "$cl_file" | cpio -i -d -u 2>/dev/null
     fi
+
     if [[ ! -s "$xm_file" ]]; then
         rm -f [0-9]*-xanmod*.tar.gz
         wget "${xm_url}/${xm_file}"
@@ -45,17 +53,17 @@ case "$1" in
     edge )
         cd "rpmbuild.edge" || exit 1
         echo "Fetching sources for XanMod edge."
-        xm_fetch "linux-6.6.2-1387.src.rpm" "6.6.2-xanmod1.tar.gz"
+        fetch "40440" "linux-6.6.4-1389.src.rpm" "6.6.4-xanmod1.tar.gz"
         ;;
     lts )
         cd "rpmbuild.lts" || exit 1
         echo "Fetching sources for XanMod lts."
-        xm_fetch "linux-ltscurrent-6.1.63-1323.src.rpm" "6.1.63-xanmod1.tar.gz"
+        fetch "40440" "linux-ltscurrent-6.1.65-1325.src.rpm" "6.1.65-xanmod1.tar.gz"
         ;;
     rt )
         cd "rpmbuild.rt" || exit 1
         echo "Fetching sources for XanMod rt."
-        xm_fetch "linux-preempt-rt-6.1.38-105.src.rpm" "6.1.59-rt16-xanmod1.tar.gz"
+        fetch "40430" "linux-ltscurrent-6.1.64-1324.src.rpm" "6.1.64-rt17-xanmod1.tar.gz"
         ;;
     * ) echo "synopsis"
         echo "   $0 all | edge | lts | rt"
