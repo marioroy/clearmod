@@ -26,16 +26,21 @@ December 6, 2023
 # Summary              count primes                  cyclictest latency
                        algorithm3(s)  hackbench(s)    max(us)  avg(us)
 
-  # /proc/sys/kernel/sched_autogroup_enabled 0
+- /proc/sys/kernel/sched_autogroup_enabled 0
+
   Clear  6.1.65 LTS        23.564        25.094        2422     1510
   XanMod 6.1.65 Preempt    23.256        24.658         981      470
   XanMod 6.1.54 Realtime   24.439        46.921         160       50
 
-  # /proc/sys/kernel/sched_autogroup_enabled 0
   Clear  6.6.4  Native     22.979        23.124        4602     2260
   XanMod 6.6.4  Preempt    22.862        23.288        3151     1206
 
-  # /proc/sys/kernel/sched_autogroup_enabled 1
+- /proc/sys/kernel/sched_autogroup_enabled 1
+
+  Clear  6.1.65 LTS        19.643        25.918        1060      458
+  XanMod 6.1.65 Preempt    20.364        26.328         869      349
+  XanMod 6.1.54 Realtime   17.204        58.456         168       59
+
   Clear  6.6.4  Native     20.945        28.634        1588      621
   XanMod 6.6.4  Preempt    21.013        28.850        2276      646
   Nobara 6.6.3  Fsync      21.167        27.434        1523      601
@@ -61,6 +66,21 @@ December 6, 2023
       01129 01241 01592 01551 01623 01537 01521 01697
       01579 01875 01476 01502 01576 01554
 
+- /proc/sys/kernel/sched_autogroup_enabled 1
+
+  algorithm3.pl time: 19.643 seconds
+      hackbench time: 25.918 seconds
+
+  cyclictest max latencies: (1060 us max, 458 us avg)
+      00561 01060 00563 00470 00529 00312 00478 00516
+      00546 00458 00613 00579 00478 00489 00526 00562
+      00488 00599 00530 00436 00489 00595 00434 00577
+      00408 00437 00470 00546 00565 00353 00430 00574
+      00400 00415 00437 00272 00283 00646 00427 00879
+      00407 00563 00273 00274 00373 00239 00273 00317
+      00630 00341 00446 00243 00351 00303 00349 00389
+      00263 00296 00497 00358 00459 00318
+
 # Clear Linux 40440
 # 6.1.65-115.xmlts-preempt kernel (PREEMPT enabled)
 # https://github.com/marioroy/clearmod
@@ -80,6 +100,21 @@ December 6, 2023
       00344 00106 00555 00118 00847 00619 00083 00083
       00465 00668 00899 00123 00725 00354
 
+- /proc/sys/kernel/sched_autogroup_enabled 1
+
+  algorithm3.pl time: 20.364 seconds
+      hackbench time: 26.328 seconds
+
+  cyclictest max latencies: (869 us max, 349 us avg)
+      00058 00048 00065 00577 00691 00699 00804 00068
+      00086 00104 00869 00126 00678 00725 00770 00725
+      00465 00495 00136 00059 00678 00618 00712 00792
+      00744 00579 00786 00724 00670 00123 00137 00164
+      00156 00063 00108 00071 00141 00357 00094 00063
+      00064 00121 00691 00736 00209 00206 00389 00171
+      00085 00412 00090 00128 00139 00109 00535 00183
+      00083 00126 00724 00130 00223 00085
+
 # Clear Linux 40440
 # 6.1.64-111.xmrt-preempt kernel (REALTIME enabled)
 # https://github.com/marioroy/clearmod
@@ -98,6 +133,21 @@ December 6, 2023
       00057 00083 00061 00160 00085 00060 00060 00036
       00129 00096 00055 00046 00114 00058 00047 00143
       00086 00090 00103 00065 00079 00119
+
+- /proc/sys/kernel/sched_autogroup_enabled 1
+
+  algorithm3.pl time: 17.204 seconds
+      hackbench time: 58.456 seconds
+
+  cyclictest max latencies: (168 us max, 59 us avg)
+      00028 00033 00020 00021 00028 00023 00022 00021
+      00020 00027 00018 00020 00018 00022 00023 00019
+      00020 00023 00016 00019 00024 00024 00019 00018
+      00018 00017 00025 00022 00019 00020 00025 00019
+      00077 00045 00097 00064 00097 00163 00139 00125
+      00093 00105 00100 00077 00156 00141 00103 00085
+      00043 00168 00040 00057 00084 00130 00081 00119
+      00090 00143 00100 00030 00100 00136
 
 #######################################################################
 
