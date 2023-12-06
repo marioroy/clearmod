@@ -1,7 +1,7 @@
 
 Results, running three commands simultaneously.
 AMD Threadripper 3970X, 3600 MHz DDR4 RAM
-December 5, 2023
+December 6, 2023
 
   Workload varied purposely (watch htop):
     62 threads for cyclictest
@@ -26,14 +26,18 @@ December 5, 2023
 # Summary              count primes                  cyclictest latency
                        algorithm3(s)  hackbench(s)    max(us)  avg(us)
 
+  # /proc/sys/kernel/sched_autogroup_enabled 0
   Clear  6.1.65 LTS        23.564        25.094        2422     1510
   XanMod 6.1.65 Preempt    23.256        24.658         981      470
   XanMod 6.1.54 Realtime   24.439        46.921         160       50
 
+  # /proc/sys/kernel/sched_autogroup_enabled 0
   Clear  6.6.4  Native     22.979        23.124        4602     2260
   XanMod 6.6.4  Preempt    22.862        23.288        3151     1206
-  XanMod 6.5.13 Preempt    22.898        23.966        2042     1128
 
+  # /proc/sys/kernel/sched_autogroup_enabled 1
+  Clear  6.6.4  Native     20.945        28.634        1588      621
+  XanMod 6.6.4  Preempt    21.013        28.850        2276      646
   Nobara 6.6.3  Fsync      21.167        27.434        1523      601
 
 #######################################################################
@@ -41,6 +45,8 @@ December 5, 2023
 # Clear Linux 40440
 # 6.1.65-1325.ltscurrent kernel
 # https://www.clearlinux.org/
+
+- /proc/sys/kernel/sched_autogroup_enabled 0
 
   algorithm3.pl time: 23.564 seconds
       hackbench time: 25.094 seconds
@@ -59,6 +65,8 @@ December 5, 2023
 # 6.1.65-115.xmlts-preempt kernel (PREEMPT enabled)
 # https://github.com/marioroy/clearmod
 
+- /proc/sys/kernel/sched_autogroup_enabled 0
+
   algorithm3.pl time: 23.256 seconds
       hackbench time: 24.658 seconds
 
@@ -75,6 +83,8 @@ December 5, 2023
 # Clear Linux 40440
 # 6.1.64-111.xmrt-preempt kernel (REALTIME enabled)
 # https://github.com/marioroy/clearmod
+
+- /proc/sys/kernel/sched_autogroup_enabled 0
 
   algorithm3.pl time: 24.439 seconds
       hackbench time: 46.921 seconds
@@ -95,6 +105,8 @@ December 5, 2023
 # 6.6.4-1389.native kernel
 # https://github.com/marioroy/clearmod
 
+- /proc/sys/kernel/sched_autogroup_enabled 0
+
   algorithm3.pl time: 22.979 seconds
       hackbench time: 23.124 seconds
 
@@ -108,9 +120,26 @@ December 5, 2023
       00393 00052 00305 00192 00350 00028 00084 00203
       00991 00851 00124 00788 01090 00904
 
+- /proc/sys/kernel/sched_autogroup_enabled 1
+
+  algorithm3.pl time: 20.945 seconds
+      hackbench time: 28.634 seconds
+
+  cyclictest max latencies: (1588 us max, 621 us avg)
+      00102 00198 00200 00307 00350 00136 00391 00300
+      00170 00170 00279 00094 00174 00100 00124 00284
+      01241 01191 01588 01571 01567 01466 01570 01445
+      01270 00335 00436 00383 00659 00923 00870 00387
+      00254 00301 00217 00078 00745 00412 00270 00238
+      00098 00101 00085 00101 00369 00046 00314 00158
+      01110 01378 01042 01354 01419 01085 01366 01035
+      01163 00271 01113 00244 00891 00990
+
 # Clear Linux 40440
 # 6.6.4-116.xmedge-preempt kernel (PREEMPT enabled)
 # https://github.com/marioroy/clearmod
+
+- /proc/sys/kernel/sched_autogroup_enabled 0
 
   algorithm3.pl time: 22.862 seconds
       hackbench time: 23.288 seconds
@@ -125,26 +154,26 @@ December 5, 2023
       02755 02712 02662 02015 02125 01894 02078 03109
       02282 02408 02342 02272 01589 01340
 
-# Clear Linux 40440
-# 6.5.13-115.xmedge-preempt kernel (PREEMPT enabled)
-# https://github.com/marioroy/clearmod
+- /proc/sys/kernel/sched_autogroup_enabled 1
 
-  algorithm3.pl time: 22.898 seconds
-      hackbench time: 23.966 seconds
+  algorithm3.pl time: 21.013 seconds
+      hackbench time: 28.850 seconds
 
-  cyclictest max latencies: (2042 us max, 1128 us avg)
-      01353 00238 01964 00742 01141 00795 01850 00127
-      02042 01904 01942 01996 00376 01263 00263 02014
-      00128 00152 01463 01741 01860 00400 01963 01758
-      01416 01269 00796 01759 00945 01528 00131 01999
-      01671 00631 01846 01607 01943 00134 01734 01418
-      00913 00136 00236 00393 01852 00430 01739 01912
-      01920 00329 00134 00105 00359 01049 00959 02025
-      00117 01862 00129 00918 00224 01921
+  cyclictest max latencies: (2276 us max, 646 us avg)
+      00305 00161 00333 00237 00190 00202 00239 00187
+      00583 00509 00592 00568 00572 00531 00551 00662
+      03573 03554 03521 03480 02424 02396 02360 02325
+      00820 00766 00728 00678 00414 00462 00520 00464
+      00174 00165 00313 00265 00204 00136 00110 00173
+      00027 00066 00085 00050 00089 00114 00042 00070
+      00954 00705 01272 01232 00455 00885 00575 00794
+      00259 00392 00350 00272 00229 00119
 
 # Nobara Linux 38
 # 6.6.3-203.fsync.fc38.x86_64 kernel
 # https://nobaraproject.org/
+
+- /proc/sys/kernel/sched_autogroup_enabled 1
 
   algorithm3.pl time: 21.167 seconds
       hackbench time: 27.434 seconds
