@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-preempt
 Version:        6.1.64
-Release:        111
+Release:        112
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -300,11 +300,10 @@ scripts/config -e PREEMPT_COUNT
 scripts/config -e PREEMPTION
 scripts/config -d RT_GROUP_SCHED
 
-# Enable RCU boost (depends on preempt_rt).
+# Disable RCU boost.
 scripts/config -e RT_MUTEXES
 scripts/config -e PREEMPT_RCU
-scripts/config -e RCU_BOOST
-scripts/config --set-val RCU_BOOST_DELAY 500
+scripts/config -d RCU_BOOST
 
 mv .config config
 
