@@ -30,7 +30,7 @@ December 6, 2023
 
   Clear  6.1.65 LTS        23.564        25.094        2422     1510
   XanMod 6.1.65 Preempt    23.256        24.658         981      470
-  XanMod 6.1.54 Realtime   24.439        46.921         160       50
+  XanMod 6.1.64 Realtime   24.439        46.921         160       50
 
   Clear  6.6.4  Native     22.979        23.124        4602     2260
   XanMod 6.6.4  Preempt    22.862        23.288        3151     1206
@@ -39,7 +39,7 @@ December 6, 2023
 
   Clear  6.1.65 LTS        19.643        25.918        1060      458
   XanMod 6.1.65 Preempt    20.364        26.328         869      349
-  XanMod 6.1.54 Realtime   17.204        58.456         168       59
+  XanMod 6.1.64 Realtime   17.204        58.456         168       59
 
   Clear  6.6.4  Native     20.945        28.634        1588      621
   XanMod 6.6.4  Preempt    21.013        28.850        2276      646
