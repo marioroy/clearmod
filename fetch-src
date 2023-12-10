@@ -52,18 +52,18 @@ function fetch {
 case "$1" in
     edge )
         cd "rpmbuild.edge" || exit 1
-        echo "Fetching sources for XanMod edge."
-        fetch "40440" "linux-6.6.4-1389.src.rpm" "6.6.4-xanmod1.tar.gz"
+        echo "Fetching sources for XanMod Edge."
+        fetch "40440" "linux-6.6.4-1389.src.rpm" "6.6.5-xanmod1.tar.gz"
         ;;
     lts )
         cd "rpmbuild.lts" || exit 1
-        echo "Fetching sources for XanMod lts."
-        fetch "40440" "linux-ltscurrent-6.1.65-1325.src.rpm" "6.1.65-xanmod1.tar.gz"
+        echo "Fetching sources for XanMod LTS."
+        fetch "40440" "linux-ltscurrent-6.1.65-1325.src.rpm" "6.1.66-xanmod1.tar.gz"
         ;;
     rt )
         cd "rpmbuild.rt" || exit 1
-        echo "Fetching sources for XanMod rt."
-        fetch "40430" "linux-ltscurrent-6.1.64-1324.src.rpm" "6.1.64-rt17-xanmod1.tar.gz"
+        echo "Fetching sources for XanMod RT."
+        fetch "40440" "linux-ltscurrent-6.1.65-1325.src.rpm" "6.1.66-rt19-xanmod1.tar.gz"
         ;;
     * ) echo "synopsis"
         echo "   $0 all | edge | lts | rt"
