@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmlts-preempt
-Version:        6.1.69
-Release:        118
+Version:        6.1.70
+Release:        119
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/

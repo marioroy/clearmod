@@ -77,7 +77,7 @@ function xm_install {
         sudo rm -fr /var/lib/dkms/*/kernel-${kernel}-x86_64
         sudo rm -fr /var/lib/dkms/*/*/${kernel}
 
-        sudo IGNORE_PREEMPT_RT_PRESENCE=1 \
+        sudo CFLAGS="" CXXFLAGS="" IGNORE_PREEMPT_RT_PRESENCE=1 \
              dkms autoinstall -k "$kernel" --force >/dev/null
 
         sudo depmod -A "$kernel"
