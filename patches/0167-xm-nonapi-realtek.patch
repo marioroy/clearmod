@@ -1,0 +1,20 @@
+--- linux-6.1.70-xanmod1/drivers/net/ethernet/realtek/r8169_main.c~	2023-11-08 10:56:25.000000000 +0000
++++ linux-6.1.70-xanmod1/drivers/net/ethernet/realtek/r8169_main.c	2024-01-04 11:55:59.833761885 +0000
+@@ -3942,7 +3942,7 @@
+ 	for (i = 0; i < NUM_RX_DESC; i++)
+ 		rtl8169_mark_to_asic(tp->RxDescArray + i);
+ 
+-	napi_enable(&tp->napi);
++//	napi_enable(&tp->napi);
+ 	rtl_hw_start(tp);
+ }
+ 
+@@ -4658,7 +4658,7 @@
+ 	phy_init_hw(tp->phydev);
+ 	phy_resume(tp->phydev);
+ 	rtl8169_init_phy(tp);
+-	napi_enable(&tp->napi);
++//	napi_enable(&tp->napi);
+ 	set_bit(RTL_FLAG_TASK_ENABLED, tp->wk.flags);
+ 	rtl_reset_work(tp);
+ 
