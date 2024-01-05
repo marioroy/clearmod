@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-preempt
 Version:        6.1.69
-Release:        116
+Release:        117
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -100,7 +100,6 @@ Patch0147: 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0149: netscale.patch
 Patch0162: 0162-xm-extra-optmization-flags.patch
-Patch0167: 0167-xm-nonapi-realtek.patch
 #Serie.end
 
 %description
@@ -189,7 +188,6 @@ Linux kernel build files
 %patch -P 148 -p1
 %patch -P 149 -p1
 %patch -P 162 -p1
-%patch -P 167 -p1
 #Serie.patch.end
 
 
