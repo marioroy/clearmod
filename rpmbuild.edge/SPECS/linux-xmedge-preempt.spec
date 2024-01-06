@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmedge-preempt
-Version:        6.6.9
-Release:        122
+Version:        6.6.10
+Release:        123
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
