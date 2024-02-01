@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-preempt
 Version:        6.6.14
-Release:        119
+Release:        120
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -52,6 +52,9 @@ Requires: linux-xmrt-preempt-license = %{version}-%{release}
 # 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
 # 0121-locking-rwsem-spin-faster.patch
 
+# Clear patch omitted, due to removal in the CL 6.7.x kernel.
+# 0142-tcptuning.patch
+
 # Clear patches omitted, due to removal in the XanMod kernel.
 # 0001-sched-migrate.patch (reverted in 6.5.7)
 # 0002-sched-migrate.patch (reverted in 6.5.7, SIS_CURRENT feature)
@@ -82,7 +85,6 @@ Patch0135: 0135-initcall-only-print-non-zero-initcall-debug-to-speed.patch
 Patch0136: scale.patch
 Patch0137: libsgrowdown.patch
 Patch0141: epp-retune.patch
-Patch0142: tcptuning.patch
 Patch0147: 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0154: 0136-crypto-kdf-make-the-module-init-call-a-late-init-cal.patch
@@ -171,7 +173,6 @@ Linux kernel build files
 %patch -P 136 -p1
 %patch -P 137 -p1
 %patch -P 141 -p1
-%patch -P 142 -p1
 %patch -P 147 -p1
 %patch -P 148 -p1
 %patch -P 154 -p1

@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmedge-preempt
-Version:        6.6.14
-Release:        126
+Version:        6.7.2
+Release:        127
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -81,7 +81,6 @@ Patch0135: 0135-initcall-only-print-non-zero-initcall-debug-to-speed.patch
 Patch0136: scale.patch
 Patch0137: libsgrowdown.patch
 Patch0141: epp-retune.patch
-Patch0142: tcptuning.patch
 Patch0147: 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0154: 0136-crypto-kdf-make-the-module-init-call-a-late-init-cal.patch
@@ -170,7 +169,6 @@ Linux kernel build files
 %patch -P 136 -p1
 %patch -P 137 -p1
 %patch -P 141 -p1
-%patch -P 142 -p1
 %patch -P 147 -p1
 %patch -P 148 -p1
 %patch -P 154 -p1
