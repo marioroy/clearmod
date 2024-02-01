@@ -50,7 +50,6 @@ Requires: linux-xmedge-default-license = %{version}-%{release}
 # 0115-enable-stateless-firmware-loading.patch
 # 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
 # 0121-locking-rwsem-spin-faster.patch
-# 0157-scale-net-alloc.patch (refer to 0301 and 0302 below)
 
 # Clear patches omitted, due to removal in the XanMod kernel.
 # 0001-sched-migrate.patch (reverted in 6.5.7)
@@ -87,6 +86,7 @@ Patch0147: 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0154: 0136-crypto-kdf-make-the-module-init-call-a-late-init-cal.patch
 Patch0155: ratelimit-sched-yield.patch
+Patch0157: scale-net-alloc.patch
 Patch0158: 0158-clocksource-only-perform-extended-clocksource-checks.patch
 Patch0160: better_idle_balance.patch
 Patch0161: 0161-ACPI-align-slab-buffers-for-improved-memory-performa.patch
@@ -95,11 +95,6 @@ Patch0163: 0163-thermal-intel-powerclamp-check-MWAIT-first-use-pr_wa.patch
 Patch0164: 0164-KVM-VMX-make-vmx-init-a-late-init-call-to-get-to-ini.patch
 Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
-#Serie.end
-
-#Serie.clr 01XX: Clear Linux conditional patches
-Patch0301: scale-net-alloc-6.3.1.patch
-Patch0302: scale-net-alloc-6.5.4.patch
 #Serie.end
 
 %description
@@ -180,6 +175,7 @@ Linux kernel build files
 %patch -P 148 -p1
 %patch -P 154 -p1
 %patch -P 155 -p1
+%patch -P 157 -p1
 %patch -P 158 -p1
 %patch -P 160 -p1
 %patch -P 161 -p1
@@ -188,15 +184,6 @@ Linux kernel build files
 %patch -P 164 -p1
 %patch -P 165 -p1
 %patch -P 166 -p1
-#Serie.patch.end
-
-#Serie.patch.start Clear Linux conditional patches
-if [ $(grep -c sk_forward_alloc_add include/net/sock.h) == 0 ];
-then
-%patch -P 301 -p1
-else
-%patch -P 302 -p1
-fi
 #Serie.patch.end
 
 
