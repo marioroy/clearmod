@@ -31,10 +31,8 @@ sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
 EOF
 ```
 
-Optionally, enable `sched_autogroup_enabled`. This option optimizes the scheduler
+Important, enable `sched_autogroup_enabled`. This option optimizes the scheduler
 to isolate aggressive CPU burners (like build jobs) from desktop applications.
-Under system load, I have found that this may help video playback or make it worst
-and the reason optional. Skip this step for servers or unsure.
 
 ```bash
 sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
