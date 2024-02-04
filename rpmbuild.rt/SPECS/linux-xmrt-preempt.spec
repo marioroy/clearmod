@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-preempt
 Version:        6.6.14
-Release:        120
+Release:        121
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -291,17 +291,13 @@ scripts/config -d SOFTIRQ_ON_OWN_STACK
 scripts/config -e ARCH_SUPPORTS_RT
 scripts/config --set-val COMPACT_UNEVICTABLE_DEFAULT 0
 scripts/config -e HAVE_ATOMIC_CONSOLE
-scripts/config -e HAVE_PREEMPT_LAZY
-scripts/config -e PREEMPT_LAZY
 scripts/config -e PREEMPT_RT
 scripts/config -e PREEMPT_COUNT
+scripts/config -e PREEMPT_RCU
 scripts/config -e PREEMPTION
 scripts/config -d RT_GROUP_SCHED
-
-# Disable RCU boost.
-scripts/config -e RT_MUTEXES
-scripts/config -e PREEMPT_RCU
-scripts/config -d RCU_BOOST
+scripts/config -e SCHED_OMIT_FRAME_POINTER
+scripts/config -e SCHED_CLUSTER
 
 mv .config config
 

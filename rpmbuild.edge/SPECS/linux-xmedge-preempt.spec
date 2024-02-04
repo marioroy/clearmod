@@ -7,8 +7,8 @@
 %define xm_customver 1
 
 Name:           linux-xmedge-preempt
-Version:        6.7.2
-Release:        127
+Version:        6.7.3
+Release:        128
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -268,14 +268,11 @@ scripts/config -d PREEMPT_VOLUNTARY_BUILD
 scripts/config -e PREEMPT_BUILD
 scripts/config -e PREEMPT
 scripts/config -e PREEMPT_COUNT
+scripts/config -e PREEMPT_RCU
 scripts/config -e PREEMPTION
 scripts/config -d RT_GROUP_SCHED
-
-# Enable RCU boost (depends on preempt).
-scripts/config -e RT_MUTEXES
-scripts/config -e PREEMPT_RCU
-scripts/config -e RCU_BOOST
-scripts/config --set-val RCU_BOOST_DELAY 500
+scripts/config -e SCHED_OMIT_FRAME_POINTER
+scripts/config -e SCHED_CLUSTER
 
 mv .config config
 
