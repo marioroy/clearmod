@@ -1,8 +1,7 @@
-
 AMD Threadripper 3970X, 3600 MHz DDR4 RAM
 February 6, 2024
 
-I played a 2560x1440@60 video in Chrome while counting prime numbers.
+I play a 2560x1440@60 video in Chrome while counting prime numbers.
 The OS Scheduler test was done separately with no background jobs.
 
 Ensure /proc/sys/kernel/sched_autogroup_enabled is set to 1 (enabled).
@@ -17,7 +16,7 @@ CL 6.7.3-1405.native             32.370        15.262        0.008511
 XM 6.6.14-122.xmrt-preempt       32.611        15.301        0.006316
 
 
-Next, I ran cyclictest, hackbench, and counted primes in separate terminal
+Next, I run cyclictest, hackbench, and counted primes in separate terminal
 windows, concurently. The workload is varied purposely (monitor htop).
 
    62 threads for cyclictest
