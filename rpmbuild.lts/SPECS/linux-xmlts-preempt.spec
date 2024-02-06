@@ -8,7 +8,7 @@
 
 Name:           linux-xmlts-preempt
 Version:        6.1.76
-Release:        126
+Release:        127
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -211,6 +211,9 @@ scripts/config -d PM_ADVANCED_DEBUG
 scripts/config -d PM_SLEEP_DEBUG
 scripts/config -d ACPI_DEBUG
 scripts/config -d LATENCYTOP
+scripts/config -d IRQ_TIME_ACCOUNTING
+scripts/config -d PERF_EVENTS_AMD_POWER
+scripts/config -d DEBUG_BUGVERBOSE
 scripts/config -d DEBUG_PREEMPT
 %endif
 

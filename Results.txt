@@ -1,240 +1,93 @@
 
-Results, running three commands simultaneously.
 AMD Threadripper 3970X, 3600 MHz DDR4 RAM
-December 6, 2023
+February 6, 2024
 
-  Workload varied purposely (watch htop):
-    62 threads for cyclictest
-    32 threads for hackbench
-    64 threads for counting prime numbers
+I played a 2560x1440@60 video in Chrome while counting prime numbers.
+The OS Scheduler test was done separately with no background jobs.
 
-#######################################################################
+Ensure /proc/sys/kernel/sched_autogroup_enabled is set to 1 (enabled).
 
-# run cyclictest as super user in terminal one.
-  taskset -c 0-61 ./cyclictest -m -Sp99 -i200 -h400 -D30 -q
+                              Count Primes  Count Primes   OS-Scheduler
+Linux Kernel                      2e12          1e12      Responsiveness
+============================  ============  ============  ==============
+XM 6.1.76-127.xmlts-preempt      31.747        14.967        0.006078
+XM 6.7.3-129.xmedge-preempt      31.697        14.981        0.008124
+CL 6.1.69-1330.ltsprev           31.707        14.950        0.005259
+CL 6.7.3-1405.native             32.370        15.262        0.008511
+XM 6.6.14-122.xmrt-preempt       32.611        15.301        0.006316
 
-# run hackbench as a normal user in terminal two.
-  taskset -c 0-31 ./hackbench -s 512 -l 51200 -P
 
-# run algorithm3.pl as a normal user in terminal three.
-# Perl code applies CPU affinity, via set_cpu_affinity.
-# https://github.com/marioroy/mce-sandbox
-  ./algorithm3.pl 1e12
+Next, I ran cyclictest, hackbench, and counted primes in separate terminal
+windows, concurently. The workload is varied purposely (monitor htop).
 
-# optional, run htop in another window
+   62 threads for cyclictest
+   32 threads for hackbench
+   64 threads for counting prime numbers
 
-# Summary              count primes                  cyclictest latency
-                       algorithm3(s)  hackbench(s)    max(us)  avg(us)
+1. run cyclictest as super user in terminal one.
+   taskset -c 0-61 ./cyclictest -m -Sp99 -i200 -h400 -D30 -q
 
-- /proc/sys/kernel/sched_autogroup_enabled 0
+2. run hackbench as a normal user in terminal two.
+   taskset -c 0-31 ./hackbench -s 512 -l 51200 -P
 
-  Clear  6.1.65 LTS        23.564        25.094        2422     1510
-  XanMod 6.1.65 Preempt    23.256        24.658         981      470
-  XanMod 6.1.64 Realtime   24.439        46.921         160       50
+3. run algorithm3.pl as a normal user in terminal three.
+   Perl code applies CPU affinity, via set_cpu_affinity.
+   https://github.com/marioroy/mce-sandbox
+   ./algorithm3.pl 1e12
 
-  Clear  6.6.4  Native     22.979        23.124        4602     2260
-  XanMod 6.6.4  Preempt    22.862        23.288        3151     1206
+4. run htop in another window (optional)
 
-- /proc/sys/kernel/sched_autogroup_enabled 1
+                              Cyclic Test   Count Primes    Hackbench
+Linux Kernel                    Max(avg)        1e12      51200 Messages
+============================  ============  ============  ==============
+XM 6.1.76-127.xmlts-preempt     216.758        20.071         25.253
+                                319.194        19.937         25.551
 
-  Clear  6.1.65 LTS        19.643        25.918        1060      458
-  XanMod 6.1.65 Preempt    20.364        26.328         869      349
-  XanMod 6.1.64 Realtime   17.204        58.456         168       59
+XM 6.7.3-129.xmedge-preempt     528.855        20.673         26.452
+                                689.613        20.783         26.978
 
-  Clear  6.6.4  Native     20.945        28.634        1588      621
-  XanMod 6.6.4  Preempt    21.013        28.850        2276      646
-  Nobara 6.6.3  Fsync      21.167        27.434        1523      601
+CL 6.1.69-1330.ltsprev          652.258        19.663         25.100
+                                757.065        19.585         25.718
 
-#######################################################################
+CL 6.7.3-1405.native            768.065        20.622         27.634
+                                743.629        20.609         26.218
 
-# Clear Linux 40440
-# 6.1.65-1325.ltscurrent kernel
-# https://www.clearlinux.org/
+XM 6.6.14-122.xmrt-preempt       27.290        18.273         51.863
+                                 26.726        18.754         52.790
 
-- /proc/sys/kernel/sched_autogroup_enabled 0
 
-  algorithm3.pl time: 23.564 seconds
-      hackbench time: 25.094 seconds
+Spotting differences between the Clear Linux and XanMod kernels.
 
-  cyclictest max latencies: (2422 us max, 1510 us avg)
-      01493 01245 01803 01226 01697 01162 00849 01056
-      01383 01549 01509 01572 01844 01386 02109 01317
-      01677 01481 01277 01041 01233 00287 01299 01736
-      02422 01752 01583 02141 01539 01399 01292 01743
-      01408 01489 01353 01376 01528 01508 01742 01686
-      01593 01566 01714 01750 01620 01518 01692 01537
-      01129 01241 01592 01551 01623 01537 01521 01697
-      01579 01875 01476 01502 01576 01554
+6.1.x:  Compare Cyclic Test results between the CL and XanMod kernels.
+6.7.x:  In addition to Cyclic Test, compare the Count Primes 2e12 results.
 
-- /proc/sys/kernel/sched_autogroup_enabled 1
+The XanMod realtime kernel is amazing. Which is your favorite?
+I like the XanMod LTS 6.1.x kernel.
 
-  algorithm3.pl time: 19.643 seconds
-      hackbench time: 25.918 seconds
+To get Max(avg), I have a script to output the max and average results.
+Simply copy the cyclictest "# Max Latencies:" output and paste as arguments
+to the tally script. 
 
-  cyclictest max latencies: (1060 us max, 458 us avg)
-      00561 01060 00563 00470 00529 00312 00478 00516
-      00546 00458 00613 00579 00478 00489 00526 00562
-      00488 00599 00530 00436 00489 00595 00434 00577
-      00408 00437 00470 00546 00565 00353 00430 00574
-      00400 00415 00437 00272 00283 00646 00427 00879
-      00407 00563 00273 00274 00373 00239 00273 00317
-      00630 00341 00446 00243 00351 00303 00349 00389
-      00263 00296 00497 00358 00459 00318
+$ ./tally.sh 00024 00027 00018 00018 ... 00051 00013 00035
 
-# Clear Linux 40440
-# 6.1.65-115.xmlts-preempt kernel (PREEMPT enabled)
-# https://github.com/marioroy/clearmod
 
-- /proc/sys/kernel/sched_autogroup_enabled 0
+#!/bin/bash
 
-  algorithm3.pl time: 23.256 seconds
-      hackbench time: 24.658 seconds
+line=$*
+if [[ -z "$line" ]]; then
+  echo "usage: $0 num1 num2 ..."
+  exit
+fi
 
-  cyclictest max latencies: (981 us max, 470 us avg)
-      00545 00767 00770 00464 00743 00795 00715 00866
-      00160 00840 00754 00090 00754 00981 00092 00821
-      00072 00519 00128 00520 00433 00725 00594 00082
-      00764 00703 00682 00942 00777 00817 00860 00094
-      00122 00105 00121 00096 00456 00244 00091 00166
-      00092 00758 00119 00160 00340 00904 00467 00059
-      00344 00106 00555 00118 00847 00619 00083 00083
-      00465 00668 00899 00123 00725 00354
+max=$(
+  echo "$line" | tr -s ' ' '\n' | sed -e 's/^0\+//mg' | sort -rn |\
+  awk '{ print $1; exit }'
+)
+avg=$(
+  echo "$line" | tr -s ' ' '\n' | sed -e 's/^0\+//mg' |\
+  awk '{ t = t + $1; c += 1 } END { print t / c }'
+)
 
-- /proc/sys/kernel/sched_autogroup_enabled 1
-
-  algorithm3.pl time: 20.364 seconds
-      hackbench time: 26.328 seconds
-
-  cyclictest max latencies: (869 us max, 349 us avg)
-      00058 00048 00065 00577 00691 00699 00804 00068
-      00086 00104 00869 00126 00678 00725 00770 00725
-      00465 00495 00136 00059 00678 00618 00712 00792
-      00744 00579 00786 00724 00670 00123 00137 00164
-      00156 00063 00108 00071 00141 00357 00094 00063
-      00064 00121 00691 00736 00209 00206 00389 00171
-      00085 00412 00090 00128 00139 00109 00535 00183
-      00083 00126 00724 00130 00223 00085
-
-# Clear Linux 40440
-# 6.1.64-111.xmrt-preempt kernel (REALTIME enabled)
-# https://github.com/marioroy/clearmod
-
-- /proc/sys/kernel/sched_autogroup_enabled 0
-
-  algorithm3.pl time: 24.439 seconds
-      hackbench time: 46.921 seconds
-
-  cyclictest max latencies: (160 us max, 50 us avg)
-      00026 00025 00018 00017 00019 00021 00039 00014
-      00019 00019 00020 00030 00022 00020 00020 00023
-      00017 00018 00019 00017 00030 00017 00019 00020
-      00017 00018 00017 00018 00022 00020 00026 00022
-      00049 00062 00065 00051 00045 00116 00122 00106
-      00057 00083 00061 00160 00085 00060 00060 00036
-      00129 00096 00055 00046 00114 00058 00047 00143
-      00086 00090 00103 00065 00079 00119
-
-- /proc/sys/kernel/sched_autogroup_enabled 1
-
-  algorithm3.pl time: 17.204 seconds
-      hackbench time: 58.456 seconds
-
-  cyclictest max latencies: (168 us max, 59 us avg)
-      00028 00033 00020 00021 00028 00023 00022 00021
-      00020 00027 00018 00020 00018 00022 00023 00019
-      00020 00023 00016 00019 00024 00024 00019 00018
-      00018 00017 00025 00022 00019 00020 00025 00019
-      00077 00045 00097 00064 00097 00163 00139 00125
-      00093 00105 00100 00077 00156 00141 00103 00085
-      00043 00168 00040 00057 00084 00130 00081 00119
-      00090 00143 00100 00030 00100 00136
-
-#######################################################################
-
-# Clear Linux 40440
-# 6.6.4-1389.native kernel
-# https://github.com/marioroy/clearmod
-
-- /proc/sys/kernel/sched_autogroup_enabled 0
-
-  algorithm3.pl time: 22.979 seconds
-      hackbench time: 23.124 seconds
-
-  cyclictest max latencies: (4602 us max, 2260 us avg)
-      01938 02203 02103 02227 02391 02485 02324 02447
-      04481 04367 04602 04463 04426 04434 04299 04366
-      01456 01462 01428 01503 01917 01990 01907 01956
-      00822 00946 00786 04345 00778 03078 00949 00970
-      02336 02026 02300 02186 02391 02263 02354 02438
-      04485 04550 04454 04517 04363 04417 04504 04333
-      00393 00052 00305 00192 00350 00028 00084 00203
-      00991 00851 00124 00788 01090 00904
-
-- /proc/sys/kernel/sched_autogroup_enabled 1
-
-  algorithm3.pl time: 20.945 seconds
-      hackbench time: 28.634 seconds
-
-  cyclictest max latencies: (1588 us max, 621 us avg)
-      00102 00198 00200 00307 00350 00136 00391 00300
-      00170 00170 00279 00094 00174 00100 00124 00284
-      01241 01191 01588 01571 01567 01466 01570 01445
-      01270 00335 00436 00383 00659 00923 00870 00387
-      00254 00301 00217 00078 00745 00412 00270 00238
-      00098 00101 00085 00101 00369 00046 00314 00158
-      01110 01378 01042 01354 01419 01085 01366 01035
-      01163 00271 01113 00244 00891 00990
-
-# Clear Linux 40440
-# 6.6.4-116.xmedge-preempt kernel (PREEMPT enabled)
-# https://github.com/marioroy/clearmod
-
-- /proc/sys/kernel/sched_autogroup_enabled 0
-
-  algorithm3.pl time: 22.862 seconds
-      hackbench time: 23.288 seconds
-
-  cyclictest max latencies: (3151 us max, 1206 us avg)
-      00363 00282 00212 00190 00163 00180 00318 00142
-      00095 00127 00122 00188 00179 00296 00192 00204
-      02757 02509 02698 02436 03151 03133 03112 02684
-      02262 02235 02411 01164 01702 01667 01621 01802
-      00343 00256 00348 00258 00292 00249 00220 00187
-      00013 00088 00021 00087 00100 00071 00013 00041
-      02755 02712 02662 02015 02125 01894 02078 03109
-      02282 02408 02342 02272 01589 01340
-
-- /proc/sys/kernel/sched_autogroup_enabled 1
-
-  algorithm3.pl time: 21.013 seconds
-      hackbench time: 28.850 seconds
-
-  cyclictest max latencies: (2276 us max, 646 us avg)
-      00305 00161 00333 00237 00190 00202 00239 00187
-      00583 00509 00592 00568 00572 00531 00551 00662
-      03573 03554 03521 03480 02424 02396 02360 02325
-      00820 00766 00728 00678 00414 00462 00520 00464
-      00174 00165 00313 00265 00204 00136 00110 00173
-      00027 00066 00085 00050 00089 00114 00042 00070
-      00954 00705 01272 01232 00455 00885 00575 00794
-      00259 00392 00350 00272 00229 00119
-
-# Nobara Linux 38
-# 6.6.3-203.fsync.fc38.x86_64 kernel
-# https://nobaraproject.org/
-
-- /proc/sys/kernel/sched_autogroup_enabled 1
-
-  algorithm3.pl time: 21.167 seconds
-      hackbench time: 27.434 seconds
-
-  cyclictest max latencies: (1523 us max, 601 us avg)
-      00601 00530 00318 00498 00212 01012 00523 00691
-      00466 00488 00413 00469 00518 00340 00448 00276
-      00512 00601 00396 00545 00484 00485 00467 00413
-      00296 00321 00393 00501 00266 00841 00805 00340
-      00251 00768 01498 00520 00393 00456 00898 00360
-      00690 00373 00214 00723 01043 01523 01024 01065
-      00481 00473 00725 00755 00897 00908 00889 00897
-      00237 00251 01280 00629 01019 00542
+echo "max: $max"
+echo "avg: $avg"
 

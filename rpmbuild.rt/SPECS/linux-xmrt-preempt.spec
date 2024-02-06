@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-preempt
 Version:        6.6.14
-Release:        121
+Release:        122
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -210,6 +210,9 @@ scripts/config -d PM_ADVANCED_DEBUG
 scripts/config -d PM_SLEEP_DEBUG
 scripts/config -d ACPI_DEBUG
 scripts/config -d LATENCYTOP
+scripts/config -d IRQ_TIME_ACCOUNTING
+scripts/config -d PERF_EVENTS_AMD_POWER
+scripts/config -d DEBUG_BUGVERBOSE
 scripts/config -d DEBUG_PREEMPT
 %endif
 
