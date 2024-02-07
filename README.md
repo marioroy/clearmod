@@ -8,6 +8,8 @@ equally well on all x86-64 CPUs with minimum support of x86-64-v3. Additionally,
 I enabled FQ-PIE packet scheduling, NTFS3 file-system driver, and the WineSync
 module for fast kernel-backed Wine.
 
+The XanMod Edge variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler patch. You can turn it off by setting the `sysctl -w kernel.sched_bore=0` or adding an entry to `/etc/clr-power-tweaks.conf`.
+
 ## Preparation and configuration
 
 Install build-essential bundles or prerequisites for building the kernel.
