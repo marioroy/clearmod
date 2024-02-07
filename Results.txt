@@ -60,9 +60,6 @@ Spotting differences between the Clear Linux and XanMod kernels.
 6.1.x:  Compare Cyclic Test results between the CL and XanMod kernels.
 6.7.x:  In addition to Cyclic Test, compare the Count Primes 2e12 results.
 
-The XanMod realtime kernel is amazing. Which is your favorite?
-I like the XanMod LTS 6.1.x kernel.
-
 To get Max(avg), I have a script to output the max and average results.
 Simply copy the cyclictest "# Max Latencies:" output and paste as arguments
 to the tally script. 
