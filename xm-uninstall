@@ -28,7 +28,7 @@ kversion="${kversion%.*}"    # 6.1.54-100
 
 function xm_uninstall {
     variant="$1" release="$2"
-    echo "Uninstalling ${variant}."
+    echo "Uninstalling linux-${variant}."
 
     if [[ -n "$release" ]]; then
         # Uninstall given variant release (e.g. 100), skipping live kernel.

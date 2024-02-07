@@ -19,7 +19,7 @@
 
 function xm_build {
     variant="$1"
-    echo "Building ${variant}."
+    echo "Building linux-${variant}."
 
     if [[ ! -d "SOURCES" ]]; then
         echo "Please run fetch-src first and try again."
