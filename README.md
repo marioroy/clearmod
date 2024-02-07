@@ -114,7 +114,7 @@ the commands to fetch the LTS sources, build, and install the XanMod kernel.
 ./xm-install lts-preempt
 ```
 
-The XanMod 6.5 kernel with preempt enabled is another consideration,
+The XanMod 6.7 kernel with preempt enabled is another consideration,
 including sustaining low latency.
 
 ```bash
@@ -130,13 +130,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XanMod boot-manager entries
-Password: 
-  org.clearlinux.xmedge-preempt.6.5.7-107
-* org.clearlinux.xmlts-preempt.6.1.57-107
+  org.clearlinux.xmedge-preempt.6.7.4-131
+* org.clearlinux.xmlts-preempt.6.1.77-128
 
 XanMod packages, exluding dev,extra,license
-  linux-xmedge-preempt-6.5.7-107
-* linux-xmlts-preempt-6.1.57-107
+  linux-xmedge-preempt-6.7.4-131
+* linux-xmlts-preempt-6.1.77-128
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -145,15 +144,14 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 107
-Removing org.clearlinux.xmedge-preempt.6.5.7-107
+./xm-uninstall edge-preempt 131
+Removing org.clearlinux.xmedge-preempt.6.7.4-131
 ```
 
 ## Epilogue
 
 The default variants are apples-to-apples to Clear's kernels. Basically,
-no overrides. The preempt variants enable (`preempt` or `preempt_rt`) and
-`rcu_boost`.
+no overrides. The preempt variants enable (`preempt` or `preempt_rt`).
 
 The `/boot` partition has limited space. So, no reason to install many XanMod
 kernels. Build the one you want and enjoy the XanMod kernel. If changing your
