@@ -5,11 +5,11 @@
 #
 
 %define xm_customver 1
-%define xm_customver_rt 21
+%define xm_customver_rt 22
 
 Name:           linux-xmrt-preempt
-Version:        6.6.14
-Release:        122
+Version:        6.6.15
+Release:        123
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -51,7 +51,6 @@ Requires: linux-xmrt-preempt-license = %{version}-%{release}
 # 0115-enable-stateless-firmware-loading.patch
 # 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
 # 0121-locking-rwsem-spin-faster.patch
-
 # Clear patch omitted, due to removal in the CL 6.7.x kernel.
 # 0142-tcptuning.patch
 

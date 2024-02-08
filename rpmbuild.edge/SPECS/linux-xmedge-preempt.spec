@@ -8,7 +8,7 @@
 
 Name:           linux-xmedge-preempt
 Version:        6.7.4
-Release:        131
+Release:        132
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -98,11 +98,9 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler (default enabled).
 # You can turn it off by setting the sysctl -w kernel.sched_bore=0
+# https://github.com/firelzrd/bore-scheduler
+# https://github.com/xanmod/linux/issues/333
 Patch0301: 0001-linux6.7.y-bore4.1.11.patch
-
-# Have select_idle_sibling() try other LLCs inside the same node
-# when the local one comes up empty.
-Patch0302: sched-fair-Multi-LLC-select_idle_sibling.patch
 
 %description
 The Linux kernel.
@@ -193,7 +191,6 @@ Linux kernel build files
 #Serie.patch.end
 
 %patch -P 301 -p1
-%patch -P 302 -p1
 
 
 cp %{SOURCE1} .config
