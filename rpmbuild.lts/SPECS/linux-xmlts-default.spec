@@ -37,7 +37,7 @@ Requires: linux-xmlts-default-license = %{version}-%{release}
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
 #mainline.end
 
-# Clear patches commented out or not patched in Clear's 6.6 spec file.
+# Clear patches commented out or not patched in Clear's spec file.
 # 0113-print-fsync-count-for-bootchart.patch
 # 0118-add-scheduler-turbo3-patch.patch
 # 0132-prezero-20220308.patch
