@@ -83,6 +83,9 @@ case "$1" in
     edge-default | edge-preempt )
         xm_uninstall "xm${1}" "$2"
         ;;
+    main-default | main-preempt )
+        xm_uninstall "xm${1}" "$2"
+        ;;
     lts-default | lts-preempt )
         xm_uninstall "xm${1}" "$2"
         ;;
@@ -91,6 +94,7 @@ case "$1" in
         ;;
     * ) echo "synopsis"
         echo "   $0 edge-default | edge-preempt [<release>]"
+        echo "   $0 main-default | main-preempt [<release>]"
         echo "   $0 lts-default | lts-preempt [<release>]"
         echo "   $0 rt-preempt [<release>]"
 esac

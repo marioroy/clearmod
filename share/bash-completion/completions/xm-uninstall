@@ -7,6 +7,7 @@ _xm-uninstall()
 
     COMPREPLY=( $(compgen -W '
         edge-default edge-preempt
+        main-default main-preempt
         lts-default lts-preempt
         rt-preempt' -- "$cur")
     )

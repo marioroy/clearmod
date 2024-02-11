@@ -190,9 +190,9 @@ Linux kernel build files
 
 cp %{SOURCE1} .config
 
-# Run equally well on all x86-64 CPUs with min support of Haswell.
+# Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 scripts/config -d MCORE2
-scripts/config -e MHASWELL
+scripts/config -e GENERIC_CPU3
 
 # Disable debug.
 %if 1
@@ -279,7 +279,6 @@ scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS
 scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE
 
 # Enable preempt_rt.
-scripts/config -e EXPERT
 scripts/config -d LEDS_TRIGGER_CPU
 scripts/config -d NET_RX_BUSY_POLL
 scripts/config -d NUMA_BALANCING

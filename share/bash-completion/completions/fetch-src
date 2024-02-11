@@ -6,7 +6,7 @@ _fetch-src()
     _init_completion || return
 
     COMPREPLY=(
-        $(compgen -W 'all edge lts rt' -- "$cur")
+        $(compgen -W 'all edge main lts rt' -- "$cur")
     )
 } &&
     complete -F _fetch-src fetch-src

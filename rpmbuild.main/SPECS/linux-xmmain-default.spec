@@ -6,8 +6,8 @@
 
 %define xm_customver 1
 
-Name:           linux-xmlts-preempt
-Version:        6.1.77
+Name:           linux-xmmain-default
+Version:        6.6.16
 Release:        130
 License:        GPL-2.0
 Summary:        The Linux kernel
@@ -17,14 +17,14 @@ Source0:        https://github.com/xanmod/linux/archive/refs/tags/%{version}-xan
 Source1:        config
 Source2:        cmdline
 
-%define ktarget  xmlts-preempt
+%define ktarget  xmmain-default
 %define kversion %{version}-%{release}.%{ktarget}
 
 #BuildRequires:  buildreq-kernel
 
 Requires: systemd-bin
 Requires: init-rdahead-extras
-Requires: linux-xmlts-preempt-license = %{version}-%{release}
+Requires: linux-xmmain-default-license = %{version}-%{release}
 
 # don't strip .ko files!
 %global __os_install_post %{nil}
@@ -41,40 +41,36 @@ Requires: linux-xmlts-preempt-license = %{version}-%{release}
 # 0113-print-fsync-count-for-bootchart.patch
 # 0118-add-scheduler-turbo3-patch.patch
 # 0132-prezero-20220308.patch
+# 0138-kdf-boottime.patch
+# 0139-adlrdt.patch
 # 0200-mm-lru_cache_disable-use-synchronize_rcu_expedited.patch
 
 # Clear patches omitted, due to inclusion in the XanMod kernel.
-# 0103-silence-rapl.patch
 # 0109-initialize-ata-before-graphics.patch
-# 0112-init-wait-for-partition-and-retry-scan.patch
 # 0115-enable-stateless-firmware-loading.patch
-# 0119-use-lfence-instead-of-rep-and-nop.patch
 # 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
 # 0121-locking-rwsem-spin-faster.patch
-# 0401-sched-hybrid1.patch (XanMod applied sched-hybrid variations)
-# 0402-sched-hybrid2.patch
-# 0403-sched-hybrid3.patch
-# 0404-sched-hybrid4.patch
+# Clear patch omitted, due to removal in the CL 6.7.x kernel.
+# 0142-tcptuning.patch
 
 # Clear patches omitted, due to removal in the XanMod kernel.
-# 0001-sched-migrate.patch (reverted in 6.1.57)
-# 0002-sched-migrate.patch (reverted in 6.1.57, SIS_CURRENT feature)
+# 0001-sched-migrate.patch (reverted in 6.5.7)
+# 0002-sched-migrate.patch (reverted in 6.5.7, SIS_CURRENT feature)
 
 #Serie.clr 01XX: Clear Linux patches
 Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
 Patch0102: 0102-increase-the-ext4-default-commit-age.patch
 Patch0104: 0104-pci-pme-wakeups.patch
-Patch0105: 0105-ksm-wakeups.patch
 Patch0106: 0106-intel_idle-tweak-cpuidle-cstates.patch
 Patch0107: 0107-bootstats-add-printk-s-to-measure-boot-time-in-more-.patch
 Patch0108: 0108-smpboot-reuse-timer-calibration.patch
 Patch0111: 0111-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch
+Patch0112: 0112-init-wait-for-partition-and-retry-scan.patch
 Patch0114: 0114-add-boot-option-to-allow-unsigned-modules.patch
 Patch0116: 0116-migrate-some-systemd-defaults-to-the-kernel-defaults.patch
 Patch0117: 0117-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch
 Patch0122: 0122-ata-libahci-ignore-staggered-spin-up.patch
 Patch0123: 0123-print-CPU-that-faults.patch
-Patch0124: 0124-x86-microcode-Add-an-option-to-reload-microcode-even.patch
 Patch0125: 0125-nvme-workaround.patch
 Patch0126: 0126-don-t-report-an-error-if-PowerClamp-run-on-other-CPU.patch
 Patch0127: 0127-lib-raid6-add-patch.patch
@@ -86,19 +82,20 @@ Patch0134: 0134-md-raid6-algorithms-scale-test-duration-for-speedier.patch
 Patch0135: 0135-initcall-only-print-non-zero-initcall-debug-to-speed.patch
 Patch0136: scale.patch
 Patch0137: libsgrowdown.patch
-Patch0138: kdf-boottime.patch
-Patch0139: adlrdt.patch
-Patch0140: kvm-printk.patch
 Patch0141: epp-retune.patch
-Patch0142: tcptuning.patch
-Patch0143: 0001-powerbump-functionality.patch
-Patch0144: 0002-add-networking-support-for-powerbump.patch
-Patch0145: 0003-futex-bump.patch
-Patch0146: 0001-add-umonitor-umwait-C0.x-C-states.patch
 Patch0147: 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
-Patch0149: netscale.patch
+Patch0154: 0136-crypto-kdf-make-the-module-init-call-a-late-init-cal.patch
+Patch0155: ratelimit-sched-yield.patch
+Patch0157: scale-net-alloc.patch
+Patch0158: 0158-clocksource-only-perform-extended-clocksource-checks.patch
+Patch0160: better_idle_balance.patch
+Patch0161: 0161-ACPI-align-slab-buffers-for-improved-memory-performa.patch
 Patch0162: 0162-xm-extra-optmization-flags.patch
+Patch0163: 0163-thermal-intel-powerclamp-check-MWAIT-first-use-pr_wa.patch
+Patch0164: 0164-KVM-VMX-make-vmx-init-a-late-init-call-to-get-to-ini.patch
+Patch0165: slack.patch
+Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
@@ -106,7 +103,7 @@ Patch0162: 0162-xm-extra-optmization-flags.patch
 # You can turn it off by running sudo sysctl -w kernel.sched_bore=0
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch0301: 0001-linux6.1.y-bore4.1.13r2.patch
+Patch0301: 0001-linux6.6.y-bore4.1.13.patch
 
 %description
 The Linux kernel.
@@ -115,7 +112,7 @@ The Linux kernel.
 License:        GPL-2.0
 Summary:        The Linux kernel extra files
 Group:          kernel
-Requires:       linux-xmlts-preempt-license = %{version}-%{release}
+Requires:       linux-xmmain-default-license = %{version}-%{release}
 
 %description extra
 Linux kernel extra files
@@ -139,9 +136,9 @@ Creates a cpio file with some modules
 License:        GPL-2.0
 Summary:        The Linux kernel
 Group:          kernel
-Requires:       linux-xmlts-preempt = %{version}-%{release}
-Requires:       linux-xmlts-preempt-extra = %{version}-%{release}
-Requires:       linux-xmlts-preempt-license = %{version}-%{release}
+Requires:       linux-xmmain-default = %{version}-%{release}
+Requires:       linux-xmmain-default-extra = %{version}-%{release}
+Requires:       linux-xmmain-default-license = %{version}-%{release}
 
 %description dev
 Linux kernel build files
@@ -159,17 +156,16 @@ Linux kernel build files
 %patch -P 101 -p1
 %patch -P 102 -p1
 %patch -P 104 -p1
-%patch -P 105 -p1
 %patch -P 106 -p1
 %patch -P 107 -p1
 %patch -P 108 -p1
 %patch -P 111 -p1
+%patch -P 112 -p1
 %patch -P 114 -p1
 %patch -P 116 -p1
 %patch -P 117 -p1
 %patch -P 122 -p1
 %patch -P 123 -p1
-%patch -P 124 -p1
 %patch -P 125 -p1
 %patch -P 126 -p1
 %patch -P 127 -p1
@@ -181,19 +177,20 @@ Linux kernel build files
 %patch -P 135 -p1
 %patch -P 136 -p1
 %patch -P 137 -p1
-%patch -P 138 -p1
-%patch -P 139 -p1
-%patch -P 140 -p1
 %patch -P 141 -p1
-%patch -P 142 -p1
-%patch -P 143 -p1
-%patch -P 144 -p1
-%patch -P 145 -p1
-%patch -P 146 -p1
 %patch -P 147 -p1
 %patch -P 148 -p1
-%patch -P 149 -p1
+%patch -P 154 -p1
+%patch -P 155 -p1
+%patch -P 157 -p1
+%patch -P 158 -p1
+%patch -P 160 -p1
+%patch -P 161 -p1
 %patch -P 162 -p1
+%patch -P 163 -p1
+%patch -P 164 -p1
+%patch -P 165 -p1
+%patch -P 166 -p1
 #Serie.patch.end
 
 %patch -P 301 -p1
@@ -276,19 +273,6 @@ scripts/config -d RCU_EXP_KTHREAD
 # https://lore.kernel.org/lkml/20221016162305.2489629-3-joel@joelfernandes.org/
 # CachyOS and Ubuntu low-latency default.
 scripts/config -e RCU_LAZY
-
-# Enable preempt.
-scripts/config -d PREEMPT_NONE
-scripts/config -d PREEMPT_VOLUNTARY
-scripts/config -d PREEMPT_VOLUNTARY_BUILD
-scripts/config -e PREEMPT_BUILD
-scripts/config -e PREEMPT
-scripts/config -e PREEMPT_COUNT
-scripts/config -e PREEMPT_RCU
-scripts/config -e PREEMPTION
-scripts/config -d RT_GROUP_SCHED
-scripts/config -e SCHED_OMIT_FRAME_POINTER
-scripts/config -e SCHED_CLUSTER
 
 mv .config config
 
@@ -391,9 +375,9 @@ createCPIO %{ktarget} %{kversion}
 
 rm -rf %{buildroot}/usr/lib/firmware
 
-mkdir -p %{buildroot}/usr/share/package-licenses/linux-xmlts-preempt
-cp COPYING %{buildroot}/usr/share/package-licenses/linux-xmlts-preempt/COPYING
-cp -a LICENSES/* %{buildroot}/usr/share/package-licenses/linux-xmlts-preempt
+mkdir -p %{buildroot}/usr/share/package-licenses/linux-xmmain-default
+cp COPYING %{buildroot}/usr/share/package-licenses/linux-xmmain-default/COPYING
+cp -a LICENSES/* %{buildroot}/usr/share/package-licenses/linux-xmmain-default
 
 %postun
 rm -fr /var/lib/dkms/*/kernel-%{kversion}-x86_64
@@ -416,7 +400,7 @@ rm -fr /var/lib/dkms/*/*/%{kversion}
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/linux-xmlts-preempt
+/usr/share/package-licenses/linux-xmmain-default
 
 %files cpio
 /usr/lib/kernel/initrd-org.clearlinux.%{ktarget}.%{version}-%{release}

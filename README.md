@@ -19,9 +19,9 @@ bc bison c-basic devpkg-gmp devpkg-elfutils devpkg-openssl flex \
 kernel-install linux-firmware lz4 make package-utils wget xz
 ```
 
-Enable `sched_autogroup_enabled`. This option (enabled in Fedora and Ubuntu)
-optimizes the scheduler to isolate aggressive CPU burners (like build jobs)
-from desktop applications.
+Enable `sched_autogroup_enabled`. The knob optimizes the scheduler to isolate
+aggressive CPU burners (like build jobs) from desktop applications. This is
+enabled in Clear Desktop since 40820.
 
 ```bash
 sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
@@ -29,7 +29,7 @@ sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
 EOF
 ```
 
-The XanMod Edge and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler patch. You can turn BORE off by setting the `sysctl -w kernel.sched_bore=0` or adding an entry to `/etc/clr-power-tweaks.conf`.
+The XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler patch. You can turn it off by running `sudo sysctl -w kernel.sched_bore=0` or adding an entry to `/etc/clr-power-tweaks.conf`.
 
 ```bash
 sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
@@ -124,12 +124,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XanMod boot-manager entries
-  org.clearlinux.xmedge-preempt.6.7.4-132
-* org.clearlinux.xmlts-preempt.6.6.16-129
+  org.clearlinux.xmedge-preempt.6.7.4-133
+* org.clearlinux.xmlts-preempt.6.1.77-130
 
 XanMod packages, exluding dev,extra,license
-  linux-xmedge-preempt-6.7.4-132
-* linux-xmlts-preempt-6.6.16-129
+  linux-xmedge-preempt-6.7.4-133
+* linux-xmlts-preempt-6.1.77-130
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -138,16 +138,16 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 132
-Removing org.clearlinux.xmedge-preempt.6.7.4-132
+./xm-uninstall edge-preempt 133
+Removing org.clearlinux.xmedge-preempt.6.7.4-133
 ```
 
 ## Epilogue
 
-The Edge and LTS kernels include the BORE CPU Scheduler patch.
+The Edge, Main, and LTS kernels include the BORE CPU scheduler patch.
 
 The default variants are apples-to-apples to Clear's kernels. Basically,
-no overrides. The preempt variants enable (`preempt` or `preempt_rt`).
+no overrides. The preempt variants enable `PREEMPT` or `PREEMPT_RT`.
 
 The `/boot` partition has limited space. So, no reason to install many XanMod
 kernels. Build the one you want and enjoy the XanMod kernel. If changing your

@@ -45,6 +45,11 @@ case "$1" in
         cd "rpmbuild.edge" || exit 1
         xm_build "xm${1}"
         ;;
+    main-default | main-preempt )
+        ./fetch-src main   || exit 1
+        cd "rpmbuild.main" || exit 1
+        xm_build "xm${1}"
+        ;;
     lts-default | lts-preempt )
         ./fetch-src lts   || exit 1
         cd "rpmbuild.lts" || exit 1
@@ -57,6 +62,7 @@ case "$1" in
         ;;
     * ) echo "synopsis"
         echo "   $0 edge-default | edge-preempt"
+        echo "   $0 main-default | main-preempt"
         echo "   $0 lts-default | lts-preempt"
         echo "   $0 rt-preempt"
 esac

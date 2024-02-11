@@ -8,7 +8,7 @@
 
 Name:           linux-xmedge-default
 Version:        6.7.4
-Release:        132
+Release:        133
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -96,11 +96,12 @@ Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
-# Burst-Oriented Response Enhancer (BORE) CPU Scheduler (default enabled).
-# You can turn it off by setting the sysctl -w kernel.sched_bore=0
+# Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
+# The CONFIG_SCHED_BORE knob is enabled by default.
+# You can turn it off by running sudo sysctl -w kernel.sched_bore=0
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch0301: 0001-linux6.7.y-bore4.1.11.patch
+Patch0301: 0001-linux6.7.y-bore4.1.13.patch
 
 %description
 The Linux kernel.
@@ -195,9 +196,9 @@ Linux kernel build files
 
 cp %{SOURCE1} .config
 
-# Run equally well on all x86-64 CPUs with min support of Haswell.
+# Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 scripts/config -d MCORE2
-scripts/config -e MHASWELL
+scripts/config -e GENERIC_CPU3
 
 # Disable debug.
 %if 1

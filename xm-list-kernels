@@ -25,7 +25,7 @@ kvariant="${kvariant##*.}"   # xmlts-preempt
 kversion="${kversion%.*}"    # 6.1.54-100
 
 echo "XanMod boot-manager entries"
-pattern1="^org\.clearlinux\.xm(edge|lts|rt)-"
+pattern1="^org\.clearlinux\.xm(edge|main|lts|rt)-"
 
 for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//" | sort); do
     if [[ "$kernel" =~ $pattern1 ]]; then
@@ -39,7 +39,7 @@ done
 echo
 
 echo "XanMod packages, exluding dev,extra,license"
-pattern2="^linux-xm(edge|lts|rt)-"
+pattern2="^linux-xm(edge|main|lts|rt)-"
 
 for package in $(rpm -qa | grep -Ev -- "-(license|extra|dev|cpio)-" | sort); do
     if [[ "$package" =~ $pattern2 ]]; then
