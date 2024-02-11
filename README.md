@@ -161,3 +161,8 @@ macro. Adjust the integer value to your liking.
 echo "%_smp_mflags -j4" >> ~/.rpmmacros
 ```
 
+## See also
+
+* [BORE (Burst-Oriented Response Enhancer) CPU Scheduler](https://github.com/firelzrd/bore-scheduler)
+* [XanMod Linux kernel source code tree](https://github.com/xanmod/linux)
+
