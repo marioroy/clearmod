@@ -9,7 +9,7 @@
 
 Name:           linux-xmrt-preempt
 Version:        6.6.15
-Release:        124
+Release:        125
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -99,15 +99,6 @@ Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
-# EEVDF update from @firelzrd.
-# https://github.com/firelzrd/bore-scheduler/commit/b0b1253
-# (They are already integrated in the latest EEVDF-BORE patches)
-# Fix: reweight_eevdf(): Deadline only becomes earlier after rescaling
-# Fix: Use div64_s64(s64, s64) instead of div_s64(s64, s32)
-#      where the divisor may reach 64 bits
-# Fix: se->load.weight == 0 might cause failure of eligibility test
-Patch0301: eevdf-fix.patch
-
 %description
 The Linux kernel.
 
@@ -195,8 +186,6 @@ Linux kernel build files
 %patch -P 165 -p1
 %patch -P 166 -p1
 #Serie.patch.end
-
-%patch -P 301 -p1
 
 
 cp %{SOURCE1} .config
