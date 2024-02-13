@@ -161,8 +161,29 @@ macro. Adjust the integer value to your liking.
 echo "%_smp_mflags -j4" >> ~/.rpmmacros
 ```
 
+## Caveat
+
+Configuring PAM or security limits, allowing users to run commands with
+real-time capabilities does not work on Clear Linux. A workaround is making
+a copy of `chrt` and giving it `cap_sys_nice+ep` capabilities. The `+ep`
+indicate the capability sets effective and permitted.
+
+```bash
+chrt -f 10 echo "Aloha!"
+chrt: failed to set pid 0's policy: Operation not permitted
+
+sudo mkdir -p /usr/local/bin
+sudo cp -a /usr/bin/chrt /usr/local/bin/.
+sudo setcap cap_sys_nice+ep /usr/local/bin/chrt
+
+# The path /usr/local/bin is searched before /usr/bin in $PATH env.
+chrt -f 10 echo "Aloha!"
+Aloha!
+```
+
 ## See also
 
+* [Is chrt broken for normal users?](https://github.com/clearlinux/distribution/issues/2962)
 * [BORE (Burst-Oriented Response Enhancer) CPU Scheduler](https://github.com/firelzrd/bore-scheduler)
 * [XanMod Linux kernel source code tree](https://github.com/xanmod/linux)
 
