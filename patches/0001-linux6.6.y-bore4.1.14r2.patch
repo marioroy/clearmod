@@ -1,7 +1,7 @@
-From d698f2c08ceebc5d71bfd12d56a754e5f4d5009a Mon Sep 17 00:00:00 2001
+From 6db85aa6c4337e6bd087d05efe1333fed14ba193 Mon Sep 17 00:00:00 2001
 From: Masahito S <firelzrd@gmail.com>
-Date: Tue, 13 Feb 2024 17:24:50 +0900
-Subject: [PATCH] linux6.6.y-cachyos-bore4.1.14
+Date: Tue, 13 Feb 2024 23:12:50 +0900
+Subject: [PATCH] linux6.6.y-bore4.1.14r2
 
 ---
  include/linux/sched.h   |  11 ++
@@ -36,10 +36,10 @@ index 77f01ac385..261b13873c 100644
  	u64				slice;
  
 diff --git a/init/Kconfig b/init/Kconfig
-index 9dee4c1003..49d343e97b 100644
+index 6d35728b94..796c996f06 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -1278,6 +1278,25 @@ config CHECKPOINT_RESTORE
+@@ -1258,6 +1258,25 @@ config CHECKPOINT_RESTORE
  
  	  If unsure, say N here.
  
@@ -339,7 +339,7 @@ index 4c3d0d9f3d..b3263af40d 100644
  	SEQ_printf(m, " %d %d", task_node(p), task_numa_group_id(p));
  #endif
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d336af9cba..662ee3e53c 100644
+index d336af9cba..08d65fc195 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -19,6 +19,9 @@
@@ -495,35 +495,35 @@ index d336af9cba..662ee3e53c 100644
 +		.data		= &sched_bore,
 +		.maxlen		= sizeof(bool),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_dobool,
 +	},
 +	{
 +		.procname	= "sched_burst_score_rounding",
 +		.data		= &sched_burst_score_rounding,
 +		.maxlen		= sizeof(bool),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_dobool,
 +	},
 +	{
 +		.procname	= "sched_burst_smoothness_long",
 +		.data		= &sched_burst_smoothness_long,
 +		.maxlen		= sizeof(bool),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_dobool,
 +	},
 +	{
 +		.procname	= "sched_burst_smoothness_short",
 +		.data		= &sched_burst_smoothness_short,
 +		.maxlen		= sizeof(bool),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_dobool,
 +	},
 +	{
 +		.procname	= "sched_burst_fork_atavistic",
 +		.data		= &sched_burst_fork_atavistic,
 +		.maxlen		= sizeof(u8),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dou8vec_minmax,
++		.proc_handler = proc_dou8vec_minmax,
 +		.extra1		= SYSCTL_ZERO,
 +		.extra2		= SYSCTL_THREE,
 +	},
@@ -532,7 +532,7 @@ index d336af9cba..662ee3e53c 100644
 +		.data		= &sched_burst_penalty_offset,
 +		.maxlen		= sizeof(u8),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dou8vec_minmax,
++		.proc_handler = proc_dou8vec_minmax,
 +		.extra1		= SYSCTL_ZERO,
 +		.extra2		= &sixty_four,
 +	},
@@ -541,7 +541,7 @@ index d336af9cba..662ee3e53c 100644
 +		.data		= &sched_burst_penalty_scale,
 +		.maxlen		= sizeof(uint),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_douintvec_minmax,
++		.proc_handler = proc_douintvec_minmax,
 +		.extra1		= SYSCTL_ZERO,
 +		.extra2		= &maxval_12_bits,
 +	},

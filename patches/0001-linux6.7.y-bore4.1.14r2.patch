@@ -1,7 +1,7 @@
-From 51880e8f08482f9d6f465baf3d8ca35787c85959 Mon Sep 17 00:00:00 2001
+From 28c5c5f28b57bcfcff4e52d85dfc3176a8c7bd55 Mon Sep 17 00:00:00 2001
 From: Masahito S <firelzrd@gmail.com>
-Date: Tue, 13 Feb 2024 17:24:50 +0900
-Subject: [PATCH] linux6.7.y-bore4.1.14
+Date: Tue, 13 Feb 2024 23:12:50 +0900
+Subject: [PATCH] linux6.7.y-bore4.1.14r2
 
 ---
  include/linux/sched.h   |  11 ++
@@ -339,7 +339,7 @@ index 4580a45070..f079b57758 100644
  	SEQ_printf(m, " %d %d", task_node(p), task_numa_group_id(p));
  #endif
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 4182fb118c..1b9a18e57e 100644
+index 4182fb118c..270985b814 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -19,6 +19,9 @@
@@ -491,35 +491,35 @@ index 4182fb118c..1b9a18e57e 100644
 +		.data		= &sched_bore,
 +		.maxlen		= sizeof(bool),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_dobool,
 +	},
 +	{
 +		.procname	= "sched_burst_score_rounding",
 +		.data		= &sched_burst_score_rounding,
 +		.maxlen		= sizeof(bool),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_dobool,
 +	},
 +	{
 +		.procname	= "sched_burst_smoothness_long",
 +		.data		= &sched_burst_smoothness_long,
 +		.maxlen		= sizeof(bool),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_dobool,
 +	},
 +	{
 +		.procname	= "sched_burst_smoothness_short",
 +		.data		= &sched_burst_smoothness_short,
 +		.maxlen		= sizeof(bool),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_dobool,
 +	},
 +	{
 +		.procname	= "sched_burst_fork_atavistic",
 +		.data		= &sched_burst_fork_atavistic,
 +		.maxlen		= sizeof(u8),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dou8vec_minmax,
++		.proc_handler = proc_dou8vec_minmax,
 +		.extra1		= SYSCTL_ZERO,
 +		.extra2		= SYSCTL_THREE,
 +	},
@@ -528,7 +528,7 @@ index 4182fb118c..1b9a18e57e 100644
 +		.data		= &sched_burst_penalty_offset,
 +		.maxlen		= sizeof(u8),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dou8vec_minmax,
++		.proc_handler = proc_dou8vec_minmax,
 +		.extra1		= SYSCTL_ZERO,
 +		.extra2		= &sixty_four,
 +	},
@@ -537,7 +537,7 @@ index 4182fb118c..1b9a18e57e 100644
 +		.data		= &sched_burst_penalty_scale,
 +		.maxlen		= sizeof(uint),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_douintvec_minmax,
++		.proc_handler = proc_douintvec_minmax,
 +		.extra1		= SYSCTL_ZERO,
 +		.extra2		= &maxval_12_bits,
 +	},
