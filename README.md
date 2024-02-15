@@ -150,25 +150,6 @@ Though, skips the running kernel.
 Removing org.clearlinux.xmedge-preempt.6.7.4-136
 ```
 
-## Epilogue
-
-The Edge, Main, and LTS kernels include the BORE CPU scheduler patch.
-
-The default variants are apples-to-apples to Clear's kernels. Basically,
-no overrides. The preempt variants enable `PREEMPT` or `PREEMPT_RT`.
-
-The `/boot` partition has limited space. So, no reason to install many XanMod
-kernels. Build the one you want and enjoy the XanMod kernel. If changing your
-mind later, remember to manage and uninstall any unused XanMod kernels.
-Keep at least one Clear kernel installed on the system.
-
-To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
-macro. Adjust the integer value to your liking.
-
-```bash
-echo "%_smp_mflags -j4" >> ~/.rpmmacros
-```
-
 ## Caveat
 
 Configuring PAM or security limits, allowing users to run commands with
@@ -194,4 +175,23 @@ Aloha!
 * [Is chrt broken for normal users?](https://github.com/clearlinux/distribution/issues/2962)
 * [BORE (Burst-Oriented Response Enhancer) CPU Scheduler](https://github.com/firelzrd/bore-scheduler)
 * [XanMod Linux kernel source code tree](https://github.com/xanmod/linux)
+
+## Epilogue
+
+The Edge, Main, and LTS kernels include the BORE CPU scheduler patch.
+
+The default variants are apples-to-apples to Clear's kernels. Basically,
+no overrides. The preempt variants enable `PREEMPT` or `PREEMPT_RT`.
+
+The `/boot` partition has limited space. So, no reason to install many XanMod
+kernels. Build the one you want and enjoy the XanMod kernel. If changing your
+mind later, remember to manage and uninstall any unused XanMod kernels.
+Keep at least one Clear kernel installed on the system.
+
+To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
+macro. Adjust the integer value to your liking.
+
+```bash
+echo "%_smp_mflags -j4" >> ~/.rpmmacros
+```
 
