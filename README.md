@@ -175,7 +175,7 @@ Aloha!
 * [Is chrt broken for normal users?](https://github.com/clearlinux/distribution/issues/2962)
 * [BORE (Burst-Oriented Response Enhancer) CPU Scheduler](https://github.com/firelzrd/bore-scheduler)
 * [XanMod Linux kernel source code tree](https://github.com/xanmod/linux)
-* [Generic vs. trimmed kernel build](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/15)
+* [Generic vs. Trimmed kernel build time](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/15)
 
 ## Epilogue
 
