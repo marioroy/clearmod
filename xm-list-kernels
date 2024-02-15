@@ -38,7 +38,7 @@ for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//" | sort); do
 done
 echo
 
-echo "XanMod packages, exluding dev,extra,license"
+echo "XanMod installed packages, exluding dev,extra,license"
 pattern2="^linux-xm(edge|main|lts|rt)-"
 
 for package in $(rpm -qa | grep -Ev -- "-(license|extra|dev|cpio)-" | sort); do

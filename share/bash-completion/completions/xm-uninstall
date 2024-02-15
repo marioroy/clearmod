@@ -9,7 +9,7 @@ _xm-uninstall()
         edge-default edge-preempt
         main-default main-preempt
         lts-default lts-preempt
-        rt-preempt' -- "$cur")
+        rt-preempt all' -- "$cur")
     )
 } &&
     complete -F _xm-uninstall xm-uninstall

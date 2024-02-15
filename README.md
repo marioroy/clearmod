@@ -76,44 +76,52 @@ cp -a share/bash-completion/completions/* \
 
 ## Synopsis and simulation
 
-Decide on the XanMod kernel you wish to run. I captured metrics for the LTS
-and RT variants. Please refer to [benchmark results](https://gist.github.com/marioroy/7a6384286f367e53758072962ad36c7f).
+Decide on the XanMod kernel. Choose "main-preempt" if unsure or prefer to
+try one variant only.
 
 The `fetch-src` command (run first) fetches `*.src.rpm` and `*.tar.gz` from
-Intel and XanMod, respectively. The optional release argument is described below.
+Intel and XanMod, respectively. The optional release argument to `xm-install`
+and `xm-uninstall` is described below.
 
 ```bash
-./fetch-src all | edge | lts | rt
+./fetch-src all | edge | main | lts | rt
 
 ./xm-build edge-default | edge-preempt
+./xm-build main-default | main-preempt
 ./xm-build lts-default | lts-preempt
 ./xm-build rt-preempt
 
 ./xm-install edge-default | edge-preempt [<release>]
+./xm-install main-default | main-preempt [<release>]
 ./xm-install lts-default | lts-preempt [<release>]
 ./xm-install rt-preempt [<release>]
 
 ./xm-uninstall edge-default | edge-preempt [<release>]
+./xm-uninstall main-default | main-preempt [<release>]
 ./xm-uninstall lts-default | lts-preempt [<release>]
 ./xm-uninstall rt-preempt [<release>]
+./xm-uninstall all
 
 ./xm-list-kernels
 ```
 
-I selected the lts-preempt variant for my desktop computer. The following are
-the commands to fetch the LTS sources, build, and install the XanMod kernel.
+The following are the steps to fetch the stable Mainline sources, build,
+and install the kernel.
 
 ```bash
-./fetch-src lts
-./xm-build lts-preempt
-./xm-install lts-preempt
+./fetch-src main
+./xm-build main-preempt
+./xm-install main-preempt
 ```
 
-The XanMod Edge kernel with preempt enabled is another consideration.
+To quickly build a trimmed Linux kernel, `LOCALMODCONFIG=1` will build only
+the modules you have running. Therefore, make sure that all modules you will
+ever need are loaded. Keyboard modules for the cpio package, CD-ROM/DVD and
+EXFAT/NTFS3 filesystems, and WINESYNC are added in the `*.spec` files.
 
 ```bash
 ./fetch-src edge
-./xm-build edge-preempt
+LOCALMODCONFIG=1 ./xm-build edge-preempt
 ./xm-install edge-preempt
 ```
 
@@ -124,12 +132,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XanMod boot-manager entries
-  org.clearlinux.xmedge-preempt.6.7.4-133
-* org.clearlinux.xmlts-preempt.6.1.77-130
+  org.clearlinux.xmedge-preempt.6.7.4-136
+* org.clearlinux.xmmain-preempt.6.6.16-133
 
-XanMod packages, exluding dev,extra,license
-  linux-xmedge-preempt-6.7.4-133
-* linux-xmlts-preempt-6.1.77-130
+XanMod installed packages, exluding dev,extra,license
+  linux-xmedge-preempt-6.7.4-136
+* linux-xmlts-preempt-6.6.16-133
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -138,8 +146,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 133
-Removing org.clearlinux.xmedge-preempt.6.7.4-133
+./xm-uninstall edge-preempt 136
+Removing org.clearlinux.xmedge-preempt.6.7.4-136
 ```
 
 ## Epilogue

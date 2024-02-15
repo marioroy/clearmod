@@ -17,6 +17,17 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
+if [[ "$1" == "all" ]]; then
+    bash "$0" "edge-default" || exit $?
+    bash "$0" "edge-preempt" || exit $?
+    bash "$0" "main-default" || exit $?
+    bash "$0" "main-preempt" || exit $?
+    bash "$0" "lts-default"  || exit $?
+    bash "$0" "lts-preempt"  || exit $?
+    bash "$0" "rt-preempt"   || exit $?
+    exit 0
+fi
+
 # shellcheck disable=SC2012,SC2046
 
 # Capture the live kernel release, for safety to not remove self.
@@ -28,11 +39,9 @@ kversion="${kversion%.*}"    # 6.1.54-100
 
 function xm_uninstall {
     variant="$1" release="$2"
-    echo "Uninstalling linux-${variant}."
 
     if [[ -n "$release" ]]; then
         # Uninstall given variant release (e.g. 100), skipping live kernel.
-
         for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//"); do
             if [[ "${kernel}z" =~ org\.clearlinux\.${variant}\..*-${release}z ]]; then
                 if [[ "$kernel" == "org.clearlinux.${kvariant}.${kversion}" ]]; then
@@ -50,7 +59,6 @@ function xm_uninstall {
 
     else
         # Uninstall variant (all releases), skipping live kernel.
-
         for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//"); do
             if [[ "${kernel}" =~ org\.clearlinux\.${variant}\. ]]; then
                 if [[ "$kernel" == "org.clearlinux.${kvariant}.${kversion}" ]]; then
@@ -97,5 +105,6 @@ case "$1" in
         echo "   $0 main-default | main-preempt [<release>]"
         echo "   $0 lts-default | lts-preempt [<release>]"
         echo "   $0 rt-preempt [<release>]"
+        echo "   $0 all"
 esac
 

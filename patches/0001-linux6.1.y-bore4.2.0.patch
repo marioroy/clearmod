@@ -1,18 +1,18 @@
-From 699791e46d19aeb5149fe2a87659d54291cefd9d Mon Sep 17 00:00:00 2001
+From 7c46f2a1bf4c963c659c0cb4efd0693d305be25a Mon Sep 17 00:00:00 2001
 From: Masahito S <firelzrd@gmail.com>
-Date: Sat, 10 Feb 2024 17:57:35 +0900
-Subject: [PATCH] linux6.1.y-bore4.1.13r2
+Date: Wed, 14 Feb 2024 15:10:06 +0900
+Subject: [PATCH] linux6.1.y-bore4.2.0
 
 ---
  include/linux/sched.h |  10 +++
  init/Kconfig          |  19 +++++
- kernel/sched/core.c   | 142 +++++++++++++++++++++++++++++++++
+ kernel/sched/core.c   | 142 ++++++++++++++++++++++++++++++++
  kernel/sched/debug.c  |   3 +
- kernel/sched/fair.c   | 178 ++++++++++++++++++++++++++++++++++++++----
- 5 files changed, 337 insertions(+), 15 deletions(-)
+ kernel/sched/fair.c   | 182 +++++++++++++++++++++++++++++++++++++++---
+ 5 files changed, 343 insertions(+), 13 deletions(-)
 
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 0cac69902e..9686dbee4d 100644
+index 0cac69902e..159733cf83 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
 @@ -555,6 +555,16 @@ struct sched_entity {
@@ -24,9 +24,9 @@ index 0cac69902e..9686dbee4d 100644
 +	u8				prev_burst_penalty;
 +	u8				curr_burst_penalty;
 +	u8				burst_penalty;
-+	u8				slice_score;
++	u8				burst_score;
 +	u8				child_burst;
-+	u16				child_burst_cnt;
++	u32				child_burst_cnt;
 +	u64				child_burst_last_cached;
 +#endif // CONFIG_SCHED_BORE
  
@@ -63,7 +63,7 @@ index 1487046402..cc45cc5414 100644
  	bool "Automatic process group scheduling"
  	select CGROUPS
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 18a4f8f28a..52b14b9bea 100644
+index 18a4f8f28a..ff5f54111a 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
 @@ -4368,6 +4368,137 @@ int wake_up_state(struct task_struct *p, unsigned int state)
@@ -80,14 +80,14 @@ index 18a4f8f28a..52b14b9bea 100644
 +	init_task.se.prev_burst_penalty = 0;
 +	init_task.se.curr_burst_penalty = 0;
 +	init_task.se.burst_penalty = 0;
-+	init_task.se.slice_score = 0;
++	init_task.se.burst_score = 0;
 +	init_task.se.child_burst_last_cached = 0;
 +}
 +
 +void inline sched_fork_bore(struct task_struct *p) {
 +	p->se.burst_time = 0;
 +	p->se.curr_burst_penalty = 0;
-+	p->se.slice_score = 0;
++	p->se.burst_score = 0;
 +	p->se.child_burst_last_cached = 0;
 +}
 +
@@ -230,14 +230,14 @@ index 18a4f8f28a..52b14b9bea 100644
  
 +#ifdef CONFIG_SCHED_BORE
 +	sched_init_bore();
-+	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification 4.1.13 by Masahito Suzuki");
++	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification 4.2.0 by Masahito Suzuki");
 +#endif // CONFIG_SCHED_BORE
 +
  	wait_bit_init();
  
  #ifdef CONFIG_FAIR_GROUP_SCHED
 diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 1637b65ba0..c143372725 100644
+index 1637b65ba0..a0157ac1be 100644
 --- a/kernel/sched/debug.c
 +++ b/kernel/sched/debug.c
 @@ -547,6 +547,9 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
@@ -245,13 +245,13 @@ index 1637b65ba0..c143372725 100644
  		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_block_runtime)));
  
 +#ifdef CONFIG_SCHED_BORE
-+	SEQ_printf(m, " %2d", p->se.slice_score);
++	SEQ_printf(m, " %2d", p->se.burst_score);
 +#endif // CONFIG_SCHED_BORE
  #ifdef CONFIG_NUMA_BALANCING
  	SEQ_printf(m, " %d %d", task_node(p), task_numa_group_id(p));
  #endif
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2558ab9033..b258db9cb7 100644
+index 2558ab9033..d765bc1d01 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -19,6 +19,9 @@
@@ -277,7 +277,7 @@ index 2558ab9033..b258db9cb7 100644
 +u8   __read_mostly sched_burst_penalty_offset   = 22;
 +uint __read_mostly sched_burst_penalty_scale    = 1280;
 +uint __read_mostly sched_burst_cache_lifetime   = 60000000;
-+static u8   sixty_four     = 64;
++static uint sixty_four     = 64;
 +static uint maxval_12_bits = 4095;
 +
 +#define MAX_BURST_PENALTY (39U <<2)
@@ -300,20 +300,20 @@ index 2558ab9033..b258db9cb7 100644
 +	return min(MAX_BURST_PENALTY, scaled_penalty);
 +}
 +
-+static void update_slice_score(struct sched_entity *se) {
++static inline u64 scale_slice(u64 delta, struct sched_entity *se) {
++	return mul_u64_u32_shr(delta, sched_prio_to_wmult[se->burst_score], 22);
++}
++
++static void update_burst_score(struct sched_entity *se) {
 +	u32 penalty = se->burst_penalty;
 +	if (sched_burst_score_rounding) penalty += 0x2U;
-+	se->slice_score = penalty >> 2;
++	se->burst_score = penalty >> 2;
 +}
 +
 +static void update_burst_penalty(struct sched_entity *se) {
 +	se->curr_burst_penalty = calc_burst_penalty(se->burst_time);
 +	se->burst_penalty = max(se->prev_burst_penalty, se->curr_burst_penalty);
-+	update_slice_score(se);
-+}
-+
-+static inline u64 scale_slice(u64 delta, struct sched_entity *se) {
-+	return mul_u64_u32_shr(delta, sched_prio_to_wmult[se->slice_score], 22);
++	update_burst_score(se);
 +}
 +
 +static inline u32 binary_smooth(u32 new, u32 old) {
@@ -328,7 +328,7 @@ index 2558ab9033..b258db9cb7 100644
 +		binary_smooth(se->curr_burst_penalty, se->prev_burst_penalty);
 +	se->curr_burst_penalty = 0;
 +	se->burst_time = 0;
-+	update_slice_score(se);
++	update_burst_score(se);
 +}
 +#endif // CONFIG_SCHED_BORE
 +
@@ -345,21 +345,35 @@ index 2558ab9033..b258db9cb7 100644
 +		.data		= &sched_bore,
 +		.maxlen		= sizeof(int),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_dobool,
 +	},
 +	{
-+		.procname	= "sched_burst_cache_lifetime",
-+		.data		= &sched_burst_cache_lifetime,
-+		.maxlen		= sizeof(uint),
++		.procname	= "sched_burst_score_rounding",
++		.data		= &sched_burst_score_rounding,
++		.maxlen		= sizeof(int),
 +		.mode		= 0644,
-+		.proc_handler = proc_douintvec,
++		.proc_handler = proc_dobool,
++	},
++	{
++		.procname	= "sched_burst_smoothness_long",
++		.data		= &sched_burst_smoothness_long,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler = proc_dobool,
++	},
++	{
++		.procname	= "sched_burst_smoothness_short",
++		.data		= &sched_burst_smoothness_short,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler = proc_dobool,
 +	},
 +	{
 +		.procname	= "sched_burst_fork_atavistic",
 +		.data		= &sched_burst_fork_atavistic,
 +		.maxlen		= sizeof(u8),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dou8vec_minmax,
++		.proc_handler = proc_dou8vec_minmax,
 +		.extra1		= SYSCTL_ZERO,
 +		.extra2		= SYSCTL_THREE,
 +	},
@@ -368,7 +382,7 @@ index 2558ab9033..b258db9cb7 100644
 +		.data		= &sched_burst_penalty_offset,
 +		.maxlen		= sizeof(u8),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dou8vec_minmax,
++		.proc_handler = proc_dou8vec_minmax,
 +		.extra1		= SYSCTL_ZERO,
 +		.extra2		= &sixty_four,
 +	},
@@ -377,30 +391,16 @@ index 2558ab9033..b258db9cb7 100644
 +		.data		= &sched_burst_penalty_scale,
 +		.maxlen		= sizeof(uint),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_douintvec_minmax,
++		.proc_handler = proc_douintvec_minmax,
 +		.extra1		= SYSCTL_ZERO,
 +		.extra2		= &maxval_12_bits,
 +	},
 +	{
-+		.procname	= "sched_burst_score_rounding",
-+		.data		= &sched_burst_score_rounding,
-+		.maxlen		= sizeof(int),
++		.procname	= "sched_burst_cache_lifetime",
++		.data		= &sched_burst_cache_lifetime,
++		.maxlen		= sizeof(uint),
 +		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
-+	},
-+	{
-+		.procname	= "sched_burst_smoothness_long",
-+		.data		= &sched_burst_smoothness_long,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
-+	},
-+	{
-+		.procname	= "sched_burst_smoothness_short",
-+		.data		= &sched_burst_smoothness_short,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= &proc_dobool,
++		.proc_handler = proc_douintvec,
 +	},
 +#endif // CONFIG_SCHED_BORE
  	{
@@ -416,20 +416,21 @@ index 2558ab9033..b258db9cb7 100644
  	return delta;
  }
  
-@@ -905,7 +1039,11 @@ static void update_curr(struct cfs_rq *cfs_rq)
+@@ -905,7 +1039,13 @@ static void update_curr(struct cfs_rq *cfs_rq)
  	curr->sum_exec_runtime += delta_exec;
  	schedstat_add(cfs_rq->exec_clock, delta_exec);
  
--	curr->vruntime += calc_delta_fair(delta_exec, curr);
 +#ifdef CONFIG_SCHED_BORE
 +	curr->burst_time += delta_exec;
 +	update_burst_penalty(curr);
-+#endif // CONFIG_SCHED_BORE
 +	curr->vruntime += max(1ULL, calc_delta_fair(delta_exec, curr));
++#else // CONFIG_SCHED_BORE
+ 	curr->vruntime += calc_delta_fair(delta_exec, curr);
++#endif // CONFIG_SCHED_BORE
  	update_min_vruntime(cfs_rq);
  
  	if (entity_is_task(curr)) {
-@@ -6171,6 +6309,12 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+@@ -6171,6 +6311,12 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  	bool was_sched_idle = sched_idle_rq(rq);
  
  	util_est_dequeue(&rq->cfs, p);
@@ -442,27 +443,17 @@ index 2558ab9033..b258db9cb7 100644
  
  	for_each_sched_entity(se) {
  		cfs_rq = cfs_rq_of(se);
-@@ -7939,24 +8083,28 @@ static void yield_task_fair(struct rq *rq)
+@@ -7939,24 +8085,31 @@ static void yield_task_fair(struct rq *rq)
  	/*
  	 * Are we the only task in the tree?
  	 */
 +#if !defined(CONFIG_SCHED_BORE)
  	if (unlikely(rq->nr_running == 1))
  		return;
+ 
+ 	clear_buddies(cfs_rq, se);
 +#endif // CONFIG_SCHED_BORE
  
-+	update_rq_clock(rq);
-+	/*
-+	 * Update run-time statistics of the 'current'.
-+	 */
-+	update_curr(cfs_rq);
-+#ifdef CONFIG_SCHED_BORE
-+	restart_burst(se);
-+	if (unlikely(rq->nr_running == 1))
-+		return;
-+#endif // CONFIG_SCHED_BORE
- 	clear_buddies(cfs_rq, se);
--
 -	if (curr->policy != SCHED_BATCH) {
 -		update_rq_clock(rq);
 -		/*
@@ -476,6 +467,18 @@ index 2558ab9033..b258db9cb7 100644
 -		 */
 -		rq_clock_skip_update(rq);
 -	}
++	update_rq_clock(rq);
++	/*
++	 * Update run-time statistics of the 'current'.
++	 */
++	update_curr(cfs_rq);
++#ifdef CONFIG_SCHED_BORE
++	restart_burst(se);
++	if (unlikely(rq->nr_running == 1))
++		return;
++
++	clear_buddies(cfs_rq, se);
++#endif // CONFIG_SCHED_BORE
 +	/*
 +	 * Tell update_rq_clock() that we've just updated,
 +	 * so we don't do microscopic update in schedule()
@@ -485,6 +488,16 @@ index 2558ab9033..b258db9cb7 100644
  
  	set_skip_buddy(se);
  }
+@@ -11869,6 +12022,9 @@ static void task_fork_fair(struct task_struct *p)
+ 		update_curr(cfs_rq);
+ 		se->vruntime = curr->vruntime;
+ 	}
++#ifdef CONFIG_SCHED_BORE
++	update_burst_score(se);
++#endif // CONFIG_SCHED_BORE
+ 	place_entity(cfs_rq, se, 1);
+ 
+ 	if (sysctl_sched_child_runs_first && curr && entity_before(curr, se)) {
 -- 
 2.34.1
 

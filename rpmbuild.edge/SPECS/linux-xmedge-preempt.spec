@@ -2,13 +2,11 @@
 # note to self: Linus releases need to be named 5.x.0 not 5.x or various
 # things break
 #
-#
-
 %define xm_customver 1
 
 Name:           linux-xmedge-preempt
 Version:        6.7.4
-Release:        135
+Release:        136
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -101,7 +99,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # You can turn it off by running sudo sysctl -w kernel.sched_bore=0
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch0301: 0001-linux6.7.y-bore4.1.14r2.patch
+Patch0301: 0001-linux6.7.y-bore4.2.0.patch
 
 %description
 The Linux kernel.
@@ -200,6 +198,10 @@ cp %{SOURCE1} .config
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
+# Default to maximum amount of ASLR bits.
+scripts/config --set-val ARCH_MMAP_RND_BITS 32
+scripts/config --set-val ARCH_MMAP_RND_COMPAT_BITS 16
+
 # Disable debug.
 %if 1
 scripts/config -d DEBUG_INFO
@@ -208,14 +210,15 @@ scripts/config -d DEBUG_INFO_BTF_MODULES
 scripts/config -d DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
 scripts/config -d DEBUG_INFO_DWARF4
 scripts/config -d DEBUG_INFO_DWARF5
+scripts/config -d DEBUG_LIST
 scripts/config -d PAHOLE_HAS_SPLIT_BTF
 scripts/config -d SLUB_DEBUG
 scripts/config -d PM_DEBUG
 scripts/config -d PM_ADVANCED_DEBUG
 scripts/config -d PM_SLEEP_DEBUG
 scripts/config -d ACPI_DEBUG
-scripts/config -d LATENCYTOP
 scripts/config -d IRQ_TIME_ACCOUNTING
+scripts/config -d LATENCYTOP
 scripts/config -d PERF_EVENTS_AMD_POWER
 scripts/config -d DEBUG_BUGVERBOSE
 scripts/config -d DEBUG_PREEMPT
@@ -226,6 +229,13 @@ scripts/config -d DMA_FENCE_TRACE
 scripts/config -d DRM_I915_LOW_LEVEL_TRACEPOINTS
 scripts/config -d RCU_TRACE
 scripts/config -d FTRACE
+
+# Set audio POWER_SAVE_DEFAULTs to 10 seconds.
+scripts/config --set-val SND_AC97_POWER_SAVE_DEFAULT 10
+scripts/config --set-val SND_HDA_POWER_SAVE_DEFAULT 10
+
+# Enable tracking the state of allocated blocks of zRAM.
+scripts/config -e ZRAM_MEMORY_TRACKING
 
 # Enable FQ-PIE Packet Scheduling.
 # https://datatracker.ietf.org/doc/html/rfc8033
@@ -241,6 +251,7 @@ scripts/config -e DEFAULT_FQ_PIE
 # https://www.paragon-software.com/home/ntfs3-driver-faq/
 # https://wiki.archlinux.org/title/NTFS
 scripts/config -m NTFS3_FS
+scripts/config -d NTFS3_64BIT_CLUSTER
 scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
 
@@ -255,24 +266,8 @@ scripts/config -e FUTEX_PI
 # Enable WINESYNC driver for fast kernel-backed Wine.
 scripts/config -m WINESYNC
 
-# Offload RCU callback processing from boot-selected CPUs.
-# Clear defaults.
-scripts/config -e RCU_EXPERT
-scripts/config -e RCU_NOCB_CPU
-scripts/config -e RCU_NOCB_CPU_DEFAULT_ALL
-
-# Disable RCU expedited work in a real-time kthread.
-# CachyOS default.
-scripts/config -d RCU_EXP_KTHREAD
-
-# To save power, batch RCU callbacks and then flush them after a timed delay,
-# memory pressure, or callback list growing too big (can provide 5-10% power-
-# savings for idle or lightly-loaded systems, this is beneficial for laptops).
-# https://lore.kernel.org/lkml/20221016162305.2489629-3-joel@joelfernandes.org/
-# CachyOS and Ubuntu low-latency default.
-scripts/config -e RCU_LAZY
-
 # Enable preempt.
+scripts/config -d RCU_EXPERT
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
@@ -300,9 +295,61 @@ BuildKernel() {
 
     make O=${Target} -s mrproper
     cp config ${Target}/.config
-
     make O=${Target} -s ARCH=${Arch} olddefconfig
-    make O=${Target} -s ARCH=${Arch} CONFIG_DEBUG_SECTION_MISMATCH=y %{?_smp_mflags} %{?sparse_mflags}
+
+    %if %{_localmodconfig} == 1
+      yes "" | make O=${Target} -s ARCH=${Arch} localmodconfig 2>&1 | grep -v "^nvidia"
+
+      # Add keyboard modules for the cpio package (do not remove).
+      scripts/config --file ${Target}/.config -m SERIO_I8042
+      scripts/config --file ${Target}/.config -m SERIO_LIBPS2
+      scripts/config --file ${Target}/.config -m KEYBOARD_ATKBD
+      scripts/config --file ${Target}/.config -m HID_LOGITECH_DJ
+      scripts/config --file ${Target}/.config -m HID_LOGITECH_HIDPP
+      scripts/config --file ${Target}/.config -m HID_APPLE
+
+      # Add modules for File systems.
+      scripts/config --file ${Target}/.config -m CUSE
+      scripts/config --file ${Target}/.config -m VIRTIO_FS
+      scripts/config --file ${Target}/.config -e FUSE_DAX
+      scripts/config --file ${Target}/.config -m OVERLAY_FS
+      scripts/config --file ${Target}/.config -d OVERLAY_FS_REDIRECT_DIR
+      scripts/config --file ${Target}/.config -d OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW
+      scripts/config --file ${Target}/.config -d OVERLAY_FS_INDEX
+      scripts/config --file ${Target}/.config -d OVERLAY_FS_XINO_AUTO
+      scripts/config --file ${Target}/.config -d OVERLAY_FS_METACOPY
+      scripts/config --file ${Target}/.config -d OVERLAY_FS_DEBUG
+
+      # Add modules for Caches.
+      scripts/config --file ${Target}/.config -m NETFS_SUPPORT
+      scripts/config --file ${Target}/.config -d NETFS_STATS
+      scripts/config --file ${Target}/.config -m FSCACHE
+      scripts/config --file ${Target}/.config -d FSCACHE_STATS
+      scripts/config --file ${Target}/.config -d FSCACHE_DEBUG
+      scripts/config --file ${Target}/.config -m CACHEFILES
+      scripts/config --file ${Target}/.config -d CACHEFILES_DEBUG
+      scripts/config --file ${Target}/.config -d CACHEFILES_ERROR_INJECTION
+      scripts/config --file ${Target}/.config -d CACHEFILES_ONDEMAND
+
+      # Add modules for CD-ROM/DVD and EXFAT/NTFS3 Filesystems.
+      scripts/config --file ${Target}/.config -m ISO9660_FS
+      scripts/config --file ${Target}/.config -e JOLIET
+      scripts/config --file ${Target}/.config -e ZISOFS
+      scripts/config --file ${Target}/.config -m UDF_FS
+      scripts/config --file ${Target}/.config -m EXFAT_FS
+      scripts/config --file ${Target}/.config --set-str EXFAT_DEFAULT_IOCHARSET "utf8"
+      scripts/config --file ${Target}/.config -m NTFS3_FS
+      scripts/config --file ${Target}/.config -d NTFS3_64BIT_CLUSTER
+      scripts/config --file ${Target}/.config -e NTFS3_LZX_XPRESS
+      scripts/config --file ${Target}/.config -e NTFS3_FS_POSIX_ACL
+
+      # Add optional modules.
+      scripts/config --file ${Target}/.config -m WINESYNC
+
+    %endif
+
+    yes "" | make O=${Target} -s ARCH=${Arch} \
+      CONFIG_DEBUG_SECTION_MISMATCH=y %{?_smp_mflags} %{?sparse_mflags}
 }
 
 BuildKernel %{ktarget}

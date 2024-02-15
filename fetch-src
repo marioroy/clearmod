@@ -36,8 +36,8 @@ function fetch {
 
     if [[ ! -s "$cl_file" ]]; then
         rm -f cmdline config ./*.patch ./*.patch.xz ./*.spec ./*.tar.xz linux-*.src.rpm
-        if [[ "$xm_file" == *-rt* && -e "../../rpmbuild.lts/SOURCES/$cl_file" ]]; then
-            cp -a "../../rpmbuild.lts/SOURCES/$cl_file" .
+        if [[ "$xm_file" == *-rt* && -e "../../rpmbuild.main/SOURCES/$cl_file" ]]; then
+            cp -a "../../rpmbuild.main/SOURCES/$cl_file" .
         else
             wget "${cl_url}/${cl_rel}/clear/source/SRPMS/${cl_file}"
         fi
