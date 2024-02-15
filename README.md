@@ -137,7 +137,7 @@ XanMod boot-manager entries
 
 XanMod installed packages, exluding dev,extra,license
   linux-xmedge-preempt-6.7.4-136
-* linux-xmlts-preempt-6.6.16-133
+* linux-xmmain-preempt-6.6.16-133
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
