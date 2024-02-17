@@ -132,12 +132,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XanMod boot-manager entries
-  org.clearlinux.xmedge-preempt.6.7.4-136
-* org.clearlinux.xmmain-preempt.6.6.16-133
+  org.clearlinux.xmedge-preempt.6.7.4-137
+* org.clearlinux.xmmain-preempt.6.6.16-134
 
 XanMod installed packages, exluding dev,extra,license
-  linux-xmedge-preempt-6.7.4-136
-* linux-xmmain-preempt-6.6.16-133
+  linux-xmedge-preempt-6.7.4-137
+* linux-xmmain-preempt-6.6.16-134
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -146,8 +146,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 136
-Removing org.clearlinux.xmedge-preempt.6.7.4-136
+./xm-uninstall edge-preempt 137
+Removing org.clearlinux.xmedge-preempt.6.7.4-137
 ```
 
 ## Caveat
@@ -175,7 +175,7 @@ Aloha!
 * [Is chrt broken for normal users?](https://github.com/clearlinux/distribution/issues/2962)
 * [BORE (Burst-Oriented Response Enhancer) CPU Scheduler](https://github.com/firelzrd/bore-scheduler)
 * [XanMod Linux kernel source code tree](https://github.com/xanmod/linux)
-* [Generic vs. Trimmed kernel build time](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/15)
+* [Generic vs. Trimmed kernel build times](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/15)
 
 ## Epilogue
 

@@ -6,7 +6,7 @@
 
 Name:           linux-xmrt-preempt
 Version:        6.6.15
-Release:        126
+Release:        127
 License:        GPL-2.0
 Summary:        The Linux kernel with Preempt-RT patch
 Url:            https://www.kernel.org
@@ -195,6 +195,10 @@ scripts/config -e GENERIC_CPU3
 scripts/config --set-val ARCH_MMAP_RND_BITS 32
 scripts/config --set-val ARCH_MMAP_RND_COMPAT_BITS 16
 
+# Disable using efivars as a pstore backend by default.
+scripts/config -m EFI_VARS_PSTORE
+scripts/config -e EFI_VARS_PSTORE_DEFAULT_DISABLE
+
 # Disable debug.
 %if 1
 scripts/config -d DEBUG_INFO
@@ -287,6 +291,8 @@ scripts/config -d SOFTIRQ_ON_OWN_STACK
 scripts/config -e ARCH_SUPPORTS_RT
 scripts/config --set-val COMPACT_UNEVICTABLE_DEFAULT 0
 scripts/config -e HAVE_ATOMIC_CONSOLE
+scripts/config -d HAVE_PREEMPT_AUTO
+scripts/config -d PREEMPT_BUILD
 scripts/config -e PREEMPT_RT
 scripts/config -e PREEMPT_COUNT
 scripts/config -e PREEMPT_RCU

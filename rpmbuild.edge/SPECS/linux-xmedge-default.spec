@@ -5,8 +5,8 @@
 %define xm_customver 1
 
 Name:           linux-xmedge-default
-Version:        6.7.4
-Release:        136
+Version:        6.7.5
+Release:        137
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
@@ -201,6 +201,10 @@ scripts/config -e GENERIC_CPU3
 # Default to maximum amount of ASLR bits.
 scripts/config --set-val ARCH_MMAP_RND_BITS 32
 scripts/config --set-val ARCH_MMAP_RND_COMPAT_BITS 16
+
+# Disable using efivars as a pstore backend by default.
+scripts/config -m EFI_VARS_PSTORE
+scripts/config -e EFI_VARS_PSTORE_DEFAULT_DISABLE
 
 # Disable debug.
 %if 1
