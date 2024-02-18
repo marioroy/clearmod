@@ -29,14 +29,6 @@ sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
 EOF
 ```
 
-The XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler patch. You can turn it off by running `sudo sysctl -w kernel.sched_bore=0` or adding an entry to `/etc/clr-power-tweaks.conf`.
-
-```bash
-sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
-/proc/sys/kernel/sched_bore 0
-EOF
-```
-
 Set boot-timeout and system‐wide configuration to avoid `clr‐boot‐manager`
 changing efi variables.
 
@@ -50,7 +42,7 @@ false
 EOF
 ```
 
-From testing, the XanMod `preempt_rt` kernel works with NVIDIA graphics.
+During testing, the XanMod `preempt_rt` kernel works with NVIDIA graphics.
 Set a system-wide environment variable to have the driver installer ignore
 `PREEMPT_RT` presense.
 
@@ -132,12 +124,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XanMod boot-manager entries
-  org.clearlinux.xmedge-preempt.6.7.4-137
-* org.clearlinux.xmmain-preempt.6.6.16-134
+  org.clearlinux.xmedge-preempt.6.7.4-140
+* org.clearlinux.xmmain-preempt.6.6.16-140
 
 XanMod installed packages, exluding dev,extra,license
-  linux-xmedge-preempt-6.7.4-137
-* linux-xmmain-preempt-6.6.16-134
+  linux-xmedge-preempt-6.7.4-140
+* linux-xmmain-preempt-6.6.16-140
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -146,8 +138,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 137
-Removing org.clearlinux.xmedge-preempt.6.7.4-137
+./xm-uninstall edge-preempt 140
+Removing org.clearlinux.xmedge-preempt.6.7.4-140
 ```
 
 ## Caveat
@@ -179,7 +171,13 @@ Aloha!
 
 ## Epilogue
 
-The Edge, Main, and LTS kernels include the BORE CPU scheduler patch.
+The XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler patch. You can turn it off by running `sudo sysctl -w kernel.sched_bore=0` or append an entry to `/etc/clr-power-tweaks.conf`.
+
+```bash
+sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
+/proc/sys/kernel/sched_bore 0
+EOF
+```
 
 The default variants are apples-to-apples to Clear's kernels. Basically,
 no overrides. The preempt variants enable `PREEMPT` or `PREEMPT_RT`.

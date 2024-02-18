@@ -1,28 +1,27 @@
 #
-# note to self: Linus releases need to be named 5.x.0 not 5.x or various
-# things break
+# Linux releases need to be named 6.x.0 not 6.x or various things break.
 #
-%define xm_customver 1
+%define   xm_customver 1
 
-Name:           linux-xmmain-preempt
-Version:        6.6.17
-Release:        134
-License:        GPL-2.0
-Summary:        The Linux kernel
-Url:            http://www.kernel.org/
-Group:          kernel
-Source0:        https://github.com/xanmod/linux/archive/refs/tags/%{version}-xanmod%{xm_customver}.tar.gz
-Source1:        config
-Source2:        cmdline
+Name:     linux-xmmain-preempt
+Version:  6.6.17
+Release:  140
+License:  GPL-2.0
+Summary:  The Linux kernel
+Url:      http://www.kernel.org/
+Group:    kernel
+Source0:  https://github.com/xanmod/linux/archive/refs/tags/%{version}-xanmod%{xm_customver}.tar.gz
+Source1:  config
+Source2:  cmdline
+
+Requires: linux-xmmain-preempt-license = %{version}-%{release}
+
+# Build requires: swupd bundle-add \
+#   bc bison c-basic devpkg-gmp devpkg-elfutils devpkg-openssl flex \
+#   kernel-install linux-firmware lz4 make package-utils wget xz
 
 %define ktarget  xmmain-preempt
 %define kversion %{version}-%{release}.%{ktarget}
-
-#BuildRequires:  buildreq-kernel
-
-Requires: systemd-bin
-Requires: init-rdahead-extras
-Requires: linux-xmmain-preempt-license = %{version}-%{release}
 
 # don't strip .ko files!
 %global __os_install_post %{nil}
@@ -98,7 +97,6 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default.
-# You can turn it off by running sudo sysctl -w kernel.sched_bore=0
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
 Patch0301: 0001-linux6.6.y-bore4.2.0.patch
@@ -116,8 +114,8 @@ Requires:       linux-xmmain-preempt-license = %{version}-%{release}
 Linux kernel extra files
 
 %package license
-Summary: license components for the linux package.
-Group: Default
+Summary:        license components for the linux package.
+Group:          Default
 
 %description license
 license components for the linux package.
@@ -205,6 +203,7 @@ scripts/config --set-val ARCH_MMAP_RND_BITS 32
 scripts/config --set-val ARCH_MMAP_RND_COMPAT_BITS 16
 
 # Disable using efivars as a pstore backend by default.
+# https://github.com/clearlinux/distribution/issues/3042#issuecomment-1948714075
 scripts/config -m EFI_VARS_PSTORE
 scripts/config -e EFI_VARS_PSTORE_DEFAULT_DISABLE
 
@@ -232,25 +231,11 @@ scripts/config -d DEBUG_PREEMPT
 
 # Disable tracers, XanMod default.
 scripts/config -d DMA_FENCE_TRACE
+scripts/config -d DRM_I915_DEBUG_RUNTIME_PM
 scripts/config -d DRM_I915_LOW_LEVEL_TRACEPOINTS
 scripts/config -d RCU_TRACE
 scripts/config -d FTRACE
 
-# Set audio POWER_SAVE_DEFAULTs to 10 seconds.
-scripts/config --set-val SND_AC97_POWER_SAVE_DEFAULT 10
-scripts/config --set-val SND_HDA_POWER_SAVE_DEFAULT 10
-
-# Enable tracking the state of allocated blocks of zRAM.
-scripts/config -e ZRAM_MEMORY_TRACKING
-
-# Enable FQ-PIE Packet Scheduling.
-# https://datatracker.ietf.org/doc/html/rfc8033
-scripts/config -e NET_SCH_PIE
-scripts/config -e NET_SCH_FQ_PIE
-scripts/config -e NET_SCH_DEFAULT
-scripts/config -e DEFAULT_FQ_PIE
-
-# Enable NTFS3 file-system driver.
 # NTFS3 is a kernel NTFS implementation, which offers much faster performance
 # than the NTFS-3G FUSE based implementation. Note: ntfs3 requires the file
 # system type to mount. e.g. mount -t ntfs3 /dev/sdxY /mnt
@@ -261,19 +246,12 @@ scripts/config -d NTFS3_64BIT_CLUSTER
 scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
 
-# Enable Google's BBRv3 (Bottleneck Bandwidth and RTT) TCP congestion control.
-# Enable Futex WAIT_MULTIPLE implementation for Wine / Proton Fsync.
-# Clear and XanMod defaults.
-scripts/config -e TCP_CONG_BBR
-scripts/config -e DEFAULT_BBR
-scripts/config -e FUTEX
-scripts/config -e FUTEX_PI
-
 # Enable WINESYNC driver for fast kernel-backed Wine.
+# Enable tracking the state of allocated blocks of zRAM.
 scripts/config -m WINESYNC
+scripts/config -e ZRAM_MEMORY_TRACKING
 
 # Enable preempt.
-scripts/config -d RCU_EXPERT
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
@@ -285,6 +263,8 @@ scripts/config -e PREEMPTION
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
 scripts/config -e SCHED_CLUSTER
+scripts/config -d RCU_BOOST
+scripts/config -d RCU_EXP_KTHREAD
 
 mv .config config
 
@@ -304,6 +284,7 @@ BuildKernel() {
     make O=${Target} -s ARCH=${Arch} olddefconfig
 
     %if %{_localmodconfig} == 1
+      # NVIDIA modules are built separately. Filter nvidia not found messages.
       yes "" | make O=${Target} -s ARCH=${Arch} localmodconfig 2>&1 | grep -v "^nvidia"
 
       # Add keyboard modules for the cpio package (do not remove).
