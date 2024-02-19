@@ -5,13 +5,13 @@
 %define   xm_customver_rt 22
 
 Name:     linux-xmrt-preempt
-Version:  6.6.15
-Release:  140
+Version:  6.6.17
+Release:  141
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
 Group:    kernel
-Source0:  https://github.com/xanmod/linux/archive/refs/tags/%{version}-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
+Source0:  https://github.com/xanmod/linux/archive/refs/tags/6.6.15-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
 Source1:  config
 Source2:  cmdline
 
@@ -28,6 +28,11 @@ Requires: linux-xmrt-preempt-license = %{version}-%{release}
 %global __os_install_post %{nil}
 %define debug_package %{nil}
 %define __strip /bin/true
+
+# The XanMod RT 6.6.x kernel was last updated to 6.6.15 on 2024-02-07.
+# Include subsequent kernel patches until no longer applicable or EOL.
+Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.15-16.xz
+Source1002: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.16-17.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -135,7 +140,9 @@ Requires:       linux-xmrt-preempt-license = %{version}-%{release}
 Linux kernel build files
 
 %prep
-%setup -q -n linux-%{version}-rt%{xm_customver_rt}-xanmod%{xm_customver}
+%setup -q -n linux-6.6.15-rt%{xm_customver_rt}-xanmod%{xm_customver}
+/usr/bin/xzcat %{SOURCE1001} | /usr/bin/patch -p1
+/usr/bin/xzcat %{SOURCE1002} | /usr/bin/patch -p1
 
 #cve.patch.start cve patches
 #cve.patch.end
