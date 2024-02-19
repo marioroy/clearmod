@@ -4,13 +4,13 @@
 %define   xm_customver 1
 
 Name:     linux-xmlts-preempt
-Version:  6.1.77
-Release:  140
+Version:  6.1.78
+Release:  141
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
 Group:    kernel
-Source0:  https://github.com/xanmod/linux/archive/refs/tags/%{version}-xanmod%{xm_customver}.tar.gz
+Source0:  https://github.com/xanmod/linux/archive/refs/tags/6.1.77-xanmod%{xm_customver}.tar.gz
 Source1:  config
 Source2:  cmdline
 
@@ -27,6 +27,11 @@ Requires: linux-xmlts-preempt-license = %{version}-%{release}
 %global __os_install_post %{nil}
 %define debug_package %{nil}
 %define __strip /bin/true
+
+# The XanMod LTS 6.1.x kernel was last updated to 6.1.77 on 2024-02-06.
+# This kernel runs amazingly and like to keep it a little while longer.
+# Include subsequent kernel patches until no longer applicable or EOL.
+Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.77-78.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -143,7 +148,8 @@ Requires:       linux-xmlts-preempt-license = %{version}-%{release}
 Linux kernel build files
 
 %prep
-%setup -q -n linux-%{version}-xanmod%{xm_customver}
+%setup -q -n linux-6.1.77-xanmod%{xm_customver}
+/usr/bin/xzcat %{SOURCE1001} | /usr/bin/patch -p1
 
 #cve.patch.start cve patches
 #cve.patch.end
