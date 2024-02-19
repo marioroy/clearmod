@@ -124,12 +124,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XanMod boot-manager entries
-  org.clearlinux.xmedge-preempt.6.7.4-140
-* org.clearlinux.xmmain-preempt.6.6.16-140
+  org.clearlinux.xmedge-preempt.6.7.5-140
+* org.clearlinux.xmmain-preempt.6.6.17-140
 
 XanMod installed packages, exluding dev,extra,license
-  linux-xmedge-preempt-6.7.4-140
-* linux-xmmain-preempt-6.6.16-140
+  linux-xmedge-preempt-6.7.5-140
+* linux-xmmain-preempt-6.6.17-140
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -139,7 +139,7 @@ Though, skips the running kernel.
 
 ```bash
 ./xm-uninstall edge-preempt 140
-Removing org.clearlinux.xmedge-preempt.6.7.4-140
+Removing org.clearlinux.xmedge-preempt.6.7.5-140
 ```
 
 ## Caveat
