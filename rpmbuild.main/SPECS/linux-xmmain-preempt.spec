@@ -255,16 +255,11 @@ scripts/config -e ZRAM_MEMORY_TRACKING
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
-scripts/config -e PREEMPT_BUILD
 scripts/config -e PREEMPT
-scripts/config -e PREEMPT_COUNT
-scripts/config -e PREEMPT_RCU
-scripts/config -e PREEMPTION
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
 scripts/config -e SCHED_CLUSTER
 scripts/config -d RCU_BOOST
-scripts/config -d RCU_EXP_KTHREAD
 
 mv .config config
 

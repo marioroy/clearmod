@@ -251,25 +251,17 @@ scripts/config -e NTFS3_FS_POSIX_ACL
 scripts/config -m WINESYNC
 scripts/config -e ZRAM_MEMORY_TRACKING
 
-# Disable transparent hugepages.
-scripts/config -d TRANSPARENT_HUGEPAGE
-
 # Enable preempt_rt.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
 scripts/config -d PREEMPT
-scripts/config --set-val COMPACT_UNEVICTABLE_DEFAULT 0
-scripts/config -e PREEMPT_BUILD
 scripts/config -e PREEMPT_RT
-scripts/config -e PREEMPT_COUNT
-scripts/config -e PREEMPT_RCU
-scripts/config -e PREEMPTION
+scripts/config --set-val COMPACT_UNEVICTABLE_DEFAULT 0
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
 scripts/config -e SCHED_CLUSTER
 scripts/config -d RCU_BOOST
-scripts/config -d RCU_EXP_KTHREAD
 
 mv .config config
 
