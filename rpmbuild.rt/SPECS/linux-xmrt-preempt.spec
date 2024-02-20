@@ -252,33 +252,15 @@ scripts/config -m WINESYNC
 scripts/config -e ZRAM_MEMORY_TRACKING
 
 # Disable transparent hugepages.
-scripts/config -d ARCH_ENABLE_THP_MIGRATION
-scripts/config -d DEV_DAX
-scripts/config -d DEV_DAX_KMEM
-scripts/config -d DEV_DAX_PMEM
-scripts/config -d FS_DAX_PMD
-scripts/config -d READ_ONLY_THP_FOR_FS
-scripts/config -d THP_SWAP
 scripts/config -d TRANSPARENT_HUGEPAGE
-scripts/config -d TRANSPARENT_HUGEPAGE_ALWAYS
-scripts/config -d TRANSPARENT_HUGEPAGE_MADVISE
 
 # Enable preempt_rt.
-scripts/config -d LEDS_TRIGGER_CPU
-scripts/config -d NET_RX_BUSY_POLL
-scripts/config -d NUMA_BALANCING
-scripts/config -d NUMA_BALANCING_DEFAULT_ENABLED
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
 scripts/config -d PREEMPT
-scripts/config -d QUEUED_RWLOCKS
-scripts/config -d SOFTIRQ_ON_OWN_STACK
-scripts/config -e ARCH_SUPPORTS_RT
 scripts/config --set-val COMPACT_UNEVICTABLE_DEFAULT 0
-scripts/config -e HAVE_ATOMIC_CONSOLE
-scripts/config -d HAVE_PREEMPT_AUTO
-scripts/config -d PREEMPT_BUILD
+scripts/config -e PREEMPT_BUILD
 scripts/config -e PREEMPT_RT
 scripts/config -e PREEMPT_COUNT
 scripts/config -e PREEMPT_RCU
