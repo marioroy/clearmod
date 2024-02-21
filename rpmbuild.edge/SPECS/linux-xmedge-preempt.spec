@@ -5,7 +5,7 @@
 
 Name:     linux-xmedge-preempt
 Version:  6.7.5
-Release:  140
+Release:  141
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -97,7 +97,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch0301: 0001-linux6.7.y-bore4.2.0.patch
+Patch0301: 0001-linux6.7.y-bore4.2.1.patch
 
 %description
 The Linux kernel.
