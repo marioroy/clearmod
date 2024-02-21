@@ -5,7 +5,7 @@
 
 Name:     linux-xmlts-preempt
 Version:  6.1.78
-Release:  142
+Release:  143
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -107,7 +107,7 @@ Patch0162: 0162-xm-extra-optmization-flags.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch0301: 0001-linux6.1.y-bore4.2.1.patch
+Patch0301: 0001-linux6.1.y-bore4.2.0.patch
 
 %description
 The Linux kernel.
