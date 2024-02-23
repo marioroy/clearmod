@@ -1,9 +1,10 @@
 # bash completion script - XanMod on Clear project
 
-_xm-install()
+__xm-install()
 {
     local cur prev words cword
-    _init_completion || return
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     COMPREPLY=( $(compgen -W '
         edge-default edge-preempt
@@ -12,5 +13,5 @@ _xm-install()
         rt-preempt' -- "$cur")
     )
 } &&
-    complete -F _xm-install xm-install
+    complete -F __xm-install xm-install
 
