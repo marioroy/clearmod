@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmlts-default
-Version:  6.1.78
-Release:  143
+Version:  6.1.79
+Release:  150
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -28,10 +28,9 @@ Requires: linux-xmlts-default-license = %{version}-%{release}
 %define debug_package %{nil}
 %define __strip /bin/true
 
-# The XanMod LTS 6.1.x kernel was last updated to 6.1.77 on 2024-02-06.
-# This kernel runs amazingly and like to keep it a little while longer.
 # Include subsequent kernel patches until no longer applicable or EOL.
 Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.77-78.xz
+Source1002: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.78-79.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -103,11 +102,14 @@ Patch0149: netscale.patch
 Patch0162: 0162-xm-extra-optmization-flags.patch
 #Serie.end
 
+# Post incremental kernel updates for the XanMod kernel.
+Patch1001: 1001-arch-x86-kconfig-cpu.patch
+
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch0301: 0001-linux6.1.y-bore4.2.0.patch
+Patch2001: 0001-linux6.1.y-bore4.2.3.patch
 
 %description
 The Linux kernel.
@@ -149,7 +151,9 @@ Linux kernel build files
 
 %prep
 %setup -q -n linux-6.1.77-xanmod%{xm_customver}
-/usr/bin/xzcat %{SOURCE1001} | /usr/bin/patch -p1
+xzcat %{SOURCE1001} | patch -p1
+xzcat %{SOURCE1002} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch -p1
+%patch -P 1001 -p1
 
 #cve.patch.start cve patches
 #cve.patch.end
@@ -198,7 +202,7 @@ Linux kernel build files
 %patch -P 162 -p1
 #Serie.patch.end
 
-%patch -P 301 -p1
+%patch -P 2001 -p1
 
 
 cp %{SOURCE1} .config

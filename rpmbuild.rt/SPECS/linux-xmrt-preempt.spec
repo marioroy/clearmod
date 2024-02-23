@@ -5,8 +5,8 @@
 %define   xm_customver_rt 22
 
 Name:     linux-xmrt-preempt
-Version:  6.6.17
-Release:  141
+Version:  6.6.18
+Release:  150
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
@@ -29,10 +29,10 @@ Requires: linux-xmrt-preempt-license = %{version}-%{release}
 %define debug_package %{nil}
 %define __strip /bin/true
 
-# The XanMod RT 6.6.x kernel was last updated to 6.6.15 on 2024-02-07.
 # Include subsequent kernel patches until no longer applicable or EOL.
 Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.15-16.xz
 Source1002: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.16-17.xz
+Source1003: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.17-18.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -101,6 +101,9 @@ Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
+# Post incremental kernel updates for the XanMod kernel.
+Patch1001: 1001-arch-x86-kconfig-cpu.patch
+
 %description
 The Linux kernel.
 
@@ -141,8 +144,10 @@ Linux kernel build files
 
 %prep
 %setup -q -n linux-6.6.15-rt%{xm_customver_rt}-xanmod%{xm_customver}
-/usr/bin/xzcat %{SOURCE1001} | /usr/bin/patch -p1
-/usr/bin/xzcat %{SOURCE1002} | /usr/bin/patch -p1
+xzcat %{SOURCE1001} | patch -p1
+xzcat %{SOURCE1002} | patch -p1
+xzcat %{SOURCE1003} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch -p1
+%patch -P 1001 -p1
 
 #cve.patch.start cve patches
 #cve.patch.end

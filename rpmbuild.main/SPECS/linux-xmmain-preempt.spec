@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmmain-preempt
-Version:  6.6.17
-Release:  142
+Version:  6.6.18
+Release:  150
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -99,7 +99,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch0301: 0001-linux6.6.y-bore4.2.0.patch
+Patch2001: 0001-linux6.6.y-bore4.2.3.patch
 
 %description
 The Linux kernel.
@@ -189,7 +189,7 @@ Linux kernel build files
 %patch -P 166 -p1
 #Serie.patch.end
 
-%patch -P 301 -p1
+%patch -P 2001 -p1
 
 
 cp %{SOURCE1} .config
