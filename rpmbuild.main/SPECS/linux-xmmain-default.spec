@@ -5,7 +5,7 @@
 
 Name:     linux-xmmain-default
 Version:  6.6.18
-Release:  150
+Release:  151
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -101,6 +101,11 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # https://github.com/xanmod/linux/issues/333
 Patch2001: 0001-linux6.6.y-bore4.2.3.patch
 
+# Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
+# To resolve "cannot get min/max values for control 12 (id 19)".
+# https://bugzilla.kernel.org/show_bug.cgi?id=206543
+Patch2002: asus-prime-trx40-pro-s-mixer-def.patch
+
 %description
 The Linux kernel.
 
@@ -190,6 +195,7 @@ Linux kernel build files
 #Serie.patch.end
 
 %patch -P 2001 -p1
+%patch -P 2002 -p1
 
 
 cp %{SOURCE1} .config

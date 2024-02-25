@@ -6,7 +6,7 @@
 
 Name:     linux-xmrt-preempt
 Version:  6.6.18
-Release:  150
+Release:  151
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
@@ -104,6 +104,11 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # Post incremental kernel updates for the XanMod kernel.
 Patch1001: 1001-arch-x86-kconfig-cpu.patch
 
+# Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
+# To resolve "cannot get min/max values for control 12 (id 19)".
+# https://bugzilla.kernel.org/show_bug.cgi?id=206543
+Patch2002: asus-prime-trx40-pro-s-mixer-def.patch
+
 %description
 The Linux kernel.
 
@@ -195,6 +200,8 @@ xzcat %{SOURCE1003} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch -p1
 %patch -P 165 -p1
 %patch -P 166 -p1
 #Serie.patch.end
+
+%patch -P 2002 -p1
 
 
 cp %{SOURCE1} .config
