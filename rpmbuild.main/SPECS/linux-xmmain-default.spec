@@ -5,7 +5,7 @@
 
 Name:     linux-xmmain-default
 Version:  6.6.18
-Release:  151
+Release:  152
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -99,7 +99,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch2001: 0001-linux6.6.y-bore4.2.3.patch
+Patch2001: 0001-linux6.6.y-bore.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
