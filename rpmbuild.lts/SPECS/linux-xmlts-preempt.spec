@@ -156,8 +156,8 @@ Linux kernel build files
 
 %prep
 %setup -q -n linux-6.1.77-xanmod%{xm_customver}
-xzcat %{SOURCE1001} | patch -p1
-xzcat %{SOURCE1002} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch -p1
+xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
+xzcat %{SOURCE1002} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch --no-backup-if-mismatch -p1 --fuzz=2
 %patch -P 1001 -p1
 
 #cve.patch.start cve patches
