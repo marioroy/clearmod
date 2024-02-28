@@ -179,6 +179,15 @@ sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
 EOF
 ```
 
+The BORE CPU Scheduler is not supported running `PREEMPT_RT`. For the
+XanMod RT build, I include the BORE patch by default and enable `PREEMPT`.
+Set the `EXLUDEBORE` variable if you want instead, `PREEMPT_RT` preemption.
+
+```text
+EXCLUDEBORE=1 ./xm-build rt-preempt  (or)
+EXCLUDEBORE=1 LOCALMODCONFIG=1 ./xm-build rt-preempt 
+```
+
 The default variants are apples-to-apples to Clear's kernels. Basically,
 no overrides. The preempt variants enable `PREEMPT` or `PREEMPT_RT`.
 

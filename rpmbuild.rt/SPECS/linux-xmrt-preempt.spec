@@ -6,7 +6,7 @@
 
 Name:     linux-xmrt-preempt
 Version:  6.6.18
-Release:  151
+Release:  152
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
@@ -104,10 +104,18 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # Post incremental kernel updates for the XanMod kernel.
 Patch1001: 1001-arch-x86-kconfig-cpu.patch
 
+# Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
+# The CONFIG_SCHED_BORE knob is enabled by default, if patched.
+# https://github.com/firelzrd/bore-scheduler
+# https://github.com/xanmod/linux/issues/333
+Patch2001: 0001-linux6.6.y-bore-rt-pre.patch
+Patch2002: 0001-linux6.6.y-bore.patch
+Patch2003: 0001-linux6.6.y-bore-rt-post.patch
+
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
-Patch2002: asus-prime-trx40-pro-s-mixer-def.patch
+Patch2101: asus-prime-trx40-pro-s-mixer-def.patch
 
 %description
 The Linux kernel.
@@ -149,9 +157,9 @@ Linux kernel build files
 
 %prep
 %setup -q -n linux-6.6.15-rt%{xm_customver_rt}-xanmod%{xm_customver}
-xzcat %{SOURCE1001} | patch -p1
-xzcat %{SOURCE1002} | patch -p1
-xzcat %{SOURCE1003} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch -p1
+xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
+xzcat %{SOURCE1002} | patch --no-backup-if-mismatch -p1 --fuzz=2
+xzcat %{SOURCE1003} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch --no-backup-if-mismatch -p1 --fuzz=2
 %patch -P 1001 -p1
 
 #cve.patch.start cve patches
@@ -201,7 +209,14 @@ xzcat %{SOURCE1003} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch -p1
 %patch -P 166 -p1
 #Serie.patch.end
 
+# The BORE CPU Scheduler patch is included by default.
+%if %{_excludebore} == 0
+%patch -P 2001 -p1
 %patch -P 2002 -p1
+%patch -P 2003 -p1
+%endif
+
+%patch -P 2101 -p1
 
 
 cp %{SOURCE1} .config
@@ -263,13 +278,15 @@ scripts/config -e NTFS3_FS_POSIX_ACL
 scripts/config -m WINESYNC
 scripts/config -e ZRAM_MEMORY_TRACKING
 
-# Enable preempt_rt.
+# Enable preempt (bore patch included) or preempt_rt.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
-scripts/config -d PREEMPT
+%if %{_excludebore} == 0
+scripts/config -e PREEMPT
+%else
 scripts/config -e PREEMPT_RT
-scripts/config --set-val COMPACT_UNEVICTABLE_DEFAULT 0
+%endif
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
 scripts/config -e SCHED_CLUSTER
