@@ -4,9 +4,8 @@ Run [XanMod](https://github.com/xanmod) Kernels on [Clear Linux](https://www.cle
 
 The motivation for this project is that I like the XanMod kernel and opportunity
 to run a preempt-enabled Linux kernel. The XanMod kernels are configured to run
-equally well on all x86-64 CPUs with minimum support of x86-64-v3. Additionally,
-I enabled FQ-PIE packet scheduling, NTFS3 file-system driver, and the WineSync
-module for fast kernel-backed Wine.
+equally well on all x86-64 CPUs with minimum support of x86-64-v3. Additionally, I
+enable the NTFS3 file-system driver and WineSync module for fast kernel-backed Wine.
 
 ## Preparation and configuration
 
