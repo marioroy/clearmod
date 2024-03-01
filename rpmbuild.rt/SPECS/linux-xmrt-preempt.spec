@@ -2,16 +2,16 @@
 # Linux releases need to be named 6.x.0 not 6.x or various things break.
 #
 %define   xm_customver 1
-%define   xm_customver_rt 22
+%define   xm_customver_rt 23
 
 Name:     linux-xmrt-preempt
-Version:  6.6.18
-Release:  152
+Version:  6.6.19
+Release:  153
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
 Group:    kernel
-Source0:  https://github.com/xanmod/linux/archive/refs/tags/6.6.15-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
+Source0:  https://github.com/xanmod/linux/archive/refs/tags/6.6.18-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
 Source1:  config
 Source2:  cmdline
 
@@ -30,9 +30,7 @@ Requires: linux-xmrt-preempt-license = %{version}-%{release}
 %define __strip /bin/true
 
 # Include subsequent kernel patches until no longer applicable or EOL.
-Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.15-16.xz
-Source1002: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.16-17.xz
-Source1003: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.17-18.xz
+Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.18-19.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -101,9 +99,6 @@ Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
-# Post incremental kernel updates for the XanMod kernel.
-Patch1001: 1001-arch-x86-kconfig-cpu.patch
-
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default, if patched.
 # https://github.com/firelzrd/bore-scheduler
@@ -156,11 +151,8 @@ Requires:       linux-xmrt-preempt-license = %{version}-%{release}
 Linux kernel build files
 
 %prep
-%setup -q -n linux-6.6.15-rt%{xm_customver_rt}-xanmod%{xm_customver}
+%setup -q -n linux-6.6.18-rt%{xm_customver_rt}-xanmod%{xm_customver}
 xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
-xzcat %{SOURCE1002} | patch --no-backup-if-mismatch -p1 --fuzz=2
-xzcat %{SOURCE1003} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch --no-backup-if-mismatch -p1 --fuzz=2
-%patch -P 1001 -p1
 
 #cve.patch.start cve patches
 #cve.patch.end

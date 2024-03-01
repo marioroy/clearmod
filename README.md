@@ -2,10 +2,12 @@
 
 Run [XanMod](https://github.com/xanmod) Kernels on [Clear Linux](https://www.clearlinux.org) with ease.
 
-The motivation for this project is that I like the XanMod kernel and opportunity
-to run a preempt-enabled Linux kernel. The XanMod kernels are configured to run
-equally well on all x86-64 CPUs with minimum support of x86-64-v3. Additionally, I
-enable the NTFS3 file-system driver and WineSync module for fast kernel-backed Wine.
+The motivation comes from liking the XanMod kernel and opportunity to run a
+preempt-enabled Linux kernel. The XanMod kernels are configured to run equally
+well on all x86-64 CPUs with minimum support of x86-64-v3. Additionally, I
+enable the NTFS3 file-system driver, and NTSync or WineSync module for fast
+kernel-backed Wine. The Edge and Main variants include le9's patchset, providing
+anon and clean file pages protection under memory pressure.
 
 ## Preparation and configuration
 
@@ -20,11 +22,14 @@ kernel-install linux-firmware lz4 make package-utils wget xz
 
 Enable `sched_autogroup_enabled`. The knob optimizes the scheduler to isolate
 aggressive CPU burners (like build jobs) from desktop applications. This is
-enabled in Clear Desktop since 40820.
+enabled in Clear Desktop since 40820. The `sched_rt_runtime_us` value is to
+mitigate jitter running a process with real-time attributes, while background
+jobs consume many CPU cores.
 
 ```bash
 sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
 /proc/sys/kernel/sched_autogroup_enabled 1
+/proc/sys/kernel/sched_rt_runtime_us 980000
 EOF
 ```
 
@@ -108,7 +113,7 @@ and install the kernel.
 To quickly build a trimmed Linux kernel, `LOCALMODCONFIG=1` will build only
 the modules you have running. Therefore, make sure that all modules you will
 ever need are loaded. Keyboard modules for the cpio package, CD-ROM/DVD and
-EXFAT/NTFS3 filesystems, and WINESYNC are added in the `*.spec` files.
+EXFAT/NTFS3 filesystems, and NTSYNC or WINESYNC are added in the SPEC files.
 
 ```bash
 ./fetch-src edge
@@ -123,12 +128,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XanMod boot-manager entries
-  org.clearlinux.xmedge-preempt.6.7.6-152
-* org.clearlinux.xmmain-preempt.6.6.18-152
+  org.clearlinux.xmedge-preempt.6.7.7-153
+* org.clearlinux.xmmain-preempt.6.6.19-153
 
 XanMod installed packages, exluding dev,extra,license
-  linux-xmedge-preempt-6.7.6-152
-* linux-xmmain-preempt-6.6.18-152
+  linux-xmedge-preempt-6.7.7-153
+* linux-xmmain-preempt-6.6.19-153
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -137,8 +142,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 152
-Removing org.clearlinux.xmedge-preempt.6.7.6-152
+./xm-uninstall edge-preempt 153
+Removing org.clearlinux.xmedge-preempt.6.7.7-153
 ```
 
 ## Caveat

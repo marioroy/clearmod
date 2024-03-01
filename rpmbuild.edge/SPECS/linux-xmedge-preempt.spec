@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmedge-preempt
-Version:  6.7.6
-Release:  152
+Version:  6.7.7
+Release:  153
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -250,9 +250,9 @@ scripts/config -d NTFS3_64BIT_CLUSTER
 scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
 
-# Enable WINESYNC driver for fast kernel-backed Wine.
+# Enable NTSYNC driver for fast kernel-backed Wine.
 # Enable tracking the state of allocated blocks of zRAM.
-scripts/config -m WINESYNC
+scripts/config -m NTSYNC
 scripts/config -e ZRAM_MEMORY_TRACKING
 
 # Enable preempt.
@@ -330,7 +330,7 @@ BuildKernel() {
       scripts/config --file ${Target}/.config -e NTFS3_FS_POSIX_ACL
 
       # Add optional modules.
-      scripts/config --file ${Target}/.config -m WINESYNC
+      scripts/config --file ${Target}/.config -m NTSYNC
 
     %endif
 

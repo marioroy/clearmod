@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmlts-preempt
-Version:  6.1.79
-Release:  152
+Version:  6.1.80
+Release:  153
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -31,6 +31,7 @@ Requires: linux-xmlts-preempt-license = %{version}-%{release}
 # Include subsequent kernel patches until no longer applicable or EOL.
 Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.77-78.xz
 Source1002: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.78-79.xz
+Source1003: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.79-80.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -158,6 +159,7 @@ Linux kernel build files
 %setup -q -n linux-6.1.77-xanmod%{xm_customver}
 xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
 xzcat %{SOURCE1002} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch --no-backup-if-mismatch -p1 --fuzz=2
+xzcat %{SOURCE1003} | patch --no-backup-if-mismatch -p1 --fuzz=2
 %patch -P 1001 -p1
 
 #cve.patch.start cve patches
