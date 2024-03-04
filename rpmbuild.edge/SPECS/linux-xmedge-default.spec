@@ -97,7 +97,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch2000: 0001-eevdf-reweight_entity.patch
+Patch2000: eevdf_minor_fixes_for_reweight_entity.patch
 Patch2001: 0001-linux6.7.y-bore.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
