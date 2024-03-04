@@ -2,16 +2,16 @@
 # Linux releases need to be named 6.x.0 not 6.x or various things break.
 #
 %define   xm_customver 1
-%define   xm_customver_rt 23
+%define   xm_customver_rt 24
 
 Name:     linux-xmrt-preempt
 Version:  6.6.19
-Release:  153
+Release:  154
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
 Group:    kernel
-Source0:  https://github.com/xanmod/linux/archive/refs/tags/6.6.18-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
+Source0:  https://github.com/xanmod/linux/archive/refs/tags/%{version}-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
 Source1:  config
 Source2:  cmdline
 
@@ -28,9 +28,6 @@ Requires: linux-xmrt-preempt-license = %{version}-%{release}
 %global __os_install_post %{nil}
 %define debug_package %{nil}
 %define __strip /bin/true
-
-# Include subsequent kernel patches until no longer applicable or EOL.
-Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.18-19.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -103,6 +100,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # The CONFIG_SCHED_BORE knob is enabled by default, if patched.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
+Patch2000: 0001-eevdf-reweight_entity.patch
 Patch2001: 0001-linux6.6.y-bore-rt-pre.patch
 Patch2002: 0001-linux6.6.y-bore.patch
 Patch2003: 0001-linux6.6.y-bore-rt-post.patch
@@ -151,8 +149,7 @@ Requires:       linux-xmrt-preempt-license = %{version}-%{release}
 Linux kernel build files
 
 %prep
-%setup -q -n linux-6.6.18-rt%{xm_customver_rt}-xanmod%{xm_customver}
-xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
+%setup -q -n linux-%{version}-rt%{xm_customver_rt}-xanmod%{xm_customver}
 
 #cve.patch.start cve patches
 #cve.patch.end
@@ -203,6 +200,7 @@ xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
 
 # The BORE CPU Scheduler patch is included by default.
 %if %{_excludebore} == 0
+%patch -P 2000 -p1
 %patch -P 2001 -p1
 %patch -P 2002 -p1
 %patch -P 2003 -p1
@@ -265,12 +263,14 @@ scripts/config -d NTFS3_64BIT_CLUSTER
 scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
 
-# Enable WINESYNC driver for fast kernel-backed Wine.
+# Enable NTSYNC driver for fast kernel-backed Wine.
+# https://github.com/xanmod/linux/issues/420
+scripts/config -m NTSYNC
+
 # Enable tracking the state of allocated blocks of zRAM.
-scripts/config -m WINESYNC
 scripts/config -e ZRAM_MEMORY_TRACKING
 
-# Enable preempt (bore patch included) or preempt_rt.
+# Enable preempt (bore patch included) or preempt_rt (without bore).
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
@@ -349,7 +349,7 @@ BuildKernel() {
       scripts/config --file ${Target}/.config -e NTFS3_FS_POSIX_ACL
 
       # Add optional modules.
-      scripts/config --file ${Target}/.config -m WINESYNC
+      scripts/config --file ${Target}/.config -m NTSYNC
 
     %endif
 

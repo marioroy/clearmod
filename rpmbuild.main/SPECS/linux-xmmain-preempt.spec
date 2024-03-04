@@ -5,7 +5,7 @@
 
 Name:     linux-xmmain-preempt
 Version:  6.6.19
-Release:  153
+Release:  154
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -99,6 +99,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
+Patch2000: 0001-eevdf-reweight_entity.patch
 Patch2001: 0001-linux6.6.y-bore.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
@@ -194,6 +195,7 @@ Linux kernel build files
 %patch -P 166 -p1
 #Serie.patch.end
 
+%patch -P 2000 -p1
 %patch -P 2001 -p1
 %patch -P 2002 -p1
 
@@ -253,8 +255,10 @@ scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
 
 # Enable NTSYNC driver for fast kernel-backed Wine.
-# Enable tracking the state of allocated blocks of zRAM.
+# https://github.com/xanmod/linux/issues/420
 scripts/config -m NTSYNC
+
+# Enable tracking the state of allocated blocks of zRAM.
 scripts/config -e ZRAM_MEMORY_TRACKING
 
 # Enable preempt.

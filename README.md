@@ -6,8 +6,8 @@ The motivation comes from liking the XanMod kernel and opportunity to run a
 preempt-enabled Linux kernel. The XanMod kernels are configured to run equally
 well on all x86-64 CPUs with minimum support of x86-64-v3. Additionally, I
 enable the NTFS3 file-system driver, and NTSync or WineSync module for fast
-kernel-backed Wine. The Edge and Main variants include le9's patchset, providing
-anon and clean file pages protection under memory pressure.
+kernel-backed Wine. The Edge, Main, and RT variants include le9's patchset,
+providing anon and clean file pages protection under memory pressure.
 
 ## Preparation and configuration
 
@@ -128,12 +128,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XanMod boot-manager entries
-  org.clearlinux.xmedge-preempt.6.7.7-153
-* org.clearlinux.xmmain-preempt.6.6.19-153
+  org.clearlinux.xmedge-preempt.6.7.7-154
+* org.clearlinux.xmmain-preempt.6.6.19-154
 
 XanMod installed packages, exluding dev,extra,license
-  linux-xmedge-preempt-6.7.7-153
-* linux-xmmain-preempt-6.6.19-153
+  linux-xmedge-preempt-6.7.7-154
+* linux-xmmain-preempt-6.6.19-154
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -142,8 +142,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 153
-Removing org.clearlinux.xmedge-preempt.6.7.7-153
+./xm-uninstall edge-preempt 154
+Removing org.clearlinux.xmedge-preempt.6.7.7-154
 ```
 
 ## Caveat

@@ -69,7 +69,7 @@ case "$1" in
     rt )
         cd "rpmbuild.rt" || exit 1
         echo "Fetching sources for XanMod RT."
-        fetch "41130" "linux-ltscurrent-6.6.8-1394.src.rpm" "6.6.18-rt23-xanmod1.tar.gz"
+        fetch "41130" "linux-ltscurrent-6.6.8-1394.src.rpm" "6.6.19-rt24-xanmod1.tar.gz"
         ;;
     * ) echo "synopsis"
         echo "   $0 all | edge | main | lts | rt"
