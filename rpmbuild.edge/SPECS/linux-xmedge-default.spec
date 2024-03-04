@@ -5,7 +5,7 @@
 
 Name:     linux-xmedge-default
 Version:  6.7.7
-Release:  154
+Release:  155
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
