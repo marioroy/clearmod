@@ -21,10 +21,9 @@ kernel-install linux-firmware lz4 make package-utils wget xz
 ```
 
 Enable `sched_autogroup_enabled`. The knob optimizes the scheduler to isolate
-aggressive CPU burners (like build jobs) from desktop applications. This is
-enabled in Clear Desktop since 40820. The `sched_rt_runtime_us` value is to
-mitigate jitter running a process with real-time attributes, while background
-jobs consume many CPU cores.
+aggressive CPU burners (like build jobs) from desktop applications.
+The `sched_rt_runtime_us` value is to mitigate jitter running a process with
+real-time attributes, while background jobs consume many CPU cores.
 
 ```bash
 sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
