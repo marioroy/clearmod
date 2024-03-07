@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmlts-default
-Version:  6.1.80
-Release:  153
+Version:  6.1.81
+Release:  154
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -32,6 +32,7 @@ Requires: linux-xmlts-default-license = %{version}-%{release}
 Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.77-78.xz
 Source1002: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.78-79.xz
 Source1003: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.79-80.xz
+Source1004: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.80-81.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -157,9 +158,12 @@ Linux kernel build files
 
 %prep
 %setup -q -n linux-6.1.77-xanmod%{xm_customver}
+
 xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
 xzcat %{SOURCE1002} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch --no-backup-if-mismatch -p1 --fuzz=2
 xzcat %{SOURCE1003} | patch --no-backup-if-mismatch -p1 --fuzz=2
+xzcat %{SOURCE1004} | patch --no-backup-if-mismatch -p1 --fuzz=2
+
 %patch -P 1001 -p1
 
 #cve.patch.start cve patches
@@ -248,6 +252,9 @@ scripts/config -d LATENCYTOP
 scripts/config -d PERF_EVENTS_AMD_POWER
 scripts/config -d DEBUG_BUGVERBOSE
 scripts/config -d DEBUG_PREEMPT
+scripts/config -d LOCK_TORTURE_TEST
+scripts/config -d RCU_TORTURE_TEST
+scripts/config -d TORTURE_TEST
 %endif
 
 # Disable tracers, XanMod default.

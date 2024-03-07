@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmmain-preempt
-Version:  6.6.19
-Release:  155
+Version:  6.6.21
+Release:  156
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -235,6 +235,9 @@ scripts/config -d LATENCYTOP
 scripts/config -d PERF_EVENTS_AMD_POWER
 scripts/config -d DEBUG_BUGVERBOSE
 scripts/config -d DEBUG_PREEMPT
+scripts/config -d LOCK_TORTURE_TEST
+scripts/config -d RCU_TORTURE_TEST
+scripts/config -d TORTURE_TEST
 %endif
 
 # Disable tracers, XanMod default.

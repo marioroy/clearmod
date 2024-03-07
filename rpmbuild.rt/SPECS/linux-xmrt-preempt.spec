@@ -5,13 +5,13 @@
 %define   xm_customver_rt 24
 
 Name:     linux-xmrt-preempt
-Version:  6.6.19
-Release:  155
+Version:  6.6.21
+Release:  156
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
 Group:    kernel
-Source0:  https://github.com/xanmod/linux/archive/refs/tags/%{version}-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
+Source0:  https://github.com/xanmod/linux/archive/refs/tags/6.6.19-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
 Source1:  config
 Source2:  cmdline
 
@@ -28,6 +28,10 @@ Requires: linux-xmrt-preempt-license = %{version}-%{release}
 %global __os_install_post %{nil}
 %define debug_package %{nil}
 %define __strip /bin/true
+
+# Include subsequent kernel patches until no longer applicable or EOL.
+Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.19-20.xz
+Source1002: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.20-21.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -149,7 +153,10 @@ Requires:       linux-xmrt-preempt-license = %{version}-%{release}
 Linux kernel build files
 
 %prep
-%setup -q -n linux-%{version}-rt%{xm_customver_rt}-xanmod%{xm_customver}
+%setup -q -n linux-6.6.19-rt%{xm_customver_rt}-xanmod%{xm_customver}
+
+xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
+xzcat %{SOURCE1002} | patch --no-backup-if-mismatch -p1 --fuzz=2
 
 #cve.patch.start cve patches
 #cve.patch.end
@@ -244,6 +251,9 @@ scripts/config -d LATENCYTOP
 scripts/config -d PERF_EVENTS_AMD_POWER
 scripts/config -d DEBUG_BUGVERBOSE
 scripts/config -d DEBUG_PREEMPT
+scripts/config -d LOCK_TORTURE_TEST
+scripts/config -d RCU_TORTURE_TEST
+scripts/config -d TORTURE_TEST
 %endif
 
 # Disable tracers, XanMod default.

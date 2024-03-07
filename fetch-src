@@ -54,22 +54,22 @@ case "$1" in
     edge )
         cd "rpmbuild.edge" || exit 1
         echo "Fetching sources for XanMod Edge."
-        fetch "41160" "linux-6.7.7-1412.src.rpm" "6.7.7-xanmod1.tar.gz"
+        fetch "41190" "linux-6.7.8-1413.src.rpm" "6.7.9-xanmod1.tar.gz"
         ;;
     main )
         cd "rpmbuild.main" || exit 1
         echo "Fetching sources for XanMod Main."
-        fetch "41160" "linux-ltscurrent-6.6.8-1394.src.rpm" "6.6.19-xanmod1.tar.gz"
+        fetch "41190" "linux-ltscurrent-6.6.8-1394.src.rpm" "6.6.21-xanmod1.tar.gz"
         ;;
     lts )
         cd "rpmbuild.lts" || exit 1
         echo "Fetching sources for XanMod LTS."
-        fetch "41160" "linux-ltsprev-6.1.69-1331.src.rpm" "6.1.77-xanmod1.tar.gz"
+        fetch "41190" "linux-ltsprev-6.1.69-1331.src.rpm" "6.1.77-xanmod1.tar.gz"
         ;;
     rt )
         cd "rpmbuild.rt" || exit 1
         echo "Fetching sources for XanMod RT."
-        fetch "41160" "linux-ltscurrent-6.6.8-1394.src.rpm" "6.6.19-rt24-xanmod1.tar.gz"
+        fetch "41190" "linux-ltscurrent-6.6.8-1394.src.rpm" "6.6.19-rt24-xanmod1.tar.gz"
         ;;
     * ) echo "synopsis"
         echo "   $0 all | edge | main | lts | rt"
