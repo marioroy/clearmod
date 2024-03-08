@@ -5,7 +5,7 @@
 
 Name:     linux-xmmain-preempt
 Version:  6.6.21
-Release:  156
+Release:  157
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/

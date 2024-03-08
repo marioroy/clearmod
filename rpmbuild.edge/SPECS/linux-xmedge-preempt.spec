@@ -5,7 +5,7 @@
 
 Name:     linux-xmedge-preempt
 Version:  6.7.9
-Release:  156
+Release:  157
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
