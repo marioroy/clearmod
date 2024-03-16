@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmlts-preempt
-Version:  6.1.81
-Release:  154
+Version:  6.1.82
+Release:  158
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -33,6 +33,7 @@ Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.77-78.xz
 Source1002: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.78-79.xz
 Source1003: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.79-80.xz
 Source1004: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.80-81.xz
+Source1005: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.81-82.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -116,7 +117,10 @@ Patch2001: 0001-linux6.1.y-bore.patch
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
-Patch2002: asus-prime-trx40-pro-s-mixer-def.patch
+Patch2101: asus-prime-trx40-pro-s-mixer-def.patch
+
+# Sched fair updates.
+Patch2102: sched_fair_fix_initial_util_avg_calculation.patch
 
 %description
 The Linux kernel.
@@ -163,6 +167,7 @@ xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
 xzcat %{SOURCE1002} | sed '/a\/arch\/x86\/Kconfig.cpu/,+12d' | patch --no-backup-if-mismatch -p1 --fuzz=2
 xzcat %{SOURCE1003} | patch --no-backup-if-mismatch -p1 --fuzz=2
 xzcat %{SOURCE1004} | patch --no-backup-if-mismatch -p1 --fuzz=2
+xzcat %{SOURCE1005} | patch --no-backup-if-mismatch -p1 --fuzz=2
 
 %patch -P 1001 -p1
 
@@ -214,7 +219,8 @@ xzcat %{SOURCE1004} | patch --no-backup-if-mismatch -p1 --fuzz=2
 #Serie.patch.end
 
 %patch -P 2001 -p1
-%patch -P 2002 -p1
+%patch -P 2101 -p1
+%patch -P 2102 -p1
 
 
 cp %{SOURCE1} .config
@@ -275,8 +281,9 @@ scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
 
 # Enable WINESYNC driver for fast kernel-backed Wine.
-# Enable tracking the state of allocated blocks of zRAM.
 scripts/config -m WINESYNC
+
+# Enable tracking the state of allocated blocks of zRAM.
 scripts/config -e ZRAM_MEMORY_TRACKING
 
 # Enable preempt.
@@ -284,10 +291,11 @@ scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
 scripts/config -e PREEMPT
+scripts/config -e RCU_BOOST
+scripts/config -d RCU_EXP_KTHREAD
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
 scripts/config -e SCHED_CLUSTER
-scripts/config -d RCU_BOOST
 
 mv .config config
 

@@ -13,6 +13,7 @@ ve and vd. So update V unconditionally when se is runnable.
 
 Suggested-by: Abel Wu <wuyun.abel@bytedance.com>
 Signed-off-by: Tianchen Ding <dtcccc@linux.alibaba.com>
+Reviewed-by: Abel Wu <wuyun.abel@bytedance.com>
 ---
  kernel/sched/fair.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)

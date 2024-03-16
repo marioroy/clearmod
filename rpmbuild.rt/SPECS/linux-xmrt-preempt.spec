@@ -2,16 +2,16 @@
 # Linux releases need to be named 6.x.0 not 6.x or various things break.
 #
 %define   xm_customver 1
-%define   xm_customver_rt 24
+%define   xm_customver_rt 26
 
 Name:     linux-xmrt-preempt
-Version:  6.6.21
-Release:  157
+Version:  6.6.22
+Release:  158
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
 Group:    kernel
-Source0:  https://github.com/xanmod/linux/archive/refs/tags/6.6.19-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
+Source0:  https://github.com/xanmod/linux/archive/refs/tags/6.6.21-rt%{xm_customver_rt}-xanmod%{xm_customver}.tar.gz
 Source1:  config
 Source2:  cmdline
 
@@ -30,8 +30,7 @@ Requires: linux-xmrt-preempt-license = %{version}-%{release}
 %define __strip /bin/true
 
 # Include subsequent kernel patches until no longer applicable or EOL.
-Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.19-20.xz
-Source1002: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.20-21.xz
+Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.21-22.xz
 
 #cve.start cve patches from 0001 to 050
 #cve.end
@@ -104,7 +103,6 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # The CONFIG_SCHED_BORE knob is enabled by default, if patched.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch2000: eevdf_minor_fixes_for_reweight_entity.patch
 Patch2001: 0001-linux6.6.y-bore-rt-pre.patch
 Patch2002: 0001-linux6.6.y-bore.patch
 Patch2003: 0001-linux6.6.y-bore-rt-post.patch
@@ -113,6 +111,10 @@ Patch2003: 0001-linux6.6.y-bore-rt-post.patch
 # To resolve "cannot get min/max values for control 12 (id 19)".
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
 Patch2101: asus-prime-trx40-pro-s-mixer-def.patch
+
+# Sched fair updates.
+Patch2102: sched_fair_fix_initial_util_avg_calculation.patch
+Patch2103: eevdf_minor_fixes_for_reweight_entity.patch
 
 %description
 The Linux kernel.
@@ -153,10 +155,9 @@ Requires:       linux-xmrt-preempt-license = %{version}-%{release}
 Linux kernel build files
 
 %prep
-%setup -q -n linux-6.6.19-rt%{xm_customver_rt}-xanmod%{xm_customver}
+%setup -q -n linux-6.6.21-rt%{xm_customver_rt}-xanmod%{xm_customver}
 
 xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
-xzcat %{SOURCE1002} | patch --no-backup-if-mismatch -p1 --fuzz=2
 
 #cve.patch.start cve patches
 #cve.patch.end
@@ -207,13 +208,14 @@ xzcat %{SOURCE1002} | patch --no-backup-if-mismatch -p1 --fuzz=2
 
 # The BORE CPU Scheduler patch is included by default.
 %if %{_excludebore} == 0
-%patch -P 2000 -p1
 %patch -P 2001 -p1
 %patch -P 2002 -p1
 %patch -P 2003 -p1
 %endif
 
 %patch -P 2101 -p1
+%patch -P 2102 -p1
+%patch -P 2103 -p1
 
 
 cp %{SOURCE1} .config
@@ -281,18 +283,24 @@ scripts/config -m NTSYNC
 scripts/config -e ZRAM_MEMORY_TRACKING
 
 # Enable preempt (bore patch included) or preempt_rt (without bore).
+# For the RT preemption, do not enable RCU_EXP_KTHREAD or RCU_LAZY.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
 %if %{_excludebore} == 0
 scripts/config -e PREEMPT
+scripts/config -e RCU_BOOST
+scripts/config -d RCU_EXP_KTHREAD
+scripts/config -e RCU_LAZY
 %else
 scripts/config -e PREEMPT_RT
+scripts/config -e RCU_BOOST
+scripts/config -d RCU_EXP_KTHREAD
+scripts/config -d RCU_LAZY
 %endif
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
 scripts/config -e SCHED_CLUSTER
-scripts/config -d RCU_BOOST
 
 mv .config config
 

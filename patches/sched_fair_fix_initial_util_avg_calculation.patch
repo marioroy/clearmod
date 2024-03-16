@@ -1,0 +1,57 @@
+From git@z Thu Jan  1 00:00:00 1970
+Subject: [PATCH v2] sched/fair: fix initial util_avg calculation
+From: Dawei Li <daweilics@gmail.com>
+Date: Thu, 14 Mar 2024 18:59:16 -0700
+Message-Id: <20240315015916.21545-1-daweilics@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+Change se->load.weight to se_weight(se) in the calculation for the
+initial util_avg to avoid unnecessarily inflating the util_avg by 1024
+times.
+
+The reason is that se->load.weight has the unit/scale as the scaled-up
+load, while cfs_rg->avg.load_avg has the unit/scale as the true task
+weight (as mapped directly from the task's nice/priority value). With
+CONFIG_32BIT, the scaled-up load is equal to the true task weight. With
+CONFIG_64BIT, the scaled-up load is 1024 times the true task weight.
+Thus, the current code may inflate the util_avg by 1024 times. The
+follow-up capping will not allow the util_avg value to go wild. But the
+calculation should have the correct logic.
+
+Signed-off-by: Dawei Li <daweilics@gmail.com>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+Changes in v2:
+- update the commit message
+---
+ kernel/sched/fair.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index a19ea290b790..5f98f639bdb9 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1031,7 +1031,8 @@ void init_entity_runnable_average(struct sched_entity *se)
+  * With new tasks being created, their initial util_avgs are extrapolated
+  * based on the cfs_rq's current util_avg:
+  *
+- *   util_avg = cfs_rq->util_avg / (cfs_rq->load_avg + 1) * se.load.weight
++ *   util_avg = cfs_rq->avg.util_avg / (cfs_rq->avg.load_avg + 1)
++ *		* se_weight(se)
+  *
+  * However, in many cases, the above util_avg does not give a desired
+  * value. Moreover, the sum of the util_avgs may be divergent, such
+@@ -1078,7 +1079,7 @@ void post_init_entity_util_avg(struct task_struct *p)
+ 
+ 	if (cap > 0) {
+ 		if (cfs_rq->avg.util_avg != 0) {
+-			sa->util_avg  = cfs_rq->avg.util_avg * se->load.weight;
++			sa->util_avg  = cfs_rq->avg.util_avg * se_weight(se);
+ 			sa->util_avg /= (cfs_rq->avg.load_avg + 1);
+ 
+ 			if (sa->util_avg > cap)
+-- 
+2.40.1
+

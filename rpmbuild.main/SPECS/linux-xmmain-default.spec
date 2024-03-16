@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmmain-default
-Version:  6.6.21
-Release:  157
+Version:  6.6.22
+Release:  158
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -99,13 +99,16 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch2000: eevdf_minor_fixes_for_reweight_entity.patch
 Patch2001: 0001-linux6.6.y-bore.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
-Patch2002: asus-prime-trx40-pro-s-mixer-def.patch
+Patch2101: asus-prime-trx40-pro-s-mixer-def.patch
+
+# Sched fair updates.
+Patch2102: sched_fair_fix_initial_util_avg_calculation.patch
+Patch2103: eevdf_minor_fixes_for_reweight_entity.patch
 
 %description
 The Linux kernel.
@@ -195,9 +198,10 @@ Linux kernel build files
 %patch -P 166 -p1
 #Serie.patch.end
 
-%patch -P 2000 -p1
 %patch -P 2001 -p1
-%patch -P 2002 -p1
+%patch -P 2101 -p1
+%patch -P 2102 -p1
+%patch -P 2103 -p1
 
 
 cp %{SOURCE1} .config
