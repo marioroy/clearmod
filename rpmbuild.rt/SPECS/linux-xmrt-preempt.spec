@@ -6,7 +6,7 @@
 
 Name:     linux-xmrt-preempt
 Version:  6.6.22
-Release:  158
+Release:  159
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
@@ -53,6 +53,8 @@ Source1001: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.6.21-22.xz
 # 0121-locking-rwsem-spin-faster.patch
 # Clear patch omitted, due to removal in the CL 6.7.x kernel.
 # 0142-tcptuning.patch
+# Clear patch omitted, due to removal in the CL 6.8.x kernel.
+# 0107-bootstats-add-printk-s-to-measure-boot-time-in-more-.patch
 
 # Clear patches omitted, due to removal in the XanMod kernel.
 # 0001-sched-migrate.patch (reverted in 6.5.7)
@@ -63,7 +65,6 @@ Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
 Patch0102: 0102-increase-the-ext4-default-commit-age.patch
 Patch0104: 0104-pci-pme-wakeups.patch
 Patch0106: 0106-intel_idle-tweak-cpuidle-cstates.patch
-Patch0107: 0107-bootstats-add-printk-s-to-measure-boot-time-in-more-.patch
 Patch0108: 0108-smpboot-reuse-timer-calibration.patch
 Patch0111: 0111-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch
 Patch0112: 0112-init-wait-for-partition-and-retry-scan.patch
@@ -106,6 +107,11 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 Patch2001: 0001-linux6.6.y-bore-rt-pre.patch
 Patch2002: 0001-linux6.6.y-bore.patch
 Patch2003: 0001-linux6.6.y-bore-rt-post.patch
+Patch2004: 0002-pcores-fair.patch
+
+# Add HZ_600, HZ_750, and HZ_800 timer-tick options.
+# https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
+Patch2100: hz-600-750-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
@@ -170,7 +176,6 @@ xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
 %patch -P 102 -p1
 %patch -P 104 -p1
 %patch -P 106 -p1
-%patch -P 107 -p1
 %patch -P 108 -p1
 %patch -P 111 -p1
 %patch -P 112 -p1
@@ -206,13 +211,14 @@ xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
 %patch -P 166 -p1
 #Serie.patch.end
 
-# The BORE CPU Scheduler patch is included by default.
-%if %{_excludebore} == 0
+%if %{_bore} == 1
 %patch -P 2001 -p1
 %patch -P 2002 -p1
 %patch -P 2003 -p1
 %endif
 
+%patch -P 2004 -p1
+%patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
@@ -223,6 +229,11 @@ cp %{SOURCE1} .config
 # Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
+
+# Set timer frequency { 1000, 800, 750, 600, 500, 300, 250, or 100 }.
+# Default to 800Hz tick rate.
+scripts/config -d HZ_1000
+scripts/config -e HZ_%{_hzval}
 
 # Default to maximum amount of ASLR bits.
 scripts/config --set-val ARCH_MMAP_RND_BITS 32
@@ -287,7 +298,7 @@ scripts/config -e ZRAM_MEMORY_TRACKING
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
-%if %{_excludebore} == 0
+%if %{_bore} == 1
 scripts/config -e PREEMPT
 scripts/config -e RCU_BOOST
 scripts/config -d RCU_EXP_KTHREAD

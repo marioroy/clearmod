@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmedge-default
-Version:  6.7.10
-Release:  158
+Version:  6.8.1
+Release:  159
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -35,6 +35,7 @@ Requires: linux-xmedge-default-license = %{version}-%{release}
 #mainline.end
 
 # Clear patches commented out or not patched in Clear's spec file.
+# 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 # 0113-print-fsync-count-for-bootchart.patch
 # 0118-add-scheduler-turbo3-patch.patch
 # 0132-prezero-20220308.patch
@@ -57,7 +58,6 @@ Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
 Patch0102: 0102-increase-the-ext4-default-commit-age.patch
 Patch0104: 0104-pci-pme-wakeups.patch
 Patch0106: 0106-intel_idle-tweak-cpuidle-cstates.patch
-Patch0107: 0107-bootstats-add-printk-s-to-measure-boot-time-in-more-.patch
 Patch0108: 0108-smpboot-reuse-timer-calibration.patch
 Patch0111: 0111-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch
 Patch0112: 0112-init-wait-for-partition-and-retry-scan.patch
@@ -75,10 +75,8 @@ Patch0131: 0131-add-a-per-cpu-minimum-high-watermark-an-tune-batch-s.patch
 Patch0133: 0133-xm-novector.patch
 Patch0134: 0134-md-raid6-algorithms-scale-test-duration-for-speedier.patch
 Patch0135: 0135-initcall-only-print-non-zero-initcall-debug-to-speed.patch
-Patch0136: scale.patch
 Patch0137: libsgrowdown.patch
 Patch0141: epp-retune.patch
-Patch0147: 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0154: 0136-crypto-kdf-make-the-module-init-call-a-late-init-cal.patch
 Patch0155: ratelimit-sched-yield.patch
@@ -97,7 +95,12 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
-Patch2001: 0001-linux6.7.y-bore.patch
+Patch2001: 0001-linux6.8.y-bore.patch
+Patch2002: 0002-pcores-fair.patch
+
+# Add HZ_600, HZ_750, and HZ_800 timer-tick options.
+# https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
+Patch2100: hz-600-750-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
@@ -160,7 +163,6 @@ Linux kernel build files
 %patch -P 102 -p1
 %patch -P 104 -p1
 %patch -P 106 -p1
-%patch -P 107 -p1
 %patch -P 108 -p1
 %patch -P 111 -p1
 %patch -P 112 -p1
@@ -178,10 +180,8 @@ Linux kernel build files
 %patch -P 133 -p1
 %patch -P 134 -p1
 %patch -P 135 -p1
-%patch -P 136 -p1
 %patch -P 137 -p1
 %patch -P 141 -p1
-%patch -P 147 -p1
 %patch -P 148 -p1
 %patch -P 154 -p1
 %patch -P 155 -p1
@@ -197,6 +197,8 @@ Linux kernel build files
 #Serie.patch.end
 
 %patch -P 2001 -p1
+%patch -P 2002 -p1
+%patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
@@ -207,6 +209,11 @@ cp %{SOURCE1} .config
 # Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
+
+# Set timer frequency { 1000, 800, 750, 600, 500, 300, 250, or 100 }.
+# Default to 800Hz tick rate.
+scripts/config -d HZ_1000
+scripts/config -e HZ_%{_hzval}
 
 # Default to maximum amount of ASLR bits.
 scripts/config --set-val ARCH_MMAP_RND_BITS 32
@@ -310,9 +317,6 @@ BuildKernel() {
       # Add modules for Caches.
       scripts/config --file ${Target}/.config -m NETFS_SUPPORT
       scripts/config --file ${Target}/.config -d NETFS_STATS
-      scripts/config --file ${Target}/.config -m FSCACHE
-      scripts/config --file ${Target}/.config -d FSCACHE_STATS
-      scripts/config --file ${Target}/.config -d FSCACHE_DEBUG
       scripts/config --file ${Target}/.config -m CACHEFILES
       scripts/config --file ${Target}/.config -d CACHEFILES_DEBUG
       scripts/config --file ${Target}/.config -d CACHEFILES_ERROR_INJECTION

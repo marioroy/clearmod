@@ -5,7 +5,7 @@
 
 Name:     linux-xmlts-default
 Version:  6.1.82
-Release:  158
+Release:  159
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -59,6 +59,8 @@ Source1005: https://cdn.kernel.org/pub/linux/kernel/v6.x/incr/patch-6.1.81-82.xz
 # 0402-sched-hybrid2.patch
 # 0403-sched-hybrid3.patch
 # 0404-sched-hybrid4.patch
+# Clear patch omitted, due to removal in the CL 6.8.x kernel.
+# 0107-bootstats-add-printk-s-to-measure-boot-time-in-more-.patch
 
 # Clear patches omitted, due to removal in the XanMod kernel.
 # 0001-sched-migrate.patch (reverted in 6.1.57)
@@ -70,7 +72,6 @@ Patch0102: 0102-increase-the-ext4-default-commit-age.patch
 Patch0104: 0104-pci-pme-wakeups.patch
 Patch0105: 0105-ksm-wakeups.patch
 Patch0106: 0106-intel_idle-tweak-cpuidle-cstates.patch
-Patch0107: 0107-bootstats-add-printk-s-to-measure-boot-time-in-more-.patch
 Patch0108: 0108-smpboot-reuse-timer-calibration.patch
 Patch0111: 0111-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch
 Patch0114: 0114-add-boot-option-to-allow-unsigned-modules.patch
@@ -113,6 +114,10 @@ Patch1001: 1001-arch-x86-kconfig-cpu.patch
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
 Patch2001: 0001-linux6.1.y-bore.patch
+
+# Add HZ_600, HZ_750, and HZ_800 timer-tick options.
+# https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
+Patch2100: hz-600-750-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
@@ -183,7 +188,6 @@ xzcat %{SOURCE1005} | patch --no-backup-if-mismatch -p1 --fuzz=2
 %patch -P 104 -p1
 %patch -P 105 -p1
 %patch -P 106 -p1
-%patch -P 107 -p1
 %patch -P 108 -p1
 %patch -P 111 -p1
 %patch -P 114 -p1
@@ -219,6 +223,7 @@ xzcat %{SOURCE1005} | patch --no-backup-if-mismatch -p1 --fuzz=2
 #Serie.patch.end
 
 %patch -P 2001 -p1
+%patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 
@@ -228,6 +233,11 @@ cp %{SOURCE1} .config
 # Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
+
+# Set timer frequency { 1000, 800, 750, 600, 500, 300, 250, or 100 }.
+# Default to 800Hz tick rate.
+scripts/config -d HZ_1000
+scripts/config -e HZ_%{_hzval}
 
 # Default to maximum amount of ASLR bits.
 scripts/config --set-val ARCH_MMAP_RND_BITS 32

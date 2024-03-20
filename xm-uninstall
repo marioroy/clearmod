@@ -96,8 +96,6 @@ function xm_uninstall {
 
     other_kernel=$(ls -1t "org.clearlinux.${variant}".* 2>/dev/null | head -1)
     [[ -n "$other_kernel" ]] && sudo ln -sf "$other_kernel" "default-${variant}"
-
-    sync
 }
 
 case "$1" in

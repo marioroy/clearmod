@@ -63,7 +63,6 @@ function xm_install {
         other_kernel=$(ls -1t "org.clearlinux.${variant}".* 2>/dev/null | head -1)
         [[ -n "$other_kernel" ]] && sudo ln -sf "$other_kernel" "default-${variant}"
 
-        sync
         exit 2
     fi
 
@@ -82,8 +81,6 @@ function xm_install {
 
         sudo depmod -A "$kernel"
     fi
-
-    sync
 }
 
 case "$1" in
