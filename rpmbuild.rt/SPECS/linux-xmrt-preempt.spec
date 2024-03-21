@@ -6,7 +6,7 @@
 
 Name:     linux-xmrt-preempt
 Version:  6.6.22
-Release:  159
+Release:  160
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org

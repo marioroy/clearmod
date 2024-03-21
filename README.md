@@ -184,16 +184,7 @@ Aloha!
 
 ## Epilogue
 
-The XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler patch. You can turn it off by running `sudo sysctl -w kernel.sched_bore=0` or append an entry to `/etc/clr-power-tweaks.conf`.
-
-```bash
-sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
-/proc/sys/kernel/sched_bore 0
-EOF
-```
-
-The BORE CPU Scheduler is excluded running `PREEMPT_RT` preemption.
-Define the `BORE` variable to include the patch and enable `PREEMPT` instead.
+The XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. For the RT variant, BORE is excluded running `PREEMPT_RT` preemption. Define the `BORE` variable to include the patch and enable `PREEMPT` instead.
 
 ```text
 BORE=1 ./xm-build rt-preempt
