@@ -54,7 +54,7 @@ case "$1" in
     edge )
         cd "rpmbuild.edge" || exit 1
         echo "Fetching sources for XanMod Edge."
-        fetch "41270" "linux-6.8.1-1418.src.rpm" "6.8.1-xanmod1.tar.gz"
+        fetch "41280" "linux-6.8.1-1419.src.rpm" "6.8.1-xanmod1.tar.gz"
         ;;
     main )
         cd "rpmbuild.main" || exit 1
