@@ -1,0 +1,28 @@
+EEVDF place_entity: PLACE_LAG: skip calculation if se->vlag == 0
+
+From BORE author:
+
+A non-zero se->vlag is possible only if the entity was once on a runqueue before.
+And inside of the branched block, a 64-bit division is performed unconditionally.
+It's a costly process while it's so obvious se->vlag == 0 makes always lag = 0 as
+the result, which is the same result as if the whole branch doesn't run.
+My idea of adding this test is bypassing this specific (and often happening) case.
+
+Optimization for the 6.6.y RT kernel (testing: XanMod on Clear project):
+
+Verified the se->vlag test is beneficial. For one, applications launch faster.
+This patch is for the RT kernel (using PREEMPT_RT preemption), which BORE is
+unsupported. So, apply from BORE the se->vlag test only.
+
+diff -uar a/kernel/sched/fair.c b/kernel/sched/fair.c
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5095,7 +5095,7 @@
+ 	 *
+ 	 * EEVDF: placement strategy #1 / #2
+ 	 */
+-	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running) {
++	if (se->vlag && sched_feat(PLACE_LAG) && cfs_rq->nr_running) {
+ 		struct sched_entity *curr = cfs_rq->curr;
+ 		unsigned long load;
+ 

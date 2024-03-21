@@ -6,7 +6,7 @@
 
 Name:     linux-xmrt-preempt
 Version:  6.6.22
-Release:  160
+Release:  161
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
@@ -107,7 +107,8 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 Patch2001: 0001-linux6.6.y-bore-rt-pre.patch
 Patch2002: 0001-linux6.6.y-bore.patch
 Patch2003: 0001-linux6.6.y-bore-rt-post.patch
-Patch2004: 0002-pcores-fair.patch
+Patch2004: eevdf_place_entity_skip_calculation.patch
+Patch2005: 0002-pcores-fair.patch
 
 # Add HZ_600, HZ_750, and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
@@ -215,9 +216,11 @@ xzcat %{SOURCE1001} | patch --no-backup-if-mismatch -p1 --fuzz=2
 %patch -P 2001 -p1
 %patch -P 2002 -p1
 %patch -P 2003 -p1
+%else
+%patch -P 2004 -p1
 %endif
 
-%patch -P 2004 -p1
+%patch -P 2005 -p1
 %patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1

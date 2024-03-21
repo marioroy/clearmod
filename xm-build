@@ -42,8 +42,6 @@ function xm_build {
             *) echo "HZ=$HZ is invalid; try again."
                exit 1
         esac
-    elif [[ "$variant" == "xmrt-preempt" ]]; then
-        HZ=1000
     fi
 
     if [[ -n "$LOCALMODCONFIG" ]]; then
