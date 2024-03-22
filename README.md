@@ -165,6 +165,26 @@ Though, skips the running kernel.
 Removing org.clearlinux.xmedge-preempt.6.8.1-160
 ```
 
+## Epilogue
+
+The Clear and XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. For the RT variant, BORE is excluded since defaulting to `PREEMPT_RT` preemption. Define the `BORE` variable to include the patch and enable `PREEMPT` instead.
+
+```text
+BORE=1 ./xm-build rt-preempt
+```
+
+The `/boot` partition has limited space. So, no reason to install many kernels.
+Build the one you want and enjoy the Clear or XanMod kernel. If changing your
+mind later, remember to manage and uninstall any unused kernels. Important:
+keep at least one Clear Linux kernel, installed with the OS or via `swupd`.
+
+To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
+macro. Adjust the integer value to your liking.
+
+```bash
+echo "%_smp_mflags -j4" >> ~/.rpmmacros
+```
+
 ## Caveat
 
 Configuring PAM or security limits, allowing users to run commands with
@@ -193,24 +213,4 @@ Aloha!
 * [Testing various timer frequencies](https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf)
 * [Latency testing - 4 million pings](https://gist.github.com/marioroy/5b36c9b650cb2af42e702922a8466d69)
 * [Generic vs. Trimmed kernel build times](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/15)
-
-## Epilogue
-
-The Clear and XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. For the RT variant, BORE is excluded since defaulting to `PREEMPT_RT` preemption. Define the `BORE` variable to include the patch and enable `PREEMPT` instead.
-
-```text
-BORE=1 ./xm-build rt-preempt
-```
-
-The `/boot` partition has limited space. So, no reason to install many kernels.
-Build the one you want and enjoy the Clear or XanMod kernel. If changing your
-mind later, remember to manage and uninstall any unused kernels. Important:
-keep at least one Clear Linux kernel, installed with the OS or via `swupd`.
-
-To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
-macro. Adjust the integer value to your liking.
-
-```bash
-echo "%_smp_mflags -j4" >> ~/.rpmmacros
-```
 
