@@ -9,6 +9,9 @@ enable the NTFS3 file-system driver, and NTSync or WineSync module for fast
 kernel-backed Wine. The Edge, Main, and RT variants include le9's patchset,
 providing anon and clean file pages protection under memory pressure.
 
+In March 2024, I added support to build Clear's native kernel with BORE, and
+enable preemption.
+
 ## Preparation and configuration
 
 Install build-essential bundles or prerequisites for building the kernel.
@@ -71,27 +74,34 @@ cp -a share/bash-completion/completions/* \
 
 ## Synopsis and simulation
 
-Decide on the XanMod kernel. Choose "main-preempt" if unsure or prefer to
-try one variant only.
+The default variants are apples-to-apples to Clear's flavors. Basically,
+minimum overrides. The preempt variants enable `PREEMPT` or `PREEMPT_RT`.
+The `clear` variants build the Clear native kernel.
+
+Decide on the kernel to build. Choose "main-preempt" if unsure or desire
+to install just one kernel with BORE and preemption enabled.
 
 The `fetch-src` command (run first) fetches `*.src.rpm` and `*.tar.gz` from
 Intel and XanMod, respectively. The optional release argument to `xm-install`
 and `xm-uninstall` is described below.
 
 ```bash
-./fetch-src all | edge | main | lts | rt
+./fetch-src all | clear | edge | main | lts | rt
 
+./xm-build clear-default | clear-preempt
 ./xm-build edge-default | edge-preempt
 ./xm-build main-default | main-preempt
 ./xm-build lts-default | lts-preempt
 ./xm-build rt-preempt
 
+./xm-install clear-default | clear-preempt [<release>]
 ./xm-install edge-default | edge-preempt [<release>]
 ./xm-install main-default | main-preempt [<release>]
 ./xm-install lts-default | lts-preempt [<release>]
 ./xm-install rt-preempt [<release>]
 
-./xm-uninstall all | edge | main | lts | rt
+./xm-uninstall all | clear | edge | main | lts | rt
+./xm-uninstall clear-default | clear-preempt [<release>]
 ./xm-uninstall edge-default | edge-preempt [<release>]
 ./xm-uninstall main-default | main-preempt [<release>]
 ./xm-uninstall lts-default | lts-preempt [<release>]
@@ -120,7 +130,7 @@ HZ=1000 ./xm-build main-preempt
 
 To quickly build a trimmed Linux kernel, `LOCALMODCONFIG=1` will build only
 the modules you have running. Therefore, make sure that all modules you will
-ever need are loaded. Keyboard modules for the cpio package, CD-ROM/DVD and
+ever need are loaded. Keyboard modules for the `cpio` package, CD-ROM/DVD and
 EXFAT/NTFS3 filesystems, and NTSYNC or WINESYNC are added in the SPEC files.
 
 ```bash
@@ -130,19 +140,19 @@ LOCALMODCONFIG=1 ./xm-build edge-preempt
 sync
 ```
 
-The `xm-list-kernels` command lists XanMod kernels only. An asterisk indicates
+The `xm-list-kernels` command lists `xm*` kernels only. An asterisk indicates
 the kernel is live or running. One may not install over it or uninstall.
 Boot into another kernel before removal via `xm-uninstall`.
 
 ```bash
 ./xm-list-kernels 
-XanMod boot-manager entries
-  org.clearlinux.xmedge-preempt.6.8.1-159
-* org.clearlinux.xmmain-preempt.6.6.22-159
+XM boot-manager entries
+  org.clearlinux.xmedge-preempt.6.8.1-160
+* org.clearlinux.xmmain-preempt.6.6.22-160
 
-XanMod installed packages, exluding dev,extra,license
-  linux-xmedge-preempt-6.8.1-159
-* linux-xmmain-preempt-6.6.22-159
+XM installed packages (excluding dev,extra,license)
+  linux-xmedge-preempt-6.8.1-160
+* linux-xmmain-preempt-6.6.22-160
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -151,8 +161,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 159
-Removing org.clearlinux.xmedge-preempt.6.8.1-159
+./xm-uninstall edge-preempt 160
+Removing org.clearlinux.xmedge-preempt.6.8.1-160
 ```
 
 ## Caveat
@@ -186,19 +196,16 @@ Aloha!
 
 ## Epilogue
 
-The XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. For the RT variant, BORE is excluded since defaulting to `PREEMPT_RT` preemption. Define the `BORE` variable to include the patch and enable `PREEMPT` instead.
+The Clear and XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. For the RT variant, BORE is excluded since defaulting to `PREEMPT_RT` preemption. Define the `BORE` variable to include the patch and enable `PREEMPT` instead.
 
 ```text
 BORE=1 ./xm-build rt-preempt
 ```
 
-The default variants are apples-to-apples to Clear's kernels. Basically,
-minimum overrides. The preempt variants enable `PREEMPT` or `PREEMPT_RT`.
-
-The `/boot` partition has limited space. So, no reason to install many XanMod
-kernels. Build the one you want and enjoy the XanMod kernel. If changing your
-mind later, remember to manage and uninstall any unused XanMod kernels.
-Keep at least one Clear kernel installed on the system.
+The `/boot` partition has limited space. So, no reason to install many kernels.
+Build the one you want and enjoy the Clear or XanMod kernel. If changing your
+mind later, remember to manage and uninstall any unused kernels. Important:
+keep at least one Clear Linux kernel, installed with the OS or via `swupd`.
 
 To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
 macro. Adjust the integer value to your liking.

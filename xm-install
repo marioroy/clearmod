@@ -70,7 +70,7 @@ function xm_install {
 
     if [[ -d "/var/lib/dkms/nvidia" ]]; then
         echo "Building kernel drivers for NVIDIA graphics."
-        xm_variant=${base_name#*-}  # xmedge, xmmain, xmlts, or xmrt
+        xm_variant=${base_name#*-}  # xmclear, xmedge, xmmain, xmlts, or xmrt
         kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f4-).$xm_variant
 
         sudo rm -fr /var/lib/dkms/*/kernel-${kernel}-x86_64
@@ -84,6 +84,10 @@ function xm_install {
 }
 
 case "$1" in
+    clear-default | clear-preempt )
+        cd "rpmbuild.clear/RPMS/x86_64" || exit 1
+        xm_install "xm${1}" "$2"
+        ;;
     edge-default | edge-preempt )
         cd "rpmbuild.edge/RPMS/x86_64" || exit 1
         xm_install "xm${1}" "$2"
@@ -101,6 +105,7 @@ case "$1" in
         xm_install "xm${1}" "$2"
         ;;
     * ) echo "synopsis"
+        echo "   $0 clear-default | clear-preempt [<release>]"
         echo "   $0 edge-default | edge-preempt [<release>]"
         echo "   $0 main-default | main-preempt [<release>]"
         echo "   $0 lts-default | lts-preempt [<release>]"

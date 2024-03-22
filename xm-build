@@ -55,7 +55,7 @@ function xm_build {
 
     cp -a "../patches"/* "SOURCES"/
 
-    # The _bore definition is ignored for edge, main, and lts variants.
+    # The _bore definition is ignored for clear, edge, main, and lts variants.
 
     ( rpmbuild -bb --clean "SPECS/linux-${variant}.spec" \
           --define "abi_package %{nil}" \
@@ -76,6 +76,11 @@ function xm_build {
 }
 
 case "$1" in
+    clear-default | clear-preempt )
+        ./fetch-src clear   || exit 1
+        cd "rpmbuild.clear" || exit 1
+        xm_build "xm${1}"
+        ;;
     edge-default | edge-preempt )
         ./fetch-src edge   || exit 1
         cd "rpmbuild.edge" || exit 1
@@ -97,6 +102,7 @@ case "$1" in
         xm_build "xm${1}"
         ;;
     * ) echo "synopsis"
+        echo "   $0 clear-default | clear-preempt"
         echo "   $0 edge-default | edge-preempt"
         echo "   $0 main-default | main-preempt"
         echo "   $0 lts-default | lts-preempt"

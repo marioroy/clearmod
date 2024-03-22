@@ -18,10 +18,11 @@
 # -----------------------------------------------------------------------
 
 if [[ "$1" == "all" ]]; then
-    bash "$0" "edge" || exit $?
-    bash "$0" "main" || exit $?
-    bash "$0" "lts"  || exit $?
-    bash "$0" "rt"   || exit $?
+    bash "$0" "clear" || exit $?
+    bash "$0" "edge"  || exit $?
+    bash "$0" "main"  || exit $?
+    bash "$0" "lts"   || exit $?
+    bash "$0" "rt"    || exit $?
     exit 0
 fi
 
@@ -32,11 +33,14 @@ function fetch {
     local cl_rel="$1"
     local cl_file="$2"
     local xm_file="$3"
+
     mkdir -p "SOURCES" && cd "SOURCES" || exit 1
 
     if [[ ! -s "$cl_file" ]]; then
         rm -f cmdline config ./*.patch ./*.patch.xz ./*.spec ./*.tar.xz linux-*.src.rpm
-        if [[ "$xm_file" == *-rt* && -e "../../rpmbuild.main/SOURCES/$cl_file" ]]; then
+        if [[ "$xm_file" == *6.8.[0-9]* && -e "../../rpmbuild.clear/SOURCES/$cl_file" ]]; then
+            cp -a "../../rpmbuild.clear/SOURCES/$cl_file" .
+        elif [[ "$xm_file" == *-rt* && -e "../../rpmbuild.main/SOURCES/$cl_file" ]]; then
             cp -a "../../rpmbuild.main/SOURCES/$cl_file" .
         else
             wget "${cl_url}/${cl_rel}/clear/source/SRPMS/${cl_file}"
@@ -44,13 +48,18 @@ function fetch {
         rpm2cpio "$cl_file" | cpio -i -d -u 2>/dev/null
     fi
 
-    if [[ ! -s "$xm_file" ]]; then
+    if [[ -n "$xm_file" && ! -s "$xm_file" ]]; then
         rm -f [0-9]*-xanmod*.tar.gz
         wget "${xm_url}/${xm_file}"
     fi
 }
 
 case "$1" in
+    clear )
+        cd "rpmbuild.clear" || exit 1
+        echo "Fetching sources for Clear Native."
+        fetch "41280" "linux-6.8.1-1419.src.rpm"
+        ;;
     edge )
         cd "rpmbuild.edge" || exit 1
         echo "Fetching sources for XanMod Edge."
@@ -72,6 +81,6 @@ case "$1" in
         fetch "41270" "linux-ltscurrent-6.6.8-1394.src.rpm" "6.6.21-rt26-xanmod1.tar.gz"
         ;;
     * ) echo "synopsis"
-        echo "   $0 all | edge | main | lts | rt"
+        echo "   $0 all | clear | edge | main | lts | rt"
 esac
 

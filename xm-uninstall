@@ -19,6 +19,11 @@
 
 flag=0
 
+if [[ "$1" == "all" || "$1" == "clear" ]]; then
+    bash "$0" "clear-default" || exit $?
+    bash "$0" "clear-preempt" || exit $?
+    flag=1
+fi
 if [[ "$1" == "all" || "$1" == "edge" ]]; then
     bash "$0" "edge-default" || exit $?
     bash "$0" "edge-preempt" || exit $?
@@ -99,6 +104,9 @@ function xm_uninstall {
 }
 
 case "$1" in
+    clear-default | clear-preempt )
+        xm_uninstall "xm${1}" "$2"
+        ;;
     edge-default | edge-preempt )
         xm_uninstall "xm${1}" "$2"
         ;;
@@ -112,7 +120,8 @@ case "$1" in
         xm_uninstall "xm${1}" "$2"
         ;;
     * ) echo "synopsis"
-        echo "   $0 all | edge | main | lts | rt"
+        echo "   $0 all | clear | edge | main | lts | rt"
+        echo "   $0 clear-default | clear-preempt [<release>]"
         echo "   $0 edge-default | edge-preempt [<release>]"
         echo "   $0 main-default | main-preempt [<release>]"
         echo "   $0 lts-default | lts-preempt [<release>]"
