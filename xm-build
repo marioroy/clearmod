@@ -37,7 +37,7 @@ function xm_build {
 
     if [[ -n "$HZ" ]]; then
         case "$HZ" in
-            1000|800|750|600|500|300|250|100) # pass
+            1000|800|720|625|500|300|250|100) # pass
                ;;
             *) echo "HZ=$HZ is invalid; try again."
                exit 1

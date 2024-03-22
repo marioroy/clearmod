@@ -4,7 +4,7 @@
 
 Name:     linux-xmclear-preempt
 Version:  6.8.1
-Release:  160
+Release:  162
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -92,9 +92,9 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 Patch2001: 0001-linux6.8.y-bore-vanilla.patch
 Patch2002: 0002-pcores-fair.patch
 
-# Add HZ_500, HZ_600, HZ_750, and HZ_800 timer-tick options.
+# Add HZ_500, HZ_625, HZ_720, and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
-Patch2100: hz-500-600-750-800-timer-frequencies.patch
+Patch2100: hz-500-625-720-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
@@ -207,7 +207,7 @@ cp %{SOURCE1} .config
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
-# Set timer frequency { 1000, 800, 750, 600, 500, 300, 250, or 100 }.
+# Set timer frequency { 1000, 800, 720, 625, 500, 300, 250, or 100 }.
 # Default to 800Hz tick rate.
 scripts/config -d HZ_1000
 scripts/config -e HZ_%{_hzval}

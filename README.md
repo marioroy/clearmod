@@ -121,11 +121,11 @@ sync
 ```
 
 The default timer frequency is `HZ_800`, for fast interactivity and improved
-smoothness. To override, define `HZ=value` to `1000`, `800`, `750`, `600`,
+smoothness. To override, define `HZ=value` to `1000`, `800`, `720`, `625`,
 `500`, `300`, `250`, or `100`.
 
 ```text
-HZ=1000 ./xm-build main-preempt
+HZ=720 ./xm-build main-preempt
 ```
 
 To quickly build a trimmed Linux kernel, `LOCALMODCONFIG=1` will build only
@@ -147,12 +147,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XM boot-manager entries
-  org.clearlinux.xmedge-preempt.6.8.1-160
-* org.clearlinux.xmmain-preempt.6.6.22-160
+  org.clearlinux.xmedge-preempt.6.8.1-162
+* org.clearlinux.xmmain-preempt.6.6.22-162
 
 XM installed packages (excluding dev,extra,license)
-  linux-xmedge-preempt-6.8.1-160
-* linux-xmmain-preempt-6.6.22-160
+  linux-xmedge-preempt-6.8.1-162
+* linux-xmmain-preempt-6.6.22-162
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -161,8 +161,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 160
-Removing org.clearlinux.xmedge-preempt.6.8.1-160
+./xm-uninstall edge-preempt 162
+Removing org.clearlinux.xmedge-preempt.6.8.1-162
 ```
 
 ## Epilogue

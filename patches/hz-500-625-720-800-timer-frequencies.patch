@@ -12,17 +12,17 @@ diff -uar a/kernel/Kconfig.hz b/kernel/Kconfig.hz
 +	 on desktops with great smoothness without increasing CPU power
 +	 consumption and sacrificing the battery life on laptops.
 +
-+	config HZ_600
-+		bool "600 HZ"
++	config HZ_625
++		bool "625 HZ"
 +	help
-+	 600 Hz is a balanced timer frequency. Provides fast interactivity
++	 625 Hz is a balanced timer frequency. Provides fast interactivity
 +	 on desktops with great smoothness without increasing CPU power
 +	 consumption and sacrificing the battery life on laptops.
 +
-+	config HZ_750
-+		bool "750 HZ"
++	config HZ_720
++		bool "720 HZ"
 +	help
-+	 750 Hz is a balanced timer frequency. Provides fast interactivity
++	 720 Hz is a balanced timer frequency. Provides fast interactivity
 +	 on desktops with great smoothness without increasing CPU power
 +	 consumption and sacrificing the battery life on laptops.
 +
@@ -41,8 +41,8 @@ diff -uar a/kernel/Kconfig.hz b/kernel/Kconfig.hz
  	default 250 if HZ_250
  	default 300 if HZ_300
 + 	default 500 if HZ_500
-+	default 600 if HZ_600
-+	default 750 if HZ_750
++	default 625 if HZ_625
++	default 720 if HZ_720
 +	default 800 if HZ_800
  	default 1000 if HZ_1000
  

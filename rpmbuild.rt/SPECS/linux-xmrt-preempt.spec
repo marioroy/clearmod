@@ -6,7 +6,7 @@
 
 Name:     linux-xmrt-preempt
 Version:  6.6.22
-Release:  161
+Release:  162
 License:  GPL-2.0
 Summary:  The Linux kernel with Preempt-RT patch
 Url:      https://www.kernel.org
@@ -110,9 +110,9 @@ Patch2003: 0001-linux6.6.y-bore-rt-post.patch
 Patch2004: eevdf_place_entity_skip_calculation.patch
 Patch2005: 0002-pcores-fair.patch
 
-# Add HZ_600, HZ_750, and HZ_800 timer-tick options.
+# Add HZ_625, HZ_720, and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
-Patch2100: hz-600-750-800-timer-frequencies.patch
+Patch2100: hz-625-720-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
@@ -233,7 +233,7 @@ cp %{SOURCE1} .config
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
-# Set timer frequency { 1000, 800, 750, 600, 500, 300, 250, or 100 }.
+# Set timer frequency { 1000, 800, 720, 625, 500, 300, 250, or 100 }.
 # Default to 800Hz tick rate.
 scripts/config -d HZ_1000
 scripts/config -e HZ_%{_hzval}
