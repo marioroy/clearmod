@@ -125,7 +125,7 @@ smoothness. To override, define `HZ=value` to `1000`, `800`, `720`, `625`,
 `500`, `300`, `250`, or `100`.
 
 ```text
-HZ=625 ./xm-build main-preempt
+HZ=800 ./xm-build main-preempt
 ```
 
 To quickly build a trimmed Linux kernel, `LOCALMODCONFIG=1` will build only
