@@ -100,7 +100,10 @@ function xm_uninstall {
     sudo rm -f "default-${variant}"
 
     other_kernel=$(ls -1t "org.clearlinux.${variant}".* 2>/dev/null | head -1)
-    [[ -n "$other_kernel" ]] && sudo ln -sf "$other_kernel" "default-${variant}"
+
+    if [[ -n "$other_kernel" ]]; then
+        sudo ln -sf "$other_kernel" "default-${variant}"
+    fi
 }
 
 case "$1" in
