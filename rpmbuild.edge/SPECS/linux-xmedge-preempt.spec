@@ -5,7 +5,7 @@
 
 Name:     linux-xmedge-preempt
 Version:  6.8.1
-Release:  162
+Release:  163
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -96,7 +96,6 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
 Patch2001: 0001-linux6.8.y-bore-xanmod.patch
-Patch2002: 0002-pcores-fair.patch
 
 # Add HZ_625, HZ_720, and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
@@ -197,7 +196,6 @@ Linux kernel build files
 #Serie.patch.end
 
 %patch -P 2001 -p1
-%patch -P 2002 -p1
 %patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
