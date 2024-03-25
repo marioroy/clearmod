@@ -351,8 +351,8 @@ index 533547e3c9..791178388c 100644
 +++ b/kernel/sched/fair.c
 @@ -19,6 +19,9 @@
   *
-  *  Remove energy efficiency functions by Alexandre Frade
-  *  (C) 2021 Alexandre Frade <kernel@xanmod.org>
+  *  Adaptive scheduling granularity, math enhancements by Peter Zijlstra
+  *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
 + *
 + *  Burst-Oriented Response Enhancer (BORE) CPU Scheduler
 + *  Copyright (C) 2021-2024 Masahito Suzuki <firelzrd@gmail.com>
@@ -370,7 +370,7 @@ index 533547e3c9..791178388c 100644
 +#ifdef CONFIG_SCHED_BORE
 +unsigned int sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_NONE;
 +#else // !CONFIG_SCHED_BORE
- unsigned int sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_NONE;
+ unsigned int sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_LOG;
 +#endif // CONFIG_SCHED_BORE
  
  /*

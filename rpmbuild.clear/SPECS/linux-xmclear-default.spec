@@ -89,7 +89,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
-Patch2001: 0001-linux6.8.y-bore-vanilla.patch
+Patch2001: 0001-linux6.8.y-bore.patch
 Patch2002: 0002-pcores-fair.patch
 
 # Add HZ_500, HZ_625, HZ_720, and HZ_800 timer-tick options.
