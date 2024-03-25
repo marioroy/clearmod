@@ -1,7 +1,6 @@
 #!/bin/bash
 # -----------------------------------------------------------------------
-#   Install XanMod kernel.
-#
+#   Install kernel.
 #   Author: Mario Roy - http://github.com/marioroy
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -92,23 +91,8 @@ case "$1" in
         cd "rpmbuild.edge/RPMS/x86_64" || exit 1
         xm_install "xm${1}" "$2"
         ;;
-    main-default | main-preempt )
-        cd "rpmbuild.main/RPMS/x86_64" || exit 1
-        xm_install "xm${1}" "$2"
-        ;;
-    lts-default | lts-preempt )
-        cd "rpmbuild.lts/RPMS/x86_64" || exit 1
-        xm_install "xm${1}" "$2"
-        ;;
-    rt-preempt )
-        cd "rpmbuild.rt/RPMS/x86_64" || exit 1
-        xm_install "xm${1}" "$2"
-        ;;
     * ) echo "synopsis"
         echo "   $0 clear-default | clear-preempt [<release>]"
         echo "   $0 edge-default | edge-preempt [<release>]"
-        echo "   $0 main-default | main-preempt [<release>]"
-        echo "   $0 lts-default | lts-preempt [<release>]"
-        echo "   $0 rt-preempt [<release>]"
 esac
 

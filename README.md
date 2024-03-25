@@ -1,16 +1,14 @@
 # ClearMod
 
-Run [XanMod](https://github.com/xanmod) Kernels on [Clear Linux](https://www.clearlinux.org) with ease.
+Run the [XanMod Edge](https://github.com/xanmod) kernel on [Clear Linux](https://www.clearlinux.org) with ease.
 
-The motivation comes from liking the XanMod kernel and opportunity to run a
-preempt-enabled Linux kernel. The XanMod kernels are configured to run equally
-well on all x86-64 CPUs with minimum support of x86-64-v3. Additionally, I
-enable the NTFS3 file-system driver, and NTSync or WineSync module for fast
-kernel-backed Wine. The Edge, Main, and RT variants include le9's patchset,
-providing anon and clean file pages protection under memory pressure.
+The motivation comes from liking the Clear and XanMod Linux kernels and opportunity to run a preempt-enabled kernel with the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. They run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 
-In March 2024, I added support to build Clear's native kernel with BORE, and
-enable preemption.
+The XanMod Edge flavor includes NTSync (for fast kernel-backed Wine) and le9's
+patchset (providing anon and clean file pages protection under memory pressure).
+
+In March 2024, I added support to build Clear's native kernel. Support for the
+XanMod LTS, Main, and RT variants were removed.
 
 ## Preparation and configuration
 
@@ -48,17 +46,6 @@ false
 EOF
 ```
 
-During testing, the XanMod `preempt_rt` kernel works with NVIDIA graphics.
-Set a system-wide environment variable to have the driver installer ignore
-`PREEMPT_RT` presense.
-
-```bash
-sudo mkdir -p "/etc/environment.d"
-sudo tee "/etc/environment.d/10-nvidia-ignore-rt.conf" >/dev/null <<'EOF'
-IGNORE_PREEMPT_RT_PRESENCE=1
-EOF
-```
-
 ## Clone the repository
 
 The GitHub repo provides auto completion for the `bash` shell.
@@ -74,38 +61,22 @@ cp -a share/bash-completion/completions/* \
 
 ## Synopsis and simulation
 
-The default variants are apples-to-apples to Clear's flavors. Basically,
-minimum overrides. The preempt variants enable `PREEMPT` or `PREEMPT_RT`.
-The `clear` variants build the Clear native kernel.
-
-Decide on the kernel to build. Choose "main-preempt" if unsure or desire
-to install just one kernel with BORE and preemption enabled.
-
 The `fetch-src` command (run first) fetches `*.src.rpm` and `*.tar.gz` from
 Intel and XanMod, respectively. The optional release argument to `xm-install`
 and `xm-uninstall` is described below.
 
 ```bash
-./fetch-src all | clear | edge | main | lts | rt
+./fetch-src all | clear | edge
 
 ./xm-build clear-default | clear-preempt
 ./xm-build edge-default | edge-preempt
-./xm-build main-default | main-preempt
-./xm-build lts-default | lts-preempt
-./xm-build rt-preempt
 
 ./xm-install clear-default | clear-preempt [<release>]
 ./xm-install edge-default | edge-preempt [<release>]
-./xm-install main-default | main-preempt [<release>]
-./xm-install lts-default | lts-preempt [<release>]
-./xm-install rt-preempt [<release>]
 
-./xm-uninstall all | clear | edge | main | lts | rt
+./xm-uninstall all | clear | edge
 ./xm-uninstall clear-default | clear-preempt [<release>]
 ./xm-uninstall edge-default | edge-preempt [<release>]
-./xm-uninstall main-default | main-preempt [<release>]
-./xm-uninstall lts-default | lts-preempt [<release>]
-./xm-uninstall rt-preempt [<release>]
 
 ./xm-list-kernels
 ```
@@ -114,9 +85,9 @@ The following are the steps to fetch the stable sources, build, and
 install the kernel.
 
 ```bash
-./fetch-src main
-./xm-build main-preempt
-./xm-install main-preempt
+./fetch-src edge
+./xm-build edge-preempt
+./xm-install edge-preempt
 sync
 ```
 
@@ -125,18 +96,18 @@ smoothness. To override, define `HZ=value` to `1000`, `800`, `720`, `625`,
 `500`, `300`, `250`, or `100`.
 
 ```text
-HZ=800 ./xm-build main-preempt
+HZ=800 ./xm-build edge-preempt
 ```
 
 To quickly build a trimmed Linux kernel, `LOCALMODCONFIG=1` will build only
 the modules you have running. Therefore, make sure that all modules you will
 ever need are loaded. Keyboard modules for the `cpio` package, CD-ROM/DVD and
-EXFAT/NTFS3 filesystems, and NTSYNC or WINESYNC are added in the SPEC files.
+EXFAT/NTFS3 filesystems, and NTSYNC are added in the SPEC files.
 
 ```bash
-./fetch-src edge
-LOCALMODCONFIG=1 ./xm-build edge-preempt
-./xm-install edge-preempt
+./fetch-src clear
+LOCALMODCONFIG=1 ./xm-build clear-preempt
+./xm-install clear-preempt
 sync
 ```
 
@@ -147,12 +118,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XM boot-manager entries
-  org.clearlinux.xmedge-preempt.6.8.1-162
-* org.clearlinux.xmmain-preempt.6.6.22-162
+  org.clearlinux.xmclear-preempt.6.8.1-162
+* org.clearlinux.xmedge-preempt.6.8.1-162
 
 XM installed packages (excluding dev,extra,license)
-  linux-xmedge-preempt-6.8.1-162
-* linux-xmmain-preempt-6.6.22-162
+  linux-xmclear-preempt-6.8.1-162
+* linux-xmedge-preempt-6.8.1-162
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -161,17 +132,11 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall edge-preempt 162
-Removing org.clearlinux.xmedge-preempt.6.8.1-162
+./xm-uninstall clear-preempt 162
+Removing org.clearlinux.xmclear-preempt.6.8.1-162
 ```
 
 ## Epilogue
-
-The Clear and XanMod Edge, Main, and LTS variants include the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. For the RT variant, BORE is excluded since defaulting to `PREEMPT_RT` preemption. Define the `BORE` variable to include the patch and enable `PREEMPT` instead.
-
-```text
-BORE=1 ./xm-build rt-preempt
-```
 
 The `/boot` partition has limited space. So, no reason to install many kernels.
 Build the one you want and enjoy the Clear or XanMod kernel. If changing your
@@ -185,10 +150,8 @@ macro. Adjust the integer value to your liking.
 echo "%_smp_mflags -j4" >> ~/.rpmmacros
 ```
 
-## Caveat
-
 Configuring PAM or security limits, allowing users to run commands with
-real-time capabilities does not work on Clear Linux. A workaround is making
+real-time capabilities, does not work on Clear Linux. A workaround is making
 a copy of `chrt` and giving it `cap_sys_nice+ep` capabilities. The `+ep`
 indicate the capability sets effective and permitted.
 

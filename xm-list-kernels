@@ -1,7 +1,6 @@
 #!/bin/bash
 # -----------------------------------------------------------------------
-#   List XanMod installed kernels and base packages.
-#
+#   List kernels and base packages.
 #   Author: Mario Roy - http://github.com/marioroy
 #
 #   This program is free software: you can redistribute it and/or modify

@@ -1,7 +1,6 @@
 #!/bin/bash
 # -----------------------------------------------------------------------
-#   Fetch Clear and XanMod kernel sources.
-#
+#   Fetch kernel sources.
 #   Author: Mario Roy - http://github.com/marioroy
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -20,9 +19,6 @@
 if [[ "$1" == "all" ]]; then
     bash "$0" "clear" || exit $?
     bash "$0" "edge"  || exit $?
-    bash "$0" "main"  || exit $?
-    bash "$0" "lts"   || exit $?
-    bash "$0" "rt"    || exit $?
     exit 0
 fi
 
@@ -40,8 +36,6 @@ function fetch {
         rm -f cmdline config ./*.patch ./*.patch.xz ./*.spec ./*.tar.xz linux-*.src.rpm
         if [[ "$xm_file" == *6.8.[0-9]* && -e "../../rpmbuild.clear/SOURCES/$cl_file" ]]; then
             cp -a "../../rpmbuild.clear/SOURCES/$cl_file" .
-        elif [[ "$xm_file" == *-rt* && -e "../../rpmbuild.main/SOURCES/$cl_file" ]]; then
-            cp -a "../../rpmbuild.main/SOURCES/$cl_file" .
         else
             wget "${cl_url}/${cl_rel}/clear/source/SRPMS/${cl_file}"
         fi
@@ -65,22 +59,7 @@ case "$1" in
         echo "Fetching sources for XanMod Edge."
         fetch "41280" "linux-6.8.1-1419.src.rpm" "6.8.1-xanmod1.tar.gz"
         ;;
-    main )
-        cd "rpmbuild.main" || exit 1
-        echo "Fetching sources for XanMod Main."
-        fetch "41270" "linux-ltscurrent-6.6.8-1394.src.rpm" "6.6.22-xanmod1.tar.gz"
-        ;;
-    lts )
-        cd "rpmbuild.lts" || exit 1
-        echo "Fetching sources for XanMod LTS."
-        fetch "41270" "linux-ltsprev-6.1.69-1331.src.rpm" "6.1.77-xanmod1.tar.gz"
-        ;;
-    rt )
-        cd "rpmbuild.rt" || exit 1
-        echo "Fetching sources for XanMod RT."
-        fetch "41270" "linux-ltscurrent-6.6.8-1394.src.rpm" "6.6.21-rt26-xanmod1.tar.gz"
-        ;;
     * ) echo "synopsis"
-        echo "   $0 all | clear | edge | main | lts | rt"
+        echo "   $0 all | clear | edge"
 esac
 

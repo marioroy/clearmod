@@ -1,7 +1,6 @@
 #!/bin/bash
 # -----------------------------------------------------------------------
-#   Uninstall XanMod kernel.
-#
+#   Uninstall kernel.
 #   Author: Mario Roy - http://github.com/marioroy
 #
 #   This program is free software: you can redistribute it and/or modify
