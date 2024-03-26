@@ -33,12 +33,21 @@ function fetch {
     mkdir -p "SOURCES" && cd "SOURCES" || exit 1
 
     if [[ ! -s "$cl_file" ]]; then
+        # purge src.rpm files
         rm -f cmdline config ./*.patch ./*.patch.xz ./*.spec ./*.tar.xz linux-*.src.rpm
-        if [[ "$xm_file" == *6.8.[0-9]* && -e "../../rpmbuild.clear/SOURCES/$cl_file" ]]; then
+
+        if [[ -z "$xm_file" && -e "../../rpmbuild.edge/SOURCES/$cl_file" ]]; then
+            # refresh clear: copy src.rpm from edge folder
+            cp -a "../../rpmbuild.edge/SOURCES/$cl_file" .
+        elif [[ -n "$xm_file" && -e "../../rpmbuild.clear/SOURCES/$cl_file" ]]; then
+            # refresh edge: copy src.rpm from clear folder
             cp -a "../../rpmbuild.clear/SOURCES/$cl_file" .
         else
+            # otherwise, fetch src.rpm from the web
             wget "${cl_url}/${cl_rel}/clear/source/SRPMS/${cl_file}"
         fi
+
+        # extract src.rpm files
         rpm2cpio "$cl_file" | cpio -i -d -u 2>/dev/null
     fi
 
