@@ -53,7 +53,7 @@ function fetch {
         rpm2cpio "$cl_file" | cpio -i -d -u 2>/dev/null
     fi
 
-    if [[ -z "$xm_file" && ! -s "$kn_file" ]]; then
+    if [[ -z "$xm_file" && -n "$kn_file" && ! -s "$kn_file" ]]; then
         rm -f linux-[0-9]*.tar.xz
         wget "${kn_url}/${kn_file}" || exit 1
     fi
@@ -68,12 +68,12 @@ case "$1" in
     clear )
         cd "rpmbuild.clear" || exit 1
         echo "Fetch/extract sources for Clear's native kernel."
-        fetch "41280" "linux-6.8.1-1419.src.rpm" "" "linux-6.8.2.tar.xz"
+        fetch "41350" "linux-6.8.2-1420.src.rpm" "" "linux-6.8.2.tar.xz"
         ;;
     edge )
         cd "rpmbuild.edge" || exit 1
         echo "Fetch/extract sources for XanMod's edge kernel."
-        fetch "41280" "linux-6.8.1-1419.src.rpm" "6.8.2-xanmod1.tar.gz"
+        fetch "41350" "linux-6.8.2-1420.src.rpm" "6.8.2-xanmod1.tar.gz"
         ;;
     * ) echo "synopsis"
         echo "   $0 all | clear | edge"
