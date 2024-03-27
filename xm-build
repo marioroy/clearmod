@@ -45,8 +45,6 @@ function xm_build {
 
     cp -a "../patches"/* "SOURCES"/
 
-    # The _bore definition is ignored for clear, edge, main, and lts variants.
-
     ( rpmbuild -bb --clean "SPECS/linux-${variant}.spec" \
           --define "abi_package %{nil}" \
           --define "_buildhost $(hostname)" \

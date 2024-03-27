@@ -118,12 +118,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XM boot-manager entries
-  org.clearlinux.xmclear-preempt.6.8.1-162
-* org.clearlinux.xmedge-preempt.6.8.1-162
+  org.clearlinux.xmclear-preempt.6.8.2-165
+* org.clearlinux.xmedge-preempt.6.8.2-165
 
 XM installed packages (excluding dev,extra,license)
-  linux-xmclear-preempt-6.8.1-162
-* linux-xmedge-preempt-6.8.1-162
+  linux-xmclear-preempt-6.8.2-165
+* linux-xmedge-preempt-6.8.2-165
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -132,8 +132,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear-preempt 162
-Removing org.clearlinux.xmclear-preempt.6.8.1-162
+./xm-uninstall clear-preempt 165
+Removing org.clearlinux.xmclear-preempt.6.8.2-165
 ```
 
 ## Epilogue

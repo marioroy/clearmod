@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmclear-preempt
-Version:  6.8.1
-Release:  164
+Version:  6.8.2
+Release:  165
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -86,6 +86,9 @@ Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
+# x86/kconfig: add generic x86_64 levels
+Patch2000: kbuild-add-generic-x86_64-levels.patch
+
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
@@ -100,9 +103,11 @@ Patch2100: hz-500-625-720-800-timer-frequencies.patch
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
 Patch2101: asus-prime-trx40-pro-s-mixer-def.patch
 
-# Sched fair updates.
+# Sched fair/mm updates.
 Patch2102: sched_fair_fix_initial_util_avg_calculation.patch
-Patch2103: eevdf_minor_fixes_for_reweight_entity.patch
+Patch2103: sched-fair-refactor-update_curr-entity_tick.patch
+Patch2104: eevdf_minor_fixes_for_reweight_entity.patch
+Patch2105: mm-Disable-watermark-boosting-by-default.patch
 
 %description
 The Linux kernel.
@@ -192,11 +197,14 @@ Linux kernel build files
 %patch -P 166 -p1
 #Serie.patch.end
 
+%patch -P 2000 -p1
 %patch -P 2001 -p1
 %patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
+%patch -P 2104 -p1
+%patch -P 2105 -p1
 
 
 cp %{SOURCE1} .config

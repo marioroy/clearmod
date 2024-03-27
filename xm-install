@@ -69,7 +69,7 @@ function xm_install {
 
     if [[ -d "/var/lib/dkms/nvidia" ]]; then
         echo "Building kernel drivers for NVIDIA graphics."
-        xm_variant=${base_name#*-}  # xmclear, xmedge, xmmain, xmlts, or xmrt
+        xm_variant=${base_name#*-}  # xmclear or xmedge
         kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f4-).$xm_variant
 
         sudo rm -fr /var/lib/dkms/*/kernel-${kernel}-x86_64

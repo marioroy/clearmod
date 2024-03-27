@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmedge-default
-Version:  6.8.1
-Release:  164
+Version:  6.8.2
+Release:  165
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -106,9 +106,11 @@ Patch2100: hz-625-720-800-timer-frequencies.patch
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
 Patch2101: asus-prime-trx40-pro-s-mixer-def.patch
 
-# Sched fair updates.
+# Sched fair/mm updates.
 Patch2102: sched_fair_fix_initial_util_avg_calculation.patch
-Patch2103: eevdf_minor_fixes_for_reweight_entity.patch
+Patch2103: sched-fair-refactor-update_curr-entity_tick.patch
+Patch2104: eevdf_minor_fixes_for_reweight_entity.patch
+Patch2105: mm-Disable-watermark-boosting-by-default.patch
 
 %description
 The Linux kernel.
@@ -200,6 +202,8 @@ Linux kernel build files
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
+%patch -P 2104 -p1
+%patch -P 2105 -p1
 
 
 cp %{SOURCE1} .config
