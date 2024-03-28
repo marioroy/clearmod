@@ -91,9 +91,10 @@ install the kernel.
 sync
 ```
 
-The default timer frequency is `HZ_800`, for fast interactivity and improved
-smoothness. To override, define `HZ=value` to `1000`, `800`, `720`, `625`,
-`500`, `300`, `250`, or `100`.
+The default timer frequency is `HZ_1000` to be consistent with Clear Linux.
+To override, define `HZ=value` to `1000`, `800`, `720`, `625`, `500`, `300`,
+`250`, or `100`. A lower Hz value may decrease power consumption or fan
+speed revving up and down less often.
 
 ```text
 HZ=800 ./xm-build edge-preempt
@@ -175,5 +176,6 @@ Aloha!
 * [XanMod Linux kernel source code tree](https://github.com/xanmod/linux)
 * [Testing various timer frequencies](https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf)
 * [Latency testing - 4 million pings](https://gist.github.com/marioroy/5b36c9b650cb2af42e702922a8466d69)
-* [Generic vs. Trimmed kernel build times](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/15)
+* [Generic vs. Trimmed kernel build times](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/15?u=marioroy)
+* [Running four tasks concurrently](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/28?u=marioroy)
 

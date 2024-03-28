@@ -4,7 +4,7 @@
 
 Name:     linux-xmclear-default
 Version:  6.8.2
-Release:  165
+Release:  166
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/

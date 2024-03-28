@@ -48,7 +48,7 @@ function xm_build {
     ( rpmbuild -bb --clean "SPECS/linux-${variant}.spec" \
           --define "abi_package %{nil}" \
           --define "_buildhost $(hostname)" \
-          --define "_hzval ${HZ:-800}" \
+          --define "_hzval ${HZ:-1000}" \
           --define "_localmodconfig ${LOCALMODCONFIG:-0}" \
           --define "_topdir ${PWD}" \
           --define "_unpackaged_files_terminate_build 0" \
