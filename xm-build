@@ -25,6 +25,15 @@ function xm_build {
         exit 2
     fi
 
+    if [[ -n "$BORE" ]]; then
+        case "$BORE" in
+            0|1) # pass
+               ;;
+            *) echo "BORE=$BORE is invalid; try again."
+               exit 1
+        esac
+    fi
+
     if [[ -n "$HZ" ]]; then
         case "$HZ" in
             1000|800|720|625|500|300|250|100) # pass
@@ -48,6 +57,7 @@ function xm_build {
     ( rpmbuild -bb --clean "SPECS/linux-${variant}.spec" \
           --define "abi_package %{nil}" \
           --define "_buildhost $(hostname)" \
+          --define "_bore ${BORE:-0}" \
           --define "_hzval ${HZ:-1000}" \
           --define "_localmodconfig ${LOCALMODCONFIG:-0}" \
           --define "_topdir ${PWD}" \

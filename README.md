@@ -7,8 +7,8 @@ The motivation comes from liking the Clear and XanMod Linux kernels and opportun
 The XanMod Edge flavor includes NTSync (for fast kernel-backed Wine) and le9's
 patchset (providing anon and clean file pages protection under memory pressure).
 
-In March 2024, I added support to build Clear's native kernel. Support for the
-XanMod LTS, Main, and RT variants were removed.
+In March 2024, I added support to build Clear's native kernel. The XanMod LTS,
+Main, and RT variants were removed.
 
 ## Preparation and configuration
 
@@ -91,23 +91,20 @@ install the kernel.
 sync
 ```
 
-The default timer frequency is `HZ_1000` to be consistent with Clear Linux.
-To override, define `HZ=value` to `1000`, `800`, `720`, `625`, `500`, `300`,
-`250`, or `100`. A lower Hz value may decrease power consumption or fan
-speed revving up and down less often.
+Opt-in to enable the BORE CPU Scheduler with `BORE=1`, default disabled.
 
-```text
-HZ=800 ./xm-build edge-preempt
-```
+The default timer frequency is `HZ_1000`. To override, define `HZ=value` to
+`1000`, `800`, `720`, `625`, `500`, `300`, `250`, or `100`. A lower Hz value
+may decrease power consumption or fan speed revving up and down.
 
 To quickly build a trimmed Linux kernel, `LOCALMODCONFIG=1` will build only
 the modules you have running. Therefore, make sure that all modules you will
 ever need are loaded. Keyboard modules for the `cpio` package, CD-ROM/DVD and
 EXFAT/NTFS3 filesystems, and NTSYNC are added in the SPEC files.
 
-```bash
+```text
 ./fetch-src clear
-LOCALMODCONFIG=1 ./xm-build clear-preempt
+BORE=1 HZ=800 LOCALMODCONFIG=1 ./xm-build clear-preempt
 ./xm-install clear-preempt
 sync
 ```
@@ -119,12 +116,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-list-kernels 
 XM boot-manager entries
-  org.clearlinux.xmclear-preempt.6.8.2-165
-* org.clearlinux.xmedge-preempt.6.8.2-165
+  org.clearlinux.xmclear-preempt.6.8.2-167
+* org.clearlinux.xmedge-preempt.6.8.2-167
 
 XM installed packages (excluding dev,extra,license)
-  linux-xmclear-preempt-6.8.2-165
-* linux-xmedge-preempt-6.8.2-165
+  linux-xmclear-preempt-6.8.2-167
+* linux-xmedge-preempt-6.8.2-167
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -133,8 +130,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear-preempt 165
-Removing org.clearlinux.xmclear-preempt.6.8.2-165
+./xm-uninstall clear-preempt 167
+Removing org.clearlinux.xmclear-preempt.6.8.2-167
 ```
 
 ## Epilogue
@@ -149,6 +146,14 @@ macro. Adjust the integer value to your liking.
 
 ```bash
 echo "%_smp_mflags -j4" >> ~/.rpmmacros
+```
+
+You may add a `build` script at the top level, ignored by `git`.
+Set execute bits `chmod +x build` and run `./build`.
+
+```bash
+#!/bin/bash
+time BORE=1 HZ=800 LOCALMODCONFIG=1 ./xm-build edge-preempt
 ```
 
 Configuring PAM or security limits, allowing users to run commands with

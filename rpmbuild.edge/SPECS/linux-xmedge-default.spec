@@ -5,7 +5,7 @@
 
 Name:     linux-xmedge-default
 Version:  6.8.2
-Release:  166
+Release:  167
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -96,6 +96,8 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # https://github.com/firelzrd/bore-scheduler
 # https://github.com/xanmod/linux/issues/333
 Patch2001: 0001-linux6.8.y-bore-xanmod.patch
+Patch2002: sched-bore-refactor-update_curr-entity_tick.patch
+Patch2003: sched-fair-refactor-update_curr-entity_tick.patch
 
 # Add HZ_625, HZ_720, and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
@@ -108,9 +110,8 @@ Patch2101: asus-prime-trx40-pro-s-mixer-def.patch
 
 # Sched fair/mm updates.
 Patch2102: sched_fair_fix_initial_util_avg_calculation.patch
-Patch2103: sched-fair-refactor-update_curr-entity_tick.patch
-Patch2104: eevdf_minor_fixes_for_reweight_entity.patch
-Patch2105: mm-Disable-watermark-boosting-by-default.patch
+Patch2103: eevdf_minor_fixes_for_reweight_entity.patch
+Patch2104: mm-Disable-watermark-boosting-by-default.patch
 
 %description
 The Linux kernel.
@@ -197,13 +198,18 @@ Linux kernel build files
 %patch -P 166 -p1
 #Serie.patch.end
 
+%if %{_bore} == 1
 %patch -P 2001 -p1
+%patch -P 2002 -p1
+%else
+%patch -P 2003 -p1
+%endif
+
 %patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
 %patch -P 2104 -p1
-%patch -P 2105 -p1
 
 
 cp %{SOURCE1} .config

@@ -50,7 +50,7 @@ index ae9b237fa..278eebe66 100644
  }
  
  #include "pelt.h"
-@@ -1153,26 +1155,35 @@ s64 update_curr_common(struct rq *rq)
+@@ -1341,17 +1341,18 @@ s64 update_curr_common(struct rq *rq)
  /*
   * Update the current task's runtime statistics.
   */
@@ -70,7 +70,12 @@ index ae9b237fa..278eebe66 100644
 -		return;
 +		return false;
  
+ #ifdef CONFIG_SCHED_BORE
+ 	curr->burst_time += delta_exec;
+@@ -1360,13 +1361,21 @@
+ #else // !CONFIG_SCHED_BORE
  	curr->vruntime += calc_delta_fair(delta_exec, curr);
+ #endif // CONFIG_SCHED_BORE
 -	update_deadline(cfs_rq, curr);
 +	resched = update_deadline(cfs_rq, curr);
  	update_min_vruntime(cfs_rq);
@@ -88,7 +93,7 @@ index ae9b237fa..278eebe66 100644
 +	if (__update_curr(cfs_rq))
 +		resched_curr(rq_of(cfs_rq));
  }
- 
+
  static void update_curr_fair(struct rq *rq)
 @@ -5487,13 +5498,13 @@ static void put_prev_entity(struct cfs_rq *cfs_rq, struct sched_entity *prev)
  	cfs_rq->curr = NULL;

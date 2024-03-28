@@ -18,3 +18,5 @@
 /rpmbuild.*/SOURCES/
 /rpmbuild.*/SRPMS/
 
+/build
+
