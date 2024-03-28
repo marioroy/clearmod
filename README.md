@@ -175,7 +175,7 @@ Aloha!
 * [BORE (Burst-Oriented Response Enhancer) CPU Scheduler](https://github.com/firelzrd/bore-scheduler)
 * [XanMod Linux kernel source code tree](https://github.com/xanmod/linux)
 * [Testing various timer frequencies](https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf)
+* [Running four tasks concurrently](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/28?u=marioroy)
 * [Latency testing - 4 million pings](https://gist.github.com/marioroy/5b36c9b650cb2af42e702922a8466d69)
 * [Generic vs. Trimmed kernel build times](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/15?u=marioroy)
-* [Running four tasks concurrently](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/28?u=marioroy)
 
