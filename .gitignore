@@ -12,11 +12,11 @@
 *.swp
 *.tmp
 
-/rpmbuild.*/BUILD/
-/rpmbuild.*/BUILDROOT/
-/rpmbuild.*/RPMS/
-/rpmbuild.*/SOURCES/
-/rpmbuild.*/SRPMS/
+/rpmbuild*/BUILD/
+/rpmbuild*/BUILDROOT/
+/rpmbuild*/RPMS/
+/rpmbuild*/SOURCES/
+/rpmbuild*/SRPMS/
 
 /build
 

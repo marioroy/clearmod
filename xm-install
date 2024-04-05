@@ -20,14 +20,14 @@
 
 # Capture the active kernel release, for safety to not replace self.
 
-kversion="$(uname -r)"       # e.g 6.1.54-100.xmlts-preempt
+kversion="$(uname -r)"       # e.g 6.1.54-100.xmedge
 kvariant="${kversion}"
-kvariant="${kvariant##*.}"   # xmlts-preempt
+kvariant="${kvariant##*.}"   # xmedge
 kversion="${kversion%.*}"    # 6.1.54-100
 
 function xm_install {
     variant="$1" release="$2" base_name="linux-${1}"
-    echo "Installing linux-${variant}."
+    echo "Installing linux-${variant}"
 
     if [[ -n "$release" ]]; then
         # Install given xm_variant release (e.g. 100).
@@ -68,9 +68,9 @@ function xm_install {
     sudo clr-boot-manager update
 
     if [[ -d "/var/lib/dkms/nvidia" ]]; then
-        echo "Building kernel drivers for NVIDIA graphics."
-        xm_variant=${base_name#*-}  # xmclear or xmedge
-        kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f4-).$xm_variant
+        echo "Building kernel drivers for NVIDIA graphics"
+        xm_variant=${base_name#*-}  # i.e. xmedge
+        kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f3-).$xm_variant
 
         sudo rm -fr /var/lib/dkms/*/kernel-${kernel}-x86_64
         sudo rm -fr /var/lib/dkms/*/*/${kernel}
@@ -80,19 +80,16 @@ function xm_install {
 
         sudo depmod -A "$kernel"
     fi
+
+    echo "done."
 }
 
 case "$1" in
-    clear-default | clear-preempt )
-        cd "rpmbuild.clear/RPMS/x86_64" || exit 1
-        xm_install "xm${1}" "$2"
-        ;;
-    edge-default | edge-preempt )
-        cd "rpmbuild.edge/RPMS/x86_64" || exit 1
+    bore | clear | echo | edge )
+        cd "rpmbuild/RPMS/x86_64" || exit 1
         xm_install "xm${1}" "$2"
         ;;
     * ) echo "synopsis"
-        echo "   $0 clear-default | clear-preempt [<release>]"
-        echo "   $0 edge-default | edge-preempt [<release>]"
+        echo "   $0 bore | clear | echo | edge [<release>]"
 esac
 

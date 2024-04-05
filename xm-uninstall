@@ -16,42 +16,35 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
-flag=0
+if [[ "$1" == "all" ]]; then
 
-if [[ "$1" == "all" || "$1" == "clear" ]]; then
+    # deprecated
     bash "$0" "clear-default" || exit $?
     bash "$0" "clear-preempt" || exit $?
-    flag=1
-fi
-if [[ "$1" == "all" || "$1" == "edge" ]]; then
-    bash "$0" "edge-default" || exit $?
-    bash "$0" "edge-preempt" || exit $?
-    flag=1
-fi
-if [[ "$1" == "all" || "$1" == "main" ]]; then
-    bash "$0" "main-default" || exit $?
-    bash "$0" "main-preempt" || exit $?
-    flag=1
-fi
-if [[ "$1" == "all" || "$1" == "lts" ]]; then
-    bash "$0" "lts-default" || exit $?
-    bash "$0" "lts-preempt" || exit $?
-    flag=1
-fi
-if [[ "$1" == "all" || "$1" == "rt" ]]; then
-    bash "$0" "rt-preempt" || exit $?
-    flag=1
-fi
+    bash "$0" "edge-default"  || exit $?
+    bash "$0" "edge-preempt"  || exit $?
+    bash "$0" "main-default"  || exit $?
+    bash "$0" "main-preempt"  || exit $?
+    bash "$0" "lts-default"   || exit $?
+    bash "$0" "lts-preempt"   || exit $?
+    bash "$0" "rt-preempt"    || exit $?
 
-[[ "$flag" -eq 1 ]] && exit 0
+    # since April 2024
+    bash "$0" "bore"  || exit $?
+    bash "$0" "clear" || exit $?
+    bash "$0" "echo"  || exit $?
+    bash "$0" "edge"  || exit $?
+
+    exit 0
+fi
 
 # shellcheck disable=SC2012,SC2046
 
 # Capture the live kernel release, for safety to not remove self.
 
-kversion="$(uname -r)"       # e.g 6.1.54-100.xmlts-preempt
+kversion="$(uname -r)"       # e.g 6.1.54-100.xmedge
 kvariant="${kversion}"
-kvariant="${kvariant##*.}"   # xmlts-preempt
+kvariant="${kvariant##*.}"   # xmedge
 kversion="${kversion%.*}"    # 6.1.54-100
 
 function xm_uninstall {
@@ -106,6 +99,9 @@ function xm_uninstall {
 }
 
 case "$1" in
+    bore | clear | echo | edge )
+        xm_uninstall "xm${1}" "$2"
+        ;;
     clear-default | clear-preempt )
         xm_uninstall "xm${1}" "$2"
         ;;
@@ -121,12 +117,20 @@ case "$1" in
     rt-preempt )
         xm_uninstall "xm${1}" "$2"
         ;;
+
     * ) echo "synopsis"
-        echo "   $0 all | clear | edge | main | lts | rt"
+        echo "   $0 all"
+        echo "   $0 bore  [<release>]"
+        echo "   $0 clear [<release>]"
+        echo "   $0 echo  [<release>]"
+        echo "   $0 edge  [<release>]"
+        echo ""
+        echo "deprecated"
         echo "   $0 clear-default | clear-preempt [<release>]"
         echo "   $0 edge-default | edge-preempt [<release>]"
         echo "   $0 main-default | main-preempt [<release>]"
         echo "   $0 lts-default | lts-preempt [<release>]"
         echo "   $0 rt-preempt [<release>]"
+        echo ""
 esac
 

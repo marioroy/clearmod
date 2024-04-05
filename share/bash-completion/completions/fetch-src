@@ -7,7 +7,7 @@ __fetch-src()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     COMPREPLY=(
-        $(compgen -W 'all clear edge' -- "$cur")
+        $(compgen -W '' -- "$cur")
     )
 } &&
     complete -F __fetch-src fetch-src

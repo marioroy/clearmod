@@ -16,66 +16,41 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
-if [[ "$1" == "all" ]]; then
-    bash "$0" "clear" || exit $?
-    bash "$0" "edge"  || exit $?
-    exit 0
-fi
+cl_rel="41350"
+cl_file="linux-6.8.2-1420.src.rpm"
+kn_file="linux-6.8.4.tar.xz"
+xm_file="6.8.4-xanmod1.tar.gz"
 
 cl_url="https://cdn.download.clearlinux.org/releases"
-xm_url="https://github.com/xanmod/linux/archive/refs/tags"
 kn_url="https://cdn.kernel.org/pub/linux/kernel/v6.x"
+xm_url="https://github.com/xanmod/linux/archive/refs/tags"
 
 function fetch {
-    local cl_rel="$1"
-    local cl_file="$2"
-    local xm_file="$3"
-    local kn_file="$4"
-
     mkdir -p "SOURCES" && cd "SOURCES" || exit 1
 
     if [[ ! -s "$cl_file" ]]; then
         # purge src.rpm files
         rm -f cmdline config ./*.patch ./*.patch.xz ./*.spec ./*.tar.xz linux-*.src.rpm
-
-        if [[ -z "$xm_file" && -e "../../rpmbuild.edge/SOURCES/$cl_file" ]]; then
-            # refresh clear: copy src.rpm from edge folder
-            cp -a "../../rpmbuild.edge/SOURCES/$cl_file" .
-        elif [[ -n "$xm_file" && -e "../../rpmbuild.clear/SOURCES/$cl_file" ]]; then
-            # refresh edge: copy src.rpm from clear folder
-            cp -a "../../rpmbuild.clear/SOURCES/$cl_file" .
-        else
-            # otherwise, fetch src.rpm from the web
-            wget "${cl_url}/${cl_rel}/clear/source/SRPMS/${cl_file}" || exit 1
-        fi
+        wget "${cl_url}/${cl_rel}/clear/source/SRPMS/${cl_file}" || exit 1
 
         # extract src.rpm files
         rpm2cpio "$cl_file" | cpio -i -d -u 2>/dev/null
     fi
 
-    if [[ -z "$xm_file" && -n "$kn_file" && ! -s "$kn_file" ]]; then
+    if [[ ! -s "$kn_file" ]]; then
         rm -f linux-[0-9]*.tar.xz
         wget "${kn_url}/${kn_file}" || exit 1
     fi
 
-    if [[ -n "$xm_file" && ! -s "$xm_file" ]]; then
+    if [[ ! -s "$xm_file" ]]; then
         rm -f [0-9]*-xanmod*.tar.gz
         wget "${xm_url}/${xm_file}" || exit 1
     fi
 }
 
-case "$1" in
-    clear )
-        cd "rpmbuild.clear" || exit 1
-        echo "Fetch/extract sources for Clear's native kernel."
-        fetch "41350" "linux-6.8.2-1420.src.rpm" "" "linux-6.8.2.tar.xz"
-        ;;
-    edge )
-        cd "rpmbuild.edge" || exit 1
-        echo "Fetch/extract sources for XanMod's edge kernel."
-        fetch "41350" "linux-6.8.2-1420.src.rpm" "6.8.2-xanmod1.tar.gz"
-        ;;
-    * ) echo "synopsis"
-        echo "   $0 all | clear | edge"
-esac
+echo "Fetch kernel sources"
+cd ./rpmbuild || exit 1
+fetch
+
+echo "done."
 

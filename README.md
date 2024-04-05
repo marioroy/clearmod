@@ -2,13 +2,17 @@
 
 Run the [XanMod Edge](https://github.com/xanmod) kernel on [Clear Linux](https://www.clearlinux.org) with ease.
 
-The motivation comes from liking the Clear and XanMod Linux kernels and opportunity to run a preempt-enabled kernel with the [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. They run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
+The motivation comes from liking the Clear and XanMod Linux kernels, and opportunity to run a preempt-enabled kernel patched with [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler, or [ECHO](https://github.com/hamadmarri/ECHO-CPU-Scheduler) (Enhanced CPU Handling Orchestrator). The kernels are configured to run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 
-The XanMod Edge flavor includes NTSync (for fast kernel-backed Wine) and le9's
-patchset (providing anon and clean file pages protection under memory pressure).
+The XanMod Edge kernel includes NTSync (for fast kernel-backed Wine) and le9's patchset
+(providing anon and clean file pages protection under memory pressure).
 
-In March 2024, I added support to build Clear's native kernel. The XanMod LTS,
-Main, and RT variants were removed.
+```text
+clear - Clear Linux native kernel + preemption
+bore  - XanMod Edge kernel + preemption + BORE
+echo  - XanMod Edge kernel + preemption + ECHO
+edge  - XanMod Edge kernel + preemption
+```
 
 ## Preparation and configuration
 
@@ -26,11 +30,21 @@ aggressive CPU burners (like build jobs) from desktop applications.
 The `sched_rt_runtime_us` value is to mitigate jitter running a process with
 real-time attributes, while background jobs consume many CPU cores.
 
+Note: `SCHED_AUTOGROUP` is not used running ECHO.
+
 ```bash
 sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
 /proc/sys/kernel/sched_autogroup_enabled 1
 /proc/sys/kernel/sched_rt_runtime_us 980000
 EOF
+```
+
+Do not tune `base_slice_ns` manually. Rather, let the kernel set the value
+automatically. The value differs between EEVDF/BORE (high number) and ECHO
+(low number).
+
+```text
+# /sys/kernel/debug/sched/base_slice_ns <value>
 ```
 
 Set boot-timeout and system‐wide configuration to avoid `clr‐boot‐manager`
@@ -62,40 +76,32 @@ cp -a share/bash-completion/completions/* \
 ## Synopsis and simulation
 
 The `fetch-src` command (run first) fetches `*.src.rpm` and `*.tar.gz` from
-Intel and XanMod, respectively. The optional release argument to `xm-install`
+Clear and XanMod, respectively. The optional release argument to `xm-install`
 and `xm-uninstall` is described below.
 
 ```bash
-./fetch-src all | clear | edge
-
-./xm-build clear-default | clear-preempt
-./xm-build edge-default | edge-preempt
-
-./xm-install clear-default | clear-preempt [<release>]
-./xm-install edge-default | edge-preempt [<release>]
-
-./xm-uninstall all | clear | edge
-./xm-uninstall clear-default | clear-preempt [<release>]
-./xm-uninstall edge-default | edge-preempt [<release>]
-
-./xm-list-kernels
+./fetch-src
+./xm-build bore | clear | echo | edge
+./xm-install bore | clear | echo | edge [<release>]
+./xm-uninstall bore | clear | echo | edge [<release>]
+./xm-uninstall all
+./xm-kernels
 ```
 
 The following are the steps to fetch the stable sources, build, and
 install the kernel.
 
 ```bash
-./fetch-src edge
-./xm-build edge-preempt
-./xm-install edge-preempt
+./fetch-src
+./xm-build edge
+./xm-install edge
 sync
 ```
 
-Opt-in to enable the BORE CPU Scheduler with `BORE=1`, default disabled.
-
-The default timer frequency is `HZ_1000`. To override, define `HZ=value` to
-`1000`, `800`, `720`, `625`, `500`, `300`, `250`, or `100`. A lower Hz value
+The default timer frequency is `HZ_800`. To override, define `HZ=value` to
+`1000`, `800`, `625`, `500`, `300`, `250`, or `100`. A lower Hz value
 may decrease power consumption or fan speed revving up and down.
+Unsure, the best Hz value for the desktop environment is 800 or 625.
 
 To quickly build a trimmed Linux kernel, `LOCALMODCONFIG=1` will build only
 the modules you have running. Therefore, make sure that all modules you will
@@ -103,25 +109,25 @@ ever need are loaded. Keyboard modules for the `cpio` package, CD-ROM/DVD and
 EXFAT/NTFS3 filesystems, and NTSYNC are added in the SPEC files.
 
 ```text
-./fetch-src clear
-BORE=1 HZ=800 LOCALMODCONFIG=1 ./xm-build clear-preempt
-./xm-install clear-preempt
+./fetch-src
+HZ=800 LOCALMODCONFIG=1 ./xm-build clear
+./xm-install clear
 sync
 ```
 
-The `xm-list-kernels` command lists `xm*` kernels only. An asterisk indicates
+The `xm-kernels` command lists `xm*` kernels only. An asterisk indicates
 the kernel is live or running. One may not install over it or uninstall.
 Boot into another kernel before removal via `xm-uninstall`.
 
 ```bash
-./xm-list-kernels 
+./xm-kernels 
 XM boot-manager entries
-  org.clearlinux.xmclear-preempt.6.8.2-167
-* org.clearlinux.xmedge-preempt.6.8.2-167
+  org.clearlinux.xmclear.6.8.4-168
+* org.clearlinux.xmedge.6.8.4-168
 
 XM installed packages (excluding dev,extra,license)
-  linux-xmclear-preempt-6.8.2-167
-* linux-xmedge-preempt-6.8.2-167
+  linux-xmclear-6.8.4-168
+* linux-xmedge-6.8.4-168
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -130,8 +136,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear-preempt 167
-Removing org.clearlinux.xmclear-preempt.6.8.2-167
+./xm-uninstall clear 168
+Removing org.clearlinux.xmclear.6.8.4-168
 ```
 
 ## Epilogue
@@ -139,7 +145,7 @@ Removing org.clearlinux.xmclear-preempt.6.8.2-167
 The `/boot` partition has limited space. So, no reason to install many kernels.
 Build the one you want and enjoy the Clear or XanMod kernel. If changing your
 mind later, remember to manage and uninstall any unused kernels. Important:
-keep at least one Clear Linux kernel, installed with the OS or via `swupd`.
+Keep at least one Clear Linux kernel, installed with the OS or via `swupd`.
 
 To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
 macro. Adjust the integer value to your liking.
@@ -153,7 +159,7 @@ Set execute bits `chmod +x build` and run `./build`.
 
 ```bash
 #!/bin/bash
-time BORE=1 HZ=800 LOCALMODCONFIG=1 ./xm-build edge-preempt
+time HZ=800 LOCALMODCONFIG=1 ./xm-build edge
 ```
 
 Configuring PAM or security limits, allowing users to run commands with

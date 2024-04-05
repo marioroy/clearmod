@@ -1,25 +1,26 @@
 #
 # Linux releases need to be named 6.x.0 not 6.x or various things break.
 #
+%define   xm_customver 1
 
-Name:     linux-xmclear-preempt
-Version:  6.8.2
-Release:  167
+Name:     linux-xmecho
+Version:  6.8.4
+Release:  168
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
 Group:    kernel
-Source0:  https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-%{version}.tar.xz
+Source0:  https://github.com/xanmod/linux/archive/refs/tags/%{version}-xanmod%{xm_customver}.tar.gz
 Source1:  config
 Source2:  cmdline
 
-Requires: linux-xmclear-preempt-license = %{version}-%{release}
+Requires: linux-xmecho-license = %{version}-%{release}
 
 # Build requires: swupd bundle-add \
 #   bc bison c-basic devpkg-gmp devpkg-elfutils devpkg-openssl flex \
 #   kernel-install linux-firmware lz4 make package-utils wget xz
 
-%define ktarget  xmclear-preempt
+%define ktarget  xmecho
 %define kversion %{version}-%{release}.%{ktarget}
 
 # don't strip .ko files!
@@ -35,13 +36,20 @@ Requires: linux-xmclear-preempt-license = %{version}-%{release}
 
 # Clear patches commented out or not patched in Clear's spec file.
 # 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
-# 0109-initialize-ata-before-graphics.patch
 # 0113-print-fsync-count-for-bootchart.patch
 # 0118-add-scheduler-turbo3-patch.patch
 # 0132-prezero-20220308.patch
 # 0138-kdf-boottime.patch
 # 0139-adlrdt.patch
 # 0200-mm-lru_cache_disable-use-synchronize_rcu_expedited.patch
+
+# Clear patches omitted, due to inclusion in the XanMod kernel.
+# 0109-initialize-ata-before-graphics.patch
+# 0115-enable-stateless-firmware-loading.patch
+# 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
+# 0121-locking-rwsem-spin-faster.patch
+
+# Clear patches omitted, due to removal in the XanMod kernel.
 # 0001-sched-migrate.patch (reverted in 6.5.7)
 # 0002-sched-migrate.patch (reverted in 6.5.7, SIS_CURRENT feature)
 
@@ -54,11 +62,8 @@ Patch0108: 0108-smpboot-reuse-timer-calibration.patch
 Patch0111: 0111-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch
 Patch0112: 0112-init-wait-for-partition-and-retry-scan.patch
 Patch0114: 0114-add-boot-option-to-allow-unsigned-modules.patch
-Patch0115: 0115-enable-stateless-firmware-loading.patch
 Patch0116: 0116-migrate-some-systemd-defaults-to-the-kernel-defaults.patch
 Patch0117: 0117-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch
-Patch0120: 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
-Patch0121: 0121-locking-rwsem-spin-faster.patch
 Patch0122: 0122-ata-libahci-ignore-staggered-spin-up.patch
 Patch0123: 0123-print-CPU-that-faults.patch
 Patch0125: 0125-nvme-workaround.patch
@@ -67,7 +72,7 @@ Patch0127: 0127-lib-raid6-add-patch.patch
 Patch0128: 0128-itmt_epb-use-epb-to-scale-itmt.patch
 Patch0130: 0130-itmt2-ADL-fixes.patch
 Patch0131: 0131-add-a-per-cpu-minimum-high-watermark-an-tune-batch-s.patch
-Patch0133: 0133-novector.patch
+Patch0133: 0133-xm-novector.patch
 Patch0134: 0134-md-raid6-algorithms-scale-test-duration-for-speedier.patch
 Patch0135: 0135-initcall-only-print-non-zero-initcall-debug-to-speed.patch
 Patch0137: libsgrowdown.patch
@@ -79,36 +84,26 @@ Patch0157: scale-net-alloc.patch
 Patch0158: 0158-clocksource-only-perform-extended-clocksource-checks.patch
 Patch0160: better_idle_balance.patch
 Patch0161: 0161-ACPI-align-slab-buffers-for-improved-memory-performa.patch
-Patch0162: 0162-extra-optmization-flags.patch
+Patch0162: 0162-xm-extra-optmization-flags.patch
 Patch0163: 0163-thermal-intel-powerclamp-check-MWAIT-first-use-pr_wa.patch
 Patch0164: 0164-KVM-VMX-make-vmx-init-a-late-init-call-to-get-to-ini.patch
 Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
-# x86/kconfig: add generic x86_64 levels
-Patch2000: kbuild-add-generic-x86_64-levels.patch
+# Enhanced CPU Handling Orchestrator (ECHO) Scheduler.
+# The CONFIG_SCHED_ECHO knob is enabled by default.
+# https://github.com/hamadmarri/ECHO-CPU-Scheduler
+Patch2001: 0001-linux6.8.y-echo.patch
 
-# Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
-# The CONFIG_SCHED_BORE knob is enabled by default.
-# https://github.com/firelzrd/bore-scheduler
-Patch2001: 0001-linux6.8.y-bore.patch
-Patch2002: sched-bore-refactor-update_curr-entity_tick.patch
-Patch2003: sched-fair-refactor-update_curr-entity_tick.patch
-
-# Add HZ_500, HZ_625, HZ_720, and HZ_800 timer-tick options.
+# Add HZ_625 and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
-Patch2100: hz-500-625-720-800-timer-frequencies.patch
+Patch2101: edge-hz-625-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
-Patch2101: asus-prime-trx40-pro-s-mixer-def.patch
-
-# Sched fair/mm updates.
-Patch2102: sched_fair_fix_initial_util_avg_calculation.patch
-Patch2103: eevdf_minor_fixes_for_reweight_entity.patch
-Patch2104: mm-Disable-watermark-boosting-by-default.patch
+Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
 %description
 The Linux kernel.
@@ -117,7 +112,7 @@ The Linux kernel.
 License:        GPL-2.0
 Summary:        The Linux kernel extra files
 Group:          kernel
-Requires:       linux-xmclear-preempt-license = %{version}-%{release}
+Requires:       linux-xmecho-license = %{version}-%{release}
 
 %description extra
 Linux kernel extra files
@@ -141,15 +136,15 @@ Creates a cpio file with some modules
 License:        GPL-2.0
 Summary:        The Linux kernel
 Group:          kernel
-Requires:       linux-xmclear-preempt = %{version}-%{release}
-Requires:       linux-xmclear-preempt-extra = %{version}-%{release}
-Requires:       linux-xmclear-preempt-license = %{version}-%{release}
+Requires:       linux-xmecho = %{version}-%{release}
+Requires:       linux-xmecho-extra = %{version}-%{release}
+Requires:       linux-xmecho-license = %{version}-%{release}
 
 %description dev
 Linux kernel build files
 
 %prep
-%setup -q -n linux-%{version}
+%setup -q -n linux-%{version}-xanmod%{xm_customver}
 
 #cve.patch.start cve patches
 #cve.patch.end
@@ -166,11 +161,8 @@ Linux kernel build files
 %patch -P 111 -p1
 %patch -P 112 -p1
 %patch -P 114 -p1
-%patch -P 115 -p1
 %patch -P 116 -p1
 %patch -P 117 -p1
-%patch -P 120 -p1
-%patch -P 121 -p1
 %patch -P 122 -p1
 %patch -P 123 -p1
 %patch -P 125 -p1
@@ -198,29 +190,21 @@ Linux kernel build files
 %patch -P 166 -p1
 #Serie.patch.end
 
-%patch -P 2000 -p1
-
-%if %{_bore} == 1
 %patch -P 2001 -p1
-%patch -P 2002 -p1
-%else
-%patch -P 2003 -p1
-%endif
 
-%patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
-%patch -P 2103 -p1
-%patch -P 2104 -p1
 
 
 cp %{SOURCE1} .config
+
+scripts/config -e ECHO
 
 # Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
-# Set timer frequency { 1000, 800, 720, 625, 500, 300, 250, or 100 }.
+# Set timer frequency { 1000, 800, 625, 500, 300, 250, or 100 }.
 # Default to 800Hz tick rate.
 scripts/config -d HZ_1000
 scripts/config -e HZ_%{_hzval}
@@ -275,6 +259,10 @@ scripts/config -m NTFS3_FS
 scripts/config -d NTFS3_64BIT_CLUSTER
 scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
+
+# Enable NTSYNC driver for fast kernel-backed Wine.
+# https://github.com/xanmod/linux/issues/420
+scripts/config -m NTSYNC
 
 # Enable tracking the state of allocated blocks of zRAM.
 scripts/config -e ZRAM_MEMORY_TRACKING
@@ -353,6 +341,7 @@ BuildKernel() {
       scripts/config --file ${Target}/.config -e NTFS3_FS_POSIX_ACL
 
       # Add optional modules.
+      scripts/config --file ${Target}/.config -m NTSYNC
 
     %endif
 
@@ -441,9 +430,9 @@ createCPIO %{ktarget} %{kversion}
 
 rm -rf %{buildroot}/usr/lib/firmware
 
-mkdir -p %{buildroot}/usr/share/package-licenses/linux-xmclear-preempt
-cp COPYING %{buildroot}/usr/share/package-licenses/linux-xmclear-preempt/COPYING
-cp -a LICENSES/* %{buildroot}/usr/share/package-licenses/linux-xmclear-preempt
+mkdir -p %{buildroot}/usr/share/package-licenses/linux-xmecho
+cp COPYING %{buildroot}/usr/share/package-licenses/linux-xmecho/COPYING
+cp -a LICENSES/* %{buildroot}/usr/share/package-licenses/linux-xmecho
 
 %postun
 rm -fr /var/lib/dkms/*/kernel-%{kversion}-x86_64
@@ -466,7 +455,7 @@ rm -fr /var/lib/dkms/*/*/%{kversion}
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/linux-xmclear-preempt
+/usr/share/package-licenses/linux-xmecho
 
 %files cpio
 /usr/lib/kernel/initrd-org.clearlinux.%{ktarget}.%{version}-%{release}

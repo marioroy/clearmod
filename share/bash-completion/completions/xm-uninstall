@@ -6,12 +6,8 @@ __xm-uninstall()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    COMPREPLY=( $(compgen -W '
-        clear-default clear-preempt
-        edge-default edge-preempt
-        main-default main-preempt
-        lts-default lts-preempt
-        rt-preempt all' -- "$cur")
+    COMPREPLY=(
+        $(compgen -W 'all bore clear echo edge' -- "$cur")
     )
 } &&
     complete -F __xm-uninstall xm-uninstall

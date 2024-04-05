@@ -3,9 +3,9 @@
 #
 %define   xm_customver 1
 
-Name:     linux-xmedge-default
-Version:  6.8.2
-Release:  167
+Name:     linux-xmedge
+Version:  6.8.4
+Release:  168
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -14,13 +14,13 @@ Source0:  https://github.com/xanmod/linux/archive/refs/tags/%{version}-xanmod%{x
 Source1:  config
 Source2:  cmdline
 
-Requires: linux-xmedge-default-license = %{version}-%{release}
+Requires: linux-xmedge-license = %{version}-%{release}
 
 # Build requires: swupd bundle-add \
 #   bc bison c-basic devpkg-gmp devpkg-elfutils devpkg-openssl flex \
 #   kernel-install linux-firmware lz4 make package-utils wget xz
 
-%define ktarget  xmedge-default
+%define ktarget  xmedge
 %define kversion %{version}-%{release}.%{ktarget}
 
 # don't strip .ko files!
@@ -91,27 +91,14 @@ Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
-# Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
-# The CONFIG_SCHED_BORE knob is enabled by default.
-# https://github.com/firelzrd/bore-scheduler
-# https://github.com/xanmod/linux/issues/333
-Patch2001: 0001-linux6.8.y-bore-xanmod.patch
-Patch2002: sched-bore-refactor-update_curr-entity_tick.patch
-Patch2003: sched-fair-refactor-update_curr-entity_tick.patch
-
-# Add HZ_625, HZ_720, and HZ_800 timer-tick options.
+# Add HZ_625 and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
-Patch2100: hz-625-720-800-timer-frequencies.patch
+Patch2101: edge-hz-625-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
-Patch2101: asus-prime-trx40-pro-s-mixer-def.patch
-
-# Sched fair/mm updates.
-Patch2102: sched_fair_fix_initial_util_avg_calculation.patch
-Patch2103: eevdf_minor_fixes_for_reweight_entity.patch
-Patch2104: mm-Disable-watermark-boosting-by-default.patch
+Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
 %description
 The Linux kernel.
@@ -120,7 +107,7 @@ The Linux kernel.
 License:        GPL-2.0
 Summary:        The Linux kernel extra files
 Group:          kernel
-Requires:       linux-xmedge-default-license = %{version}-%{release}
+Requires:       linux-xmedge-license = %{version}-%{release}
 
 %description extra
 Linux kernel extra files
@@ -144,9 +131,9 @@ Creates a cpio file with some modules
 License:        GPL-2.0
 Summary:        The Linux kernel
 Group:          kernel
-Requires:       linux-xmedge-default = %{version}-%{release}
-Requires:       linux-xmedge-default-extra = %{version}-%{release}
-Requires:       linux-xmedge-default-license = %{version}-%{release}
+Requires:       linux-xmedge = %{version}-%{release}
+Requires:       linux-xmedge-extra = %{version}-%{release}
+Requires:       linux-xmedge-license = %{version}-%{release}
 
 %description dev
 Linux kernel build files
@@ -198,18 +185,8 @@ Linux kernel build files
 %patch -P 166 -p1
 #Serie.patch.end
 
-%if %{_bore} == 1
-%patch -P 2001 -p1
-%patch -P 2002 -p1
-%else
-%patch -P 2003 -p1
-%endif
-
-%patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
-%patch -P 2103 -p1
-%patch -P 2104 -p1
 
 
 cp %{SOURCE1} .config
@@ -218,7 +195,7 @@ cp %{SOURCE1} .config
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
-# Set timer frequency { 1000, 800, 720, 625, 500, 300, 250, or 100 }.
+# Set timer frequency { 1000, 800, 625, 500, 300, 250, or 100 }.
 # Default to 800Hz tick rate.
 scripts/config -d HZ_1000
 scripts/config -e HZ_%{_hzval}
@@ -280,6 +257,18 @@ scripts/config -m NTSYNC
 
 # Enable tracking the state of allocated blocks of zRAM.
 scripts/config -e ZRAM_MEMORY_TRACKING
+
+# Enable preempt.
+scripts/config -d PREEMPT_NONE
+scripts/config -d PREEMPT_VOLUNTARY
+scripts/config -d PREEMPT_VOLUNTARY_BUILD
+scripts/config -e PREEMPT
+scripts/config -e RCU_BOOST
+scripts/config -d RCU_EXP_KTHREAD
+scripts/config -e RCU_LAZY
+scripts/config -d RT_GROUP_SCHED
+scripts/config -e SCHED_OMIT_FRAME_POINTER
+scripts/config -e SCHED_CLUSTER
 
 mv .config config
 
@@ -432,9 +421,9 @@ createCPIO %{ktarget} %{kversion}
 
 rm -rf %{buildroot}/usr/lib/firmware
 
-mkdir -p %{buildroot}/usr/share/package-licenses/linux-xmedge-default
-cp COPYING %{buildroot}/usr/share/package-licenses/linux-xmedge-default/COPYING
-cp -a LICENSES/* %{buildroot}/usr/share/package-licenses/linux-xmedge-default
+mkdir -p %{buildroot}/usr/share/package-licenses/linux-xmedge
+cp COPYING %{buildroot}/usr/share/package-licenses/linux-xmedge/COPYING
+cp -a LICENSES/* %{buildroot}/usr/share/package-licenses/linux-xmedge
 
 %postun
 rm -fr /var/lib/dkms/*/kernel-%{kversion}-x86_64
@@ -457,7 +446,7 @@ rm -fr /var/lib/dkms/*/*/%{kversion}
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/linux-xmedge-default
+/usr/share/package-licenses/linux-xmedge
 
 %files cpio
 /usr/lib/kernel/initrd-org.clearlinux.%{ktarget}.%{version}-%{release}
