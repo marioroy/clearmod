@@ -198,8 +198,6 @@ Linux kernel build files
 
 cp %{SOURCE1} .config
 
-scripts/config -e ECHO
-
 # Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
