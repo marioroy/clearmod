@@ -5,7 +5,7 @@
 
 Name:     linux-xmedge
 Version:  6.8.4
-Release:  168
+Release:  169
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -196,9 +196,15 @@ scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
 # Set timer frequency { 1000, 800, 625, 500, 300, 250, or 100 }.
-# Default to 800Hz tick rate.
+# Defaults to 800Hz tick rate.
 scripts/config -d HZ_1000
 scripts/config -e HZ_%{_hzval}
+
+# Override timer configs to match XanMod defaults.
+scripts/config -d NO_HZ_FULL
+scripts/config -d NO_HZ
+scripts/config -e NO_HZ_IDLE
+scripts/config -e TICK_CPU_ACCOUNTING
 
 # Default to maximum amount of ASLR bits.
 scripts/config --set-val ARCH_MMAP_RND_BITS 32
