@@ -25,23 +25,18 @@ bc bison c-basic devpkg-gmp devpkg-elfutils devpkg-openssl flex \
 kernel-install linux-firmware lz4 make package-utils wget xz
 ```
 
-Enable `sched_autogroup_enabled`. The knob optimizes the scheduler to isolate
-aggressive CPU burners (like build jobs) from desktop applications.
-The `sched_rt_runtime_us` value is to mitigate jitter running a process with
-real-time attributes, while background jobs consume many CPU cores.
-
-Note: `SCHED_AUTOGROUP` is not used running ECHO.
+The power tweaks service is how Clear Linux sets reasonable power management
+defaults. For additional tweaking and response time consistency, copy the
+sample file to the `/etc` folder, or merge the entries manually. This requires
+the `clr-power` service, enabled by default.
 
 ```bash
-sudo tee -a "/etc/clr-power-tweaks.conf" >/dev/null <<'EOF'
-/proc/sys/kernel/sched_autogroup_enabled 1
-/proc/sys/kernel/sched_rt_runtime_us 980000
-EOF
+sudo cp share/clr-power-tweaks.conf /etc/.
 ```
 
-Do not tune `base_slice_ns` manually. Rather, let the kernel set the value
-automatically. The value differs between EEVDF/BORE (high number) and ECHO
-(low number).
+Do not tune or add `base_slice_ns` manually. Rather, let the kernel set the
+value automatically. The value differs between EEVDF/BORE (high number) and
+ECHO (low number).
 
 ```text
 # /sys/kernel/debug/sched/base_slice_ns <value>
@@ -122,12 +117,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-  org.clearlinux.xmclear.6.8.4-169
-* org.clearlinux.xmedge.6.8.4-169
+  org.clearlinux.xmclear.6.8.5-170
+* org.clearlinux.xmedge.6.8.5-170
 
 XM installed packages (excluding dev,extra,license)
-  linux-xmclear-6.8.4-169
-* linux-xmedge-6.8.4-169
+  linux-xmclear-6.8.5-170
+* linux-xmedge-6.8.5-170
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -136,8 +131,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 169
-Removing org.clearlinux.xmclear.6.8.4-169
+./xm-uninstall clear 170
+Removing org.clearlinux.xmclear.6.8.5-170
 ```
 
 ## Epilogue

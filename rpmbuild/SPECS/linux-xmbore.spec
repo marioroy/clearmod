@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmbore
-Version:  6.8.4
-Release:  169
+Version:  6.8.5
+Release:  170
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -109,6 +109,8 @@ Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 # Sched fair updates.
 Patch2103: sched_fair_fix_initial_util_avg_calculation.patch
 Patch2104: eevdf_minor_fixes_for_reweight_entity.patch
+Patch2105: eevdf-Allow-shorter-slices-to-wakeup-preempt1.patch
+Patch2106: eevdf-Allow-shorter-slices-to-wakeup-preempt3.patch
 
 %description
 The Linux kernel.
@@ -201,6 +203,8 @@ Linux kernel build files
 %patch -P 2102 -p1
 %patch -P 2103 -p1
 %patch -P 2104 -p1
+%patch -P 2105 -p1
+%patch -P 2106 -p1
 
 
 cp %{SOURCE1} .config

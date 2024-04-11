@@ -1,0 +1,25 @@
+From 4f130b977768b9e545837945008f1e008cea4839 Mon Sep 17 00:00:00 2001
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Tue, 26 Sep 2023 14:32:32 +0200
+Subject: [PATCH 09/10] sched/eevdf: Allow shorter slices to wakeup-preempt
+
+  For BORE kernel.
+
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index b0cdff096..64ce99cf0 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -14,6 +14,10 @@ SCHED_FEAT(PLACE_DEADLINE_INITIAL, true)
+ #else // !CONFIG_SCHED_BORE
+ SCHED_FEAT(RUN_TO_PARITY, true)
+ #endif // CONFIG_SCHED_BORE
++/*
++ * Allow tasks with a shorter slice to disregard RUN_TO_PARITY
++ */
++SCHED_FEAT(PREEMPT_SHORT, true)
+ 
+ /*
+  * Prefer to schedule the task we woke last (assuming it failed
+-- 
+2.44.0.325.g11c821f2f2
+
