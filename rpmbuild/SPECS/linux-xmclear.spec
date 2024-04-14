@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmclear
-Version:  6.8.5
-Release:  170
+Version:  6.8.6
+Release:  171
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -104,6 +104,10 @@ Patch2104: eevdf_minor_fixes_for_reweight_entity.patch
 Patch2105: eevdf-Allow-shorter-slices-to-wakeup-preempt1.patch
 Patch2106: eevdf-Allow-shorter-slices-to-wakeup-preempt2.patch
 
+# Bluetooth: l2cap_core: Don't double set the HCI_CONN_MGMT_CONNECTED bit.
+# https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/41
+Patch2201: bluetooth-l2cap_core-fix.patch
+
 %description
 The Linux kernel.
 
@@ -193,13 +197,13 @@ Linux kernel build files
 #Serie.patch.end
 
 %patch -P 2000 -p1
-
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
 %patch -P 2104 -p1
 %patch -P 2105 -p1
 %patch -P 2106 -p1
+%patch -P 2201 -p1
 
 
 cp %{SOURCE1} .config
@@ -273,11 +277,13 @@ scripts/config -e NTFS3_FS_POSIX_ACL
 # Enable tracking the state of allocated blocks of zRAM.
 scripts/config -e ZRAM_MEMORY_TRACKING
 
-# Enable preempt.
+# Enable full preemption by default. The preemption behavior
+# can be defined on boot i.e preempt=none, voluntary, or full.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
 scripts/config -e PREEMPT
+scripts/config -e PREEMPT_DYNAMIC
 scripts/config -e RCU_BOOST
 scripts/config -d RCU_EXP_KTHREAD
 scripts/config -e RCU_LAZY
