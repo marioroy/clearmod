@@ -4,7 +4,7 @@
 
 Name:     linux-xmclear
 Version:  6.8.6
-Release:  171
+Release:  172
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -431,7 +431,7 @@ createCPIO() {
     (
       cd cpiofile
       find . | cpio --create --format=newc \
-        | xz --check=crc32 --lzma2=dict=1024KiB > ${KernelDir}/initrd-org.clearlinux.${Target}.%{version}-%{release}
+        > ${KernelDir}/initrd-org.clearlinux.${Target}.%{version}-%{release}
     )
 }
 
