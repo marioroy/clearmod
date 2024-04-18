@@ -1,0 +1,100 @@
+0a1,11
+> Subject: Add realtime patch set (v6.8.2-rt11)
+> 
+> 1. The file "patch-6.8.2-rt11.patch.gz" originated from:
+>    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.8/
+> 
+> 2. ClearMod Project: 
+>    Removed context that are included in the Clear/XanMod kernels.
+>    A complementary diff contains the bits changed, mostly removal.
+>    diff ~/Downloads/patch-6.8.2-rt11.patch 0001-linux6.8.y-rt-clearmod.patch \
+>         > 0001-linux6.8.y-rt-clearmod.diff
+> 
+2730c2741
+< @@ -271,8 +278,27 @@ static inline void dump_stack(void)
+---
+> @@ -271,6 +278,23 @@ static inline void dump_stack(void)
+2753,2757c2764
+< +bool this_cpu_in_panic(void);
+< +
+<  #ifdef CONFIG_SMP
+<  extern int __printk_cpu_sync_try_get(void);
+<  extern void __printk_cpu_sync_wait(void);
+---
+>  bool this_cpu_in_panic(void);
+3957,3967c3964,3967
+< @@ -446,6 +448,15 @@ void panic(const char *fmt, ...)
+<  
+<  	/* Do not scroll important messages printed above */
+<  	suppress_printk = 1;
+< +
+< +	/*
+< +	 * The final messages may not have been printed if in a context that
+< +	 * defers printing (such as NMI) and irq_work is not available.
+< +	 * Explicitly flush the kernel log buffer one last time.
+< +	 */
+< +	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+---
+> @@ -453,6 +455,7 @@ void panic(const char *fmt, ...)
+>  	 * Explicitly flush the kernel log buffer one last time.
+>  	 */
+>  	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+3969c3969
+< +
+---
+>  
+3972d3971
+<  		touch_softlockup_watchdog();
+4182,4188c4181
+< @@ -130,10 +235,10 @@ struct printk_message {
+<  };
+<  
+<  bool other_cpu_in_panic(void);
+< -bool this_cpu_in_panic(void);
+<  bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+<  			     bool is_extended, bool may_supress);
+---
+> @@ -135,4 +240,5 @@ struct printk_message {
+5150c5143
+< @@ -2311,55 +2343,124 @@ int vprintk_store(int facility, int level,
+---
+> @@ -2311,54 +2343,124 @@ int vprintk_store(int facility, int level,
+5184,5185c5177
+< -	if (unlikely(suppress_panic_printk) &&
+< -	    atomic_read(&panic_cpu) != raw_smp_processor_id())
+---
+> -	if (unlikely(suppress_panic_printk) && other_cpu_in_panic())
+6932,6964d6923
+< diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+< index 83471e81501a7..222c6d6c8281a 100644
+< --- a/lib/dump_stack.c
+< +++ b/lib/dump_stack.c
+< @@ -96,15 +96,25 @@ static void __dump_stack(const char *log_lvl)
+<   */
+<  asmlinkage __visible void dump_stack_lvl(const char *log_lvl)
+<  {
+< +	bool in_panic = this_cpu_in_panic();
+<  	unsigned long flags;
+<  
+<  	/*
+<  	 * Permit this cpu to perform nested stack dumps while serialising
+< -	 * against other CPUs
+< +	 * against other CPUs, unless this CPU is in panic.
+< +	 *
+< +	 * When in panic, non-panic CPUs are not permitted to store new
+< +	 * printk messages so there is no need to synchronize the output.
+< +	 * This avoids potential deadlock in panic() if another CPU is
+< +	 * holding and unable to release the printk_cpu_sync.
+<  	 */
+< -	printk_cpu_sync_get_irqsave(flags);
+< +	if (!in_panic)
+< +		printk_cpu_sync_get_irqsave(flags);
+< +
+<  	__dump_stack(log_lvl);
+< -	printk_cpu_sync_put_irqrestore(flags);
+< +
+< +	if (!in_panic)
+< +		printk_cpu_sync_put_irqrestore(flags);
+<  }
+<  EXPORT_SYMBOL(dump_stack_lvl);
+<  

@@ -1,0 +1,17 @@
+For XanMod kernel:
+
+Set this to SCHED_FIFO, matching the vanilla kernel, prior to
+patching the realtime patch set. A post action will put it back.
+
+diff -uar a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -2408,7 +2408,7 @@
+ 		t = per_cpu(ksoftirqd, cpu);
+ 		WARN_ON_ONCE(!t);
+ 		sp.sched_priority = 2;
+-		sched_setscheduler_nocheck(t, SCHED_RR, &sp);
++		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
+ 	}
+ 
+ 	/* Don't allow time recalculation while creating a new task. */

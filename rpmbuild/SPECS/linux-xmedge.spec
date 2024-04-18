@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmedge
-Version:  6.8.6
-Release:  172
+Version:  6.8.7
+Release:  173
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -100,15 +100,12 @@ Patch2101: edge-hz-625-800-timer-frequencies.patch
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
 Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
-# Sched fair updates.
+# Sched fair/rt updates.
 Patch2103: sched_fair_fix_initial_util_avg_calculation.patch
 Patch2104: eevdf_minor_fixes_for_reweight_entity.patch
 Patch2105: eevdf-Allow-shorter-slices-to-wakeup-preempt1.patch
 Patch2106: eevdf-Allow-shorter-slices-to-wakeup-preempt2.patch
-
-# Bluetooth: l2cap_core: Don't double set the HCI_CONN_MGMT_CONNECTED bit.
-# https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/41
-Patch2201: bluetooth-l2cap_core-fix.patch
+Patch2107: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
 
 %description
 The Linux kernel.
@@ -201,7 +198,7 @@ Linux kernel build files
 %patch -P 2104 -p1
 %patch -P 2105 -p1
 %patch -P 2106 -p1
-%patch -P 2201 -p1
+%patch -P 2107 -p1
 
 
 cp %{SOURCE1} .config
@@ -279,16 +276,17 @@ scripts/config -m NTSYNC
 # Enable tracking the state of allocated blocks of zRAM.
 scripts/config -e ZRAM_MEMORY_TRACKING
 
-# Enable full preemption by default. The preemption behavior
-# can be defined on boot i.e preempt=none, voluntary, or full.
+# Enable full preemption.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
+# The preemption behavior can be defined on boot.
+# i.e. preempt=none, voluntary, or full
 scripts/config -e PREEMPT
 scripts/config -e PREEMPT_DYNAMIC
 scripts/config -e RCU_BOOST
-scripts/config -d RCU_EXP_KTHREAD
 scripts/config -e RCU_LAZY
+scripts/config -d RCU_EXP_KTHREAD
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
 scripts/config -e SCHED_CLUSTER
@@ -302,7 +300,7 @@ BuildKernel() {
     Arch=x86_64
     ExtraVer="-%{release}.${Target}"
 
-    rm -f localversion
+    rm -f localversion*
 
     perl -p -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = ${ExtraVer}/" Makefile
 

@@ -70,7 +70,12 @@ function xm_install {
     if [[ -d "/var/lib/dkms/nvidia" ]]; then
         echo "Building kernel drivers for NVIDIA graphics"
         xm_variant=${base_name#*-}  # i.e. xmedge
-        kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f3-).$xm_variant
+
+        if [[ "$variant" == *"-rt"* ]]; then
+            kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f4-).$xm_variant
+        else
+            kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f3-).$xm_variant
+        fi
 
         sudo rm -fr /var/lib/dkms/*/kernel-${kernel}-x86_64
         sudo rm -fr /var/lib/dkms/*/*/${kernel}
@@ -85,11 +90,12 @@ function xm_install {
 }
 
 case "$1" in
-    bore | clear | echo | edge )
+    bore | clear | echo | edge | bore-rt | clear-rt | echo-rt | edge-rt )
         cd "rpmbuild/RPMS/x86_64" || exit 1
         xm_install "xm${1}" "$2"
         ;;
     * ) echo "synopsis"
-        echo "   $0 bore | clear | echo | edge [<release>]"
+        echo "   $0 bore    | clear    | echo    | edge    [<release>]"
+        echo "   $0 bore-rt | clear-rt | echo-rt | edge-rt [<release>]"
 esac
 

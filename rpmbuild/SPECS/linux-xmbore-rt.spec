@@ -3,7 +3,7 @@
 #
 %define   xm_customver 1
 
-Name:     linux-xmbore
+Name:     linux-xmbore-rt
 Version:  6.8.7
 Release:  173
 License:  GPL-2.0
@@ -14,13 +14,13 @@ Source0:  https://github.com/xanmod/linux/archive/refs/tags/%{version}-xanmod%{x
 Source1:  config
 Source2:  cmdline
 
-Requires: linux-xmbore-license = %{version}-%{release}
+Requires: linux-xmbore-rt-license = %{version}-%{release}
 
 # Build requires: swupd bundle-add \
 #   bc bison c-basic devpkg-gmp devpkg-elfutils devpkg-openssl flex \
 #   kernel-install linux-firmware lz4 make package-utils wget xz
 
-%define ktarget  xmbore
+%define ktarget  xmbore-rt
 %define kversion %{version}-%{release}.%{ktarget}
 
 # don't strip .ko files!
@@ -91,6 +91,11 @@ Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
+# Realtime kernel patch set.
+Patch2001: 0001-linux6.8.y-xanmod-pre-rt.patch
+Patch2002: 0001-linux6.8.y-rt-clearmod.patch
+Patch2003: 0001-linux6.8.y-xanmod-post-rt.patch
+
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
@@ -120,7 +125,7 @@ The Linux kernel.
 License:        GPL-2.0
 Summary:        The Linux kernel extra files
 Group:          kernel
-Requires:       linux-xmbore-license = %{version}-%{release}
+Requires:       linux-xmbore-rt-license = %{version}-%{release}
 
 %description extra
 Linux kernel extra files
@@ -144,9 +149,9 @@ Creates a cpio file with some modules
 License:        GPL-2.0
 Summary:        The Linux kernel
 Group:          kernel
-Requires:       linux-xmbore = %{version}-%{release}
-Requires:       linux-xmbore-extra = %{version}-%{release}
-Requires:       linux-xmbore-license = %{version}-%{release}
+Requires:       linux-xmbore-rt = %{version}-%{release}
+Requires:       linux-xmbore-rt-extra = %{version}-%{release}
+Requires:       linux-xmbore-rt-license = %{version}-%{release}
 
 %description dev
 Linux kernel build files
@@ -198,7 +203,14 @@ Linux kernel build files
 %patch -P 166 -p1
 #Serie.patch.end
 
-%patch -P 2004 -p1
+%patch -P 2001 -p1
+%patch -P 2002 -p1
+%patch -P 2003 -p1
+
+cat %{PATCH2004} | \
+  sed 's/update_deadline(cfs_rq, curr)/update_deadline(cfs_rq, curr, tick)/' | \
+  patch --no-backup-if-mismatch -p1
+
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
@@ -283,16 +295,14 @@ scripts/config -m NTSYNC
 # Enable tracking the state of allocated blocks of zRAM.
 scripts/config -e ZRAM_MEMORY_TRACKING
 
-# Enable full preemption.
+# Enable realtime preemption.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
-# The preemption behavior can be defined on boot.
-# i.e. preempt=none, voluntary, or full
-scripts/config -e PREEMPT
-scripts/config -e PREEMPT_DYNAMIC
+scripts/config -e PREEMPT_RT
 scripts/config -e RCU_BOOST
-scripts/config -e RCU_LAZY
+scripts/config -d RCU_LAZY
+scripts/config -d RCU_NOCB_CPU_CB_BOOST
 scripts/config -d RCU_EXP_KTHREAD
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
@@ -449,9 +459,9 @@ createCPIO %{ktarget} %{kversion}
 
 rm -rf %{buildroot}/usr/lib/firmware
 
-mkdir -p %{buildroot}/usr/share/package-licenses/linux-xmbore
-cp COPYING %{buildroot}/usr/share/package-licenses/linux-xmbore/COPYING
-cp -a LICENSES/* %{buildroot}/usr/share/package-licenses/linux-xmbore
+mkdir -p %{buildroot}/usr/share/package-licenses/linux-xmbore-rt
+cp COPYING %{buildroot}/usr/share/package-licenses/linux-xmbore-rt/COPYING
+cp -a LICENSES/* %{buildroot}/usr/share/package-licenses/linux-xmbore-rt
 
 %postun
 rm -fr /var/lib/dkms/*/kernel-%{kversion}-x86_64
@@ -474,7 +484,7 @@ rm -fr /var/lib/dkms/*/*/%{kversion}
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/linux-xmbore
+/usr/share/package-licenses/linux-xmbore-rt
 
 %files cpio
 /usr/lib/kernel/initrd-org.clearlinux.%{ktarget}.%{version}-%{release}

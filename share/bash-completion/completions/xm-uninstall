@@ -7,7 +7,8 @@ __xm-uninstall()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     COMPREPLY=(
-        $(compgen -W 'all bore clear echo edge' -- "$cur")
+        $(compgen -W 'all bore    clear    echo    edge
+                          bore-rt clear-rt echo-rt edge-rt' -- "$cur")
     )
 } &&
     complete -F __xm-uninstall xm-uninstall

@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmecho
-Version:  6.8.6
-Release:  172
+Version:  6.8.7
+Release:  173
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -94,7 +94,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # Enhanced CPU Handling Orchestrator (ECHO) Scheduler.
 # The CONFIG_SCHED_ECHO knob is enabled by default.
 # https://github.com/hamadmarri/ECHO-CPU-Scheduler
-Patch2001: 0001-linux6.8.y-echo.patch
+Patch2004: 0001-linux6.8.y-echo.patch
 
 # Add HZ_625 and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
@@ -105,9 +105,8 @@ Patch2101: edge-hz-625-800-timer-frequencies.patch
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
 Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
-# Bluetooth: l2cap_core: Don't double set the HCI_CONN_MGMT_CONNECTED bit.
-# https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/41
-Patch2201: bluetooth-l2cap_core-fix.patch
+# Sched fair/rt updates.
+Patch2107: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
 
 %description
 The Linux kernel.
@@ -194,10 +193,10 @@ Linux kernel build files
 %patch -P 166 -p1
 #Serie.patch.end
 
-%patch -P 2001 -p1
+%patch -P 2004 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
-%patch -P 2201 -p1
+%patch -P 2107 -p1
 
 
 cp %{SOURCE1} .config
@@ -275,16 +274,17 @@ scripts/config -m NTSYNC
 # Enable tracking the state of allocated blocks of zRAM.
 scripts/config -e ZRAM_MEMORY_TRACKING
 
-# Enable full preemption by default. The preemption behavior
-# can be defined on boot i.e preempt=none, voluntary, or full.
+# Enable full preemption.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT_VOLUNTARY_BUILD
+# The preemption behavior can be defined on boot.
+# i.e. preempt=none, voluntary, or full
 scripts/config -e PREEMPT
 scripts/config -e PREEMPT_DYNAMIC
 scripts/config -e RCU_BOOST
-scripts/config -d RCU_EXP_KTHREAD
 scripts/config -e RCU_LAZY
+scripts/config -d RCU_EXP_KTHREAD
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
 scripts/config -e SCHED_CLUSTER
@@ -298,7 +298,7 @@ BuildKernel() {
     Arch=x86_64
     ExtraVer="-%{release}.${Target}"
 
-    rm -f localversion
+    rm -f localversion*
 
     perl -p -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = ${ExtraVer}/" Makefile
 

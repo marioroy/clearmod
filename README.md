@@ -4,14 +4,19 @@ Run the [XanMod Edge](https://github.com/xanmod) kernel on [Clear Linux](https:/
 
 The motivation comes from liking the Clear and XanMod Linux kernels, and opportunity to run a preempt-enabled kernel patched with [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler, or [ECHO](https://github.com/hamadmarri/ECHO-CPU-Scheduler) (Enhanced CPU Handling Orchestrator). The kernels are configured to run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 
-The XanMod Edge kernel includes NTSync (for fast kernel-backed Wine) and le9's patchset
-(providing anon and clean file pages protection under memory pressure).
+The XanMod Edge kernel includes NTSync (for fast kernel-backed Wine).
 
 ```text
-clear - Clear Linux native kernel + preemption
+clear - Clear native kernel + preemption
 bore  - XanMod Edge kernel + preemption + BORE
 echo  - XanMod Edge kernel + preemption + ECHO
 edge  - XanMod Edge kernel + preemption
+```
+
+The `*-rt` variants include the Linux realtime patch set.
+
+```text
+clear-rt, bore-rt, echo-rt, and edge-rt
 ```
 
 ## Preparation and configuration
@@ -76,10 +81,17 @@ and `xm-uninstall` is described below.
 
 ```bash
 ./fetch-src
-./xm-build bore | clear | echo | edge
-./xm-install bore | clear | echo | edge [<release>]
-./xm-uninstall bore | clear | echo | edge [<release>]
+
+./xm-build bore    | clear    | echo    | edge
+./xm-build bore-rt | clear-rt | echo-rt | edge-rt
+
+./xm-install bore    | clear    | echo    | edge    [<release>]
+./xm-install bore-rt | clear-rt | echo-rt | edge-rt [<release>]
+
 ./xm-uninstall all
+./xm-uninstall bore    | clear    | echo    | edge    [<release>]
+./xm-uninstall bore-rt | clear-rt | echo-rt | edge-rt [<release>]
+
 ./xm-kernels
 ```
 
@@ -93,19 +105,19 @@ install the kernel.
 sync
 ```
 
-The default timer frequency is `HZ_800`. To override, define `HZ=value` to
-`1000`, `800`, `625`, `500`, `300`, `250`, or `100`. A lower Hz value
-may decrease power consumption or fan speed revving up and down.
-Unsure, the best Hz value for the desktop environment is 800 or 625.
-
 To quickly build a trimmed Linux kernel, `LOCALMODCONFIG=1` will build only
 the modules you have running. Therefore, make sure that all modules you will
 ever need are loaded. Keyboard modules for the `cpio` package, CD-ROM/DVD and
 EXFAT/NTFS3 filesystems, and NTSYNC are added in the SPEC files.
 
+The default timer frequency is `HZ_800`. To override, define `HZ=value` to
+`1000`, `800`, `625`, `500`, `300`, `250`, or `100`. A lower Hz value
+may decrease power consumption or fan speed revving up and down.
+Unsure, the best Hz value for the desktop environment is 800 or 625.
+
 ```text
 ./fetch-src
-HZ=800 LOCALMODCONFIG=1 ./xm-build clear
+LOCALMODCONFIG=1 HZ=800 ./xm-build clear
 ./xm-install clear
 sync
 ```
@@ -117,12 +129,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-  org.clearlinux.xmclear.6.8.6-172
-* org.clearlinux.xmedge.6.8.6-172
+  org.clearlinux.xmclear.6.8.7-173
+* org.clearlinux.xmedge.6.8.7-173
 
 XM installed packages (excluding dev,extra,license)
-  linux-xmclear-6.8.6-172
-* linux-xmedge-6.8.6-172
+  linux-xmclear-6.8.7-173
+* linux-xmedge-6.8.7-173
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -131,8 +143,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 172
-Removing org.clearlinux.xmclear.6.8.6-172
+./xm-uninstall clear 173
+Removing org.clearlinux.xmclear.6.8.7-173
 ```
 
 ## Epilogue
@@ -154,7 +166,7 @@ Set execute bits `chmod +x build` and run `./build`.
 
 ```bash
 #!/bin/bash
-time HZ=800 LOCALMODCONFIG=1 ./xm-build edge
+time LOCALMODCONFIG=1 HZ=800 ./xm-build edge
 ```
 
 Configuring PAM or security limits, allowing users to run commands with
