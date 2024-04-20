@@ -79,17 +79,20 @@ The `fetch-src` command (run first) fetches `*.src.rpm` and `*.tar.gz` from
 Clear and XanMod, respectively. The optional release argument to `xm-install`
 and `xm-uninstall` is described below.
 
+Note: Running a realtime kernel using NVIDIA graphics requires 550 minimally.
+The 535 driver on RT may result in schedule/lock errors.
+
 ```bash
 ./fetch-src
 
-./xm-build bore    | clear    | echo    | edge
+./xm-build bore | clear | echo | edge
 ./xm-build bore-rt | clear-rt | echo-rt | edge-rt
 
-./xm-install bore    | clear    | echo    | edge    [<release>]
+./xm-install bore | clear | echo | edge [<release>]
 ./xm-install bore-rt | clear-rt | echo-rt | edge-rt [<release>]
 
 ./xm-uninstall all
-./xm-uninstall bore    | clear    | echo    | edge    [<release>]
+./xm-uninstall bore | clear | echo | edge [<release>]
 ./xm-uninstall bore-rt | clear-rt | echo-rt | edge-rt [<release>]
 
 ./xm-kernels

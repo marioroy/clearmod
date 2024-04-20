@@ -78,7 +78,7 @@ case "$1" in
         xm_build "xm${1}"
         ;;
     * ) echo "synopsis"
-        echo "   $0 bore    | clear    | echo    | edge"
+        echo "   $0 bore | clear | echo | edge"
         echo "   $0 bore-rt | clear-rt | echo-rt | edge-rt"
 esac
 
