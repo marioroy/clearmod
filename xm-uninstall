@@ -86,11 +86,11 @@ function xm_uninstall {
 
     if [[ "$variant" == *"-rt"* ]]; then
         pkgs=$( echo "$pkgs" |\
-            grep -Ev "^linux-${kvariant}-(license|extra|dev)-${kversion}.x86_64$" |\
+            grep -Ev "^linux-${kvariant}-(license|extra|dev|cpio)-${kversion}.x86_64$" |\
             grep -Ev "^linux-${kvariant}-${kversion}.x86_64$" )
     else
         pkgs=$( echo "$pkgs" | grep -v -- "-rt-" |\
-            grep -Ev "^linux-${kvariant}-(license|extra|dev)-${kversion}.x86_64$" |\
+            grep -Ev "^linux-${kvariant}-(license|extra|dev|cpio)-${kversion}.x86_64$" |\
             grep -Ev "^linux-${kvariant}-${kversion}.x86_64$" )
     fi
 
