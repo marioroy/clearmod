@@ -22,8 +22,8 @@ for pkg in $(
 ); do
     dir=$( rpm -ql "$pkg" | grep "modules" | head -1 )
 
-    # The clr-boot-manager removes older kernel versions.
-    # Purge packages for kernels no longer present in /lib/modules/.
+    # The "clr-boot-manager update" command removes older kernel version.
+    # Purge packages for kernels no longer present in /usr/lib/modules/.
 
     if [[ ! -e "$dir" ]]; then
         v=${pkg#*-}; v=${v#*-}; [[ "$v" == *"rt-"* ]] && v=${v#*-}
