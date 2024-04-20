@@ -47,7 +47,7 @@ function xm_build {
     done
 
     # Build kernel.
-    topdir="/tmp/${variant}.$$"
+    local topdir="/tmp/${variant}.$$"
     mkdir -p "$topdir"
 
     ( rpmbuild -bb --clean "SPECS/linux-${variant}.spec" \
