@@ -52,7 +52,7 @@ kvariant="${kvariant##*.}"   # xmedge
 kversion="${kversion%.*}"    # 6.1.54-100
 
 function xm_uninstall {
-    variant="$1" release="$2"
+    local variant="$1"; local release="$2"; local pkgs=""
 
     if [[ -n "$release" ]]; then
         # Uninstall given variant release (e.g. 100), skipping live kernel.
@@ -61,22 +61,12 @@ function xm_uninstall {
                 if [[ "$kernel" == "org.clearlinux.${kvariant}.${kversion}" ]]; then
                     echo "Skipping live kernel ${kernel}"
                 else
-                    echo "Removing ${kernel}"
+                    echo "Removing ${kernel} from boot-manager"
                     sudo clr-boot-manager remove-kernel "$kernel" || exit 2
                 fi
             fi
         done
-
-        if [[ "$variant" == *"-rt"* ]]; then
-            sudo rpm -e $( rpm -qa |\
-                grep "^linux-${variant}-.*-${release}\.x86_64" |\
-                grep -v "^linux-${kvariant}-.*-${kversion}.x86_64$" ) 2>/dev/null
-        else
-            sudo rpm -e $( rpm -qa | grep -v -- "-rt-" |\
-                grep "^linux-${variant}-.*-${release}\.x86_64" |\
-                grep -v "^linux-${kvariant}-.*-${kversion}.x86_64$" ) 2>/dev/null
-        fi
-
+        pkgs=$( rpm -qa | grep "^linux-${variant}-.*-${release}\.x86_64" )
     else
         # Uninstall variant (all releases), skipping live kernel.
         for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//"); do
@@ -84,21 +74,29 @@ function xm_uninstall {
                 if [[ "$kernel" == "org.clearlinux.${kvariant}.${kversion}" ]]; then
                     echo "Skipping live kernel ${kernel}"
                 else
-                    echo "Removing ${kernel}"
+                    echo "Removing ${kernel} from boot-manager"
                     sudo clr-boot-manager remove-kernel "$kernel" || exit 2
                 fi
             fi
         done
+        pkgs=$( rpm -qa | grep "^linux-${variant}-" )
+    fi
 
-        if [[ "$variant" == *"-rt"* ]]; then
-            sudo rpm -e $( rpm -qa |\
-                grep "^linux-${variant}-" |\
-                grep -v "^linux-${kvariant}-.*-${kversion}.x86_64$" ) 2>/dev/null
-        else
-            sudo rpm -e $( rpm -qa | grep -v -- "-rt-" |\
-                grep "^linux-${variant}-" |\
-                grep -v "^linux-${kvariant}-.*-${kversion}.x86_64$" ) 2>/dev/null
-        fi
+    # Exclude the live kernel from the package list.
+
+    if [[ "$variant" == *"-rt"* ]]; then
+        pkgs=$( echo "$pkgs" |\
+            grep -Ev "^linux-${kvariant}-(license|extra|dev)-${kversion}.x86_64$" |\
+            grep -Ev "^linux-${kvariant}-${kversion}.x86_64$" )
+    else
+        pkgs=$( echo "$pkgs" | grep -v -- "-rt-" |\
+            grep -Ev "^linux-${kvariant}-(license|extra|dev)-${kversion}.x86_64$" |\
+            grep -Ev "^linux-${kvariant}-${kversion}.x86_64$" )
+    fi
+
+    if [[ -n "$pkgs" ]]; then
+        echo "Uninstalling packages:" && echo "$pkgs"
+        sudo rpm -e $pkgs 2>/dev/null
     fi
 
     # Create default symbolic link if another release exists on the system.
