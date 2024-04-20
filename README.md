@@ -95,7 +95,8 @@ The 535 driver on RT may result in schedule/lock errors.
 ./xm-uninstall bore | clear | echo | edge [<release>]
 ./xm-uninstall bore-rt | clear-rt | echo-rt | edge-rt [<release>]
 
-./xm-kernels
+./xm-kernels - list kernels and packages
+./xm-purge   - purge packages
 ```
 
 The following are the steps to fetch the stable sources, build, and
@@ -148,6 +149,14 @@ Though, skips the running kernel.
 ```bash
 ./xm-uninstall clear 173
 Removing org.clearlinux.xmclear.6.8.7-173
+```
+
+The `clr-boot-manager update` command may remove older kernel versions.
+Run the purge script, periodically, to uninstall packages for xm-kernels
+no longer present in `/lib/modules`.
+
+```bash
+./xm-purge
 ```
 
 ## Epilogue
