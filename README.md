@@ -4,13 +4,13 @@ Run the [XanMod Edge](https://github.com/xanmod) kernel on [Clear Linux](https:/
 
 The motivation comes from liking the Clear and XanMod Linux kernels, and opportunity to run a preempt-enabled kernel patched with [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler, or [ECHO](https://github.com/hamadmarri/ECHO-CPU-Scheduler) (Enhanced CPU Handling Orchestrator). The kernels are configured to run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 
-The XanMod Edge kernel includes NTSync (for fast kernel-backed Wine).
+All variants include the v4l2-loopback patch. The XanMod kernel includes also, NTSync for fast kernel-backed Wine.
 
 ```text
 clear - Clear native kernel + preemption
-bore  - XanMod Edge kernel + preemption + BORE
-echo  - XanMod Edge kernel + preemption + ECHO
-edge  - XanMod Edge kernel + preemption
+bore  - XanMod kernel + preemption + BORE
+echo  - XanMod kernel + preemption + ECHO
+edge  - XanMod kernel + preemption
 ```
 
 The `*-rt` variants include the Linux realtime patch set.
@@ -133,12 +133,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-  org.clearlinux.xmclear.6.8.7-173
-* org.clearlinux.xmedge.6.8.7-173
+  org.clearlinux.xmclear.6.8.7-174
+* org.clearlinux.xmedge.6.8.7-174
 
 XM installed packages (excluding dev,extra,license)
-  linux-xmclear-6.8.7-173
-* linux-xmedge-6.8.7-173
+  linux-xmclear-6.8.7-174
+* linux-xmedge-6.8.7-174
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -147,8 +147,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 173
-Removing org.clearlinux.xmclear.6.8.7-173
+./xm-uninstall clear 174
+Removing org.clearlinux.xmclear.6.8.7-174
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.

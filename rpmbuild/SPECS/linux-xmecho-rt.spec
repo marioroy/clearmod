@@ -5,7 +5,7 @@
 
 Name:     linux-xmecho-rt
 Version:  6.8.7
-Release:  173
+Release:  174
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -113,6 +113,9 @@ Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 # Sched fair/rt updates.
 Patch2107: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
 
+# v4l2-loopback device.
+Patch2201: v4l2loopback.patch
+
 %description
 The Linux kernel.
 
@@ -205,6 +208,7 @@ Linux kernel build files
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2107 -p1
+%patch -P 2201 -p1
 
 
 cp %{SOURCE1} .config
@@ -278,6 +282,10 @@ scripts/config -e NTFS3_FS_POSIX_ACL
 # Enable NTSYNC driver for fast kernel-backed Wine.
 # https://github.com/xanmod/linux/issues/420
 scripts/config -m NTSYNC
+
+# Enable v4l2-loopback device.
+# https://github.com/umlaeute/v4l2loopback
+scripts/config -m V4L2_LOOPBACK
 
 # Enable tracking the state of allocated blocks of zRAM.
 scripts/config -e ZRAM_MEMORY_TRACKING
