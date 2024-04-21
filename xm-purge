@@ -29,7 +29,7 @@ for pkg in $(
         v=${pkg#*-}; v=${v#*-}; [[ "$v" == *"rt-"* ]] && v=${v#*-}
         p=${pkg%-*}; p=${p%-*}
         # Uninstall the packages separately.
-        echo "Purging ${pkg}"
+        echo "Uninstalling ${pkg} packages"
         ( sudo rpm -e "${p}-cpio-${v}"
           sudo rpm -e "${p}-dev-${v}"
           sudo rpm -e "${p}-extra-${v}"
