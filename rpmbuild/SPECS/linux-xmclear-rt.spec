@@ -4,7 +4,7 @@
 
 Name:     linux-xmclear-rt
 Version:  6.8.7
-Release:  174
+Release:  175
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -102,11 +102,9 @@ Patch2101: clear-hz-500-625-800-timer-frequencies.patch
 Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
 # Sched fair/rt updates.
-Patch2103: sched_fair_fix_initial_util_avg_calculation.patch
-Patch2104: eevdf_minor_fixes_for_reweight_entity.patch
-Patch2105: eevdf-Allow-shorter-slices-to-wakeup-preempt1.patch
-Patch2106: eevdf-Allow-shorter-slices-to-wakeup-preempt2.patch
-Patch2107: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
+Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
+Patch2104: eevdf-Allow-shorter-slices-to-wakeup-preempt1.patch
+Patch2105: eevdf-Allow-shorter-slices-to-wakeup-preempt2.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -206,8 +204,6 @@ Linux kernel build files
 %patch -P 2103 -p1
 %patch -P 2104 -p1
 %patch -P 2105 -p1
-%patch -P 2106 -p1
-%patch -P 2107 -p1
 %patch -P 2201 -p1
 
 

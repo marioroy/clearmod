@@ -5,7 +5,7 @@
 
 Name:     linux-xmecho-rt
 Version:  6.8.7
-Release:  174
+Release:  175
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -111,7 +111,7 @@ Patch2101: edge-hz-625-800-timer-frequencies.patch
 Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
 # Sched fair/rt updates.
-Patch2107: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
+Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -207,7 +207,7 @@ Linux kernel build files
 %patch -P 2004 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
-%patch -P 2107 -p1
+%patch -P 2103 -p1
 %patch -P 2201 -p1
 
 
