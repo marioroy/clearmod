@@ -17,7 +17,7 @@
 # -----------------------------------------------------------------------
 
 for pkg in $(
-    rpm -qa | grep -E "^linux-xm(bore|clear|echo|edge)" |\
+    rpm -qa | grep -E "^linux-xm(clear|bore|echo|edge)" |\
               grep -Ev "(license|extra|dev|cpio)"
 ); do
     dir=$( rpm -ql "$pkg" | grep "modules" | head -1 )

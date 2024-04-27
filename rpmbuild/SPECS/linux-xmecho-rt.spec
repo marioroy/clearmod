@@ -1,11 +1,11 @@
 #
 # Linux releases need to be named 6.x.0 not 6.x or various things break.
 #
-%define   xm_customver 1
+%define   xm_customver 2
 
 Name:     linux-xmecho-rt
 Version:  6.8.7
-Release:  175
+Release:  176
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -42,6 +42,9 @@ Requires: linux-xmecho-rt-license = %{version}-%{release}
 # 0138-kdf-boottime.patch
 # 0139-adlrdt.patch
 # 0200-mm-lru_cache_disable-use-synchronize_rcu_expedited.patch
+
+# Clear patch omitted, due to higher latency regression.
+# 0167-net-sock-increase-default-number-of-_SK_MEM_PACKETS-.patch
 
 # Clear patches omitted, due to inclusion in the XanMod kernel.
 # 0109-initialize-ata-before-graphics.patch
@@ -286,9 +289,6 @@ scripts/config -m NTSYNC
 # Enable v4l2-loopback device.
 # https://github.com/umlaeute/v4l2loopback
 scripts/config -m V4L2_LOOPBACK
-
-# Enable tracking the state of allocated blocks of zRAM.
-scripts/config -e ZRAM_MEMORY_TRACKING
 
 # Enable realtime preemption.
 scripts/config -d PREEMPT_NONE

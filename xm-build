@@ -72,13 +72,13 @@ function xm_build {
 }
 
 case "$1" in
-    bore | clear | echo | edge | bore-rt | clear-rt | echo-rt | edge-rt )
+    clear | bore | echo | edge | clear-rt | bore-rt | echo-rt | edge-rt )
         ./fetch-src   || exit 1
         cd "rpmbuild" || exit 1
         xm_build "xm${1}"
         ;;
     * ) echo "synopsis"
-        echo "   $0 bore | clear | echo | edge"
-        echo "   $0 bore-rt | clear-rt | echo-rt | edge-rt"
+        echo "   $0 clear | bore | echo | edge"
+        echo "   $0 clear-rt | bore-rt | echo-rt | edge-rt"
 esac
 

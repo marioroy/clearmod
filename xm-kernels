@@ -24,7 +24,7 @@ kvariant="${kvariant##*.}"   # xmedge
 kversion="${kversion%.*}"    # 6.1.54-100
 
 echo "XM boot-manager entries"
-pattern1="^org\.clearlinux\.xm(bore|clear|echo|edge|main|lts|rt)"
+pattern1="^org\.clearlinux\.xm(clear|bore|echo|edge|main|lts|rt)"
 
 for kernel in $(sudo clr-boot-manager list-kernels | sed "s/\*//" | sort); do
     if [[ "$kernel" =~ $pattern1 ]]; then
@@ -38,7 +38,7 @@ done
 echo
 
 echo "XM installed packages (excluding dev,extra,license)"
-pattern2="^linux-xm(bore|clear|echo|edge|main|lts|rt)"
+pattern2="^linux-xm(clear|bore|echo|edge|main|lts|rt)"
 
 for package in $(rpm -qa | grep -Ev -- "-(license|extra|dev|cpio)-" | sort); do
     if [[ "$package" =~ $pattern2 ]]; then

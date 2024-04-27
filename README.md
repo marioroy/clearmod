@@ -27,7 +27,8 @@ The `wget` command is used to fetch the source archive from the web.
 ```bash
 sudo swupd bundle-add \
 bc bison c-basic devpkg-gmp devpkg-elfutils devpkg-openssl flex \
-kernel-install linux-firmware lz4 make package-utils wget xz
+kernel-install linux-firmware lz4 make package-utils wget xz \
+hardware-uefi
 ```
 
 The power tweaks service is how Clear Linux sets reasonable power management
@@ -85,15 +86,15 @@ The 535 driver on RT may result in schedule/lock errors.
 ```bash
 ./fetch-src
 
-./xm-build bore | clear | echo | edge
-./xm-build bore-rt | clear-rt | echo-rt | edge-rt
+./xm-build clear | bore | echo | edge
+./xm-build clear-rt | bore-rt | echo-rt | edge-rt
 
-./xm-install bore | clear | echo | edge [<release>]
-./xm-install bore-rt | clear-rt | echo-rt | edge-rt [<release>]
+./xm-install clear | bore | echo | edge [<release>]
+./xm-install clear-rt | bore-rt | echo-rt | edge-rt [<release>]
 
 ./xm-uninstall all
-./xm-uninstall bore | clear | echo | edge [<release>]
-./xm-uninstall bore-rt | clear-rt | echo-rt | edge-rt [<release>]
+./xm-uninstall clear | bore | echo | edge [<release>]
+./xm-uninstall clear-rt | bore-rt | echo-rt | edge-rt [<release>]
 
 ./xm-kernels - list kernels and packages
 ./xm-purge   - purge packages
@@ -133,12 +134,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-  org.clearlinux.xmclear.6.8.7-175
-* org.clearlinux.xmedge.6.8.7-175
+  org.clearlinux.xmclear.6.8.7-176
+* org.clearlinux.xmedge.6.8.7-176
 
 XM installed packages (excluding dev,extra,license)
-  linux-xmclear-6.8.7-175
-* linux-xmedge-6.8.7-175
+  linux-xmclear-6.8.7-176
+* linux-xmedge-6.8.7-176
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -147,8 +148,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 175
-Removing org.clearlinux.xmclear.6.8.7-175
+./xm-uninstall clear 176
+Removing org.clearlinux.xmclear.6.8.7-176
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.

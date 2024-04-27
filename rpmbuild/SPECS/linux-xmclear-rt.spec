@@ -4,7 +4,7 @@
 
 Name:     linux-xmclear-rt
 Version:  6.8.7
-Release:  175
+Release:  176
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -44,6 +44,9 @@ Requires: linux-xmclear-rt-license = %{version}-%{release}
 # 0200-mm-lru_cache_disable-use-synchronize_rcu_expedited.patch
 # 0001-sched-migrate.patch (reverted in 6.5.7)
 # 0002-sched-migrate.patch (reverted in 6.5.7, SIS_CURRENT feature)
+
+# Clear patch omitted, due to higher latency regression.
+# 0167-net-sock-increase-default-number-of-_SK_MEM_PACKETS-.patch
 
 #Serie.clr 01XX: Clear Linux patches
 Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
@@ -105,6 +108,9 @@ Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
 Patch2104: eevdf-Allow-shorter-slices-to-wakeup-preempt1.patch
 Patch2105: eevdf-Allow-shorter-slices-to-wakeup-preempt2.patch
+Patch2106: eevdf-Limit-preemption-a-little-more1.patch
+Patch2107: eevdf-Limit-preemption-a-little-more2.patch
+Patch2108: eevdf-Fix-miscalculation-in-reweight_entity.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -204,6 +210,9 @@ Linux kernel build files
 %patch -P 2103 -p1
 %patch -P 2104 -p1
 %patch -P 2105 -p1
+%patch -P 2106 -p1
+%patch -P 2107 -p1
+%patch -P 2108 -p1
 %patch -P 2201 -p1
 
 
@@ -278,9 +287,6 @@ scripts/config -e NTFS3_FS_POSIX_ACL
 # Enable v4l2-loopback device.
 # https://github.com/umlaeute/v4l2loopback
 scripts/config -m V4L2_LOOPBACK
-
-# Enable tracking the state of allocated blocks of zRAM.
-scripts/config -e ZRAM_MEMORY_TRACKING
 
 # Enable realtime preemption.
 scripts/config -d PREEMPT_NONE

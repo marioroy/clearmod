@@ -30,14 +30,14 @@ if [[ "$1" == "all" ]]; then
     bash "$0" "rt-preempt"    || exit $?
 
     # since April 2024
-    bash "$0" "bore-rt"  || exit $?
-    bash "$0" "bore"     || exit $?
-    bash "$0" "clear-rt" || exit $?
-    bash "$0" "clear"    || exit $?
-    bash "$0" "echo-rt"  || exit $?
-    bash "$0" "echo"     || exit $?
-    bash "$0" "edge-rt"  || exit $?
-    bash "$0" "edge"     || exit $?
+    bash "$0" "clear-rt"  || exit $?
+    bash "$0" "clear"     || exit $?
+    bash "$0" "bore-rt"   || exit $?
+    bash "$0" "bore"      || exit $?
+    bash "$0" "echo-rt"   || exit $?
+    bash "$0" "echo"      || exit $?
+    bash "$0" "edge-rt"   || exit $?
+    bash "$0" "edge"      || exit $?
 
     exit 0
 fi
@@ -112,7 +112,7 @@ function xm_uninstall {
 }
 
 case "$1" in
-    bore | clear | echo | edge | bore-rt | clear-rt | echo-rt | edge-rt )
+    clear | bore | echo | edge | clear-rt | bore-rt | echo-rt | edge-rt )
         xm_uninstall "xm${1}" "$2"
         ;;
     clear-default | clear-preempt )
@@ -133,8 +133,8 @@ case "$1" in
 
     * ) echo "synopsis"
         echo "   $0 all"
-        echo "   $0 bore | clear | echo | edge [<release>]"
-        echo "   $0 bore-rt | clear-rt | echo-rt | edge-rt [<release>]"
+        echo "   $0 clear | bore | echo | edge [<release>]"
+        echo "   $0 clear-rt | bore-rt | echo-rt | edge-rt [<release>]"
         echo ""
         echo "deprecated"
         echo "   $0 clear-default | clear-preempt [<release>]"
