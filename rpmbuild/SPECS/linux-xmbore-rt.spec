@@ -1,11 +1,11 @@
 #
 # Linux releases need to be named 6.x.0 not 6.x or various things break.
 #
-%define   xm_customver 2
+%define   xm_customver 1
 
 Name:     linux-xmbore-rt
-Version:  6.8.7
-Release:  176
+Version:  6.8.8
+Release:  177
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/

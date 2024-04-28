@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmclear-rt
-Version:  6.8.7
-Release:  176
+Version:  6.8.8
+Release:  177
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
