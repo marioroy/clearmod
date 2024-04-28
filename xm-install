@@ -20,9 +20,9 @@
 
 # Capture the active kernel release, for safety to not replace self.
 
-kversion="$(uname -r)"       # e.g 6.1.54-100.xmedge
+kversion="$(uname -r)"       # e.g 6.1.54-100.xmclear
 kvariant="${kversion}"
-kvariant="${kvariant##*.}"   # xmedge
+kvariant="${kvariant##*.}"   # xmclear
 kversion="${kversion%.*}"    # 6.1.54-100
 
 function xm_install {
@@ -70,7 +70,7 @@ function xm_install {
 
     if [[ -d "/var/lib/dkms/nvidia" ]]; then
         echo "Building kernel drivers for NVIDIA graphics"
-        xm_variant=${base_name#*-}  # i.e. xmedge
+        xm_variant=${base_name#*-}  # i.e. xmclear
 
         if [[ "$variant" == *"-rt"* ]]; then
             kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f4-).$xm_variant
@@ -91,12 +91,12 @@ function xm_install {
 }
 
 case "$1" in
-    clear | bore | echo | edge | clear-rt | bore-rt | echo-rt | edge-rt )
+    clear | clear-rt | bore | bore-rt | echo | echo-rt )
         cd "rpmbuild/RPMS/x86_64" || exit 1
         xm_install "xm${1}" "$2"
         ;;
     * ) echo "synopsis"
-        echo "   $0 clear | bore | echo | edge [<release>]"
-        echo "   $0 clear-rt | bore-rt | echo-rt | edge-rt [<release>]"
+        echo "   $0 clear | bore | echo [<release>]"
+        echo "   $0 clear-rt | bore-rt | echo-rt [<release>]"
 esac
 

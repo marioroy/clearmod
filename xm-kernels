@@ -18,9 +18,9 @@
 
 # Capture the active kernel release, to identify active kernel in output.
 
-kversion="$(uname -r)"       # e.g 6.1.54-100.xmedge
+kversion="$(uname -r)"       # e.g 6.1.54-100.xmclear
 kvariant="${kversion}"
-kvariant="${kvariant##*.}"   # xmedge
+kvariant="${kvariant##*.}"   # xmclear
 kversion="${kversion%.*}"    # 6.1.54-100
 
 echo "XM boot-manager entries"

@@ -1,6 +1,6 @@
 # ClearMod
 
-Run the [XanMod Edge](https://github.com/xanmod) kernel on [Clear Linux](https://www.clearlinux.org) with ease.
+Run the [XanMod](https://github.com/xanmod) kernel on [Clear Linux](https://www.clearlinux.org) with ease.
 
 The motivation comes from liking the Clear and XanMod Linux kernels, and opportunity to run a preempt-enabled kernel patched with [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler, or [ECHO](https://github.com/hamadmarri/ECHO-CPU-Scheduler) (Enhanced CPU Handling Orchestrator). The kernels are configured to run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 
@@ -10,13 +10,12 @@ All variants include the v4l2-loopback patch. The XanMod kernel includes also, N
 clear - Clear native kernel + preemption
 bore  - XanMod kernel + preemption + BORE
 echo  - XanMod kernel + preemption + ECHO
-edge  - XanMod kernel + preemption
 ```
 
 The `*-rt` variants include the Linux realtime patch set.
 
 ```text
-clear-rt, bore-rt, echo-rt, and edge-rt
+clear-rt, bore-rt, and echo-rt
 ```
 
 ## Preparation and configuration
@@ -86,15 +85,15 @@ The 535 driver on RT may result in schedule/lock errors.
 ```bash
 ./fetch-src
 
-./xm-build clear | bore | echo | edge
-./xm-build clear-rt | bore-rt | echo-rt | edge-rt
+./xm-build clear | bore | echo
+./xm-build clear-rt | bore-rt | echo-rt
 
-./xm-install clear | bore | echo | edge [<release>]
-./xm-install clear-rt | bore-rt | echo-rt | edge-rt [<release>]
+./xm-install clear | bore | echo [<release>]
+./xm-install clear-rt | bore-rt | echo-rt [<release>]
 
 ./xm-uninstall all
-./xm-uninstall clear | bore | echo | edge [<release>]
-./xm-uninstall clear-rt | bore-rt | echo-rt | edge-rt [<release>]
+./xm-uninstall clear | bore | echo [<release>]
+./xm-uninstall clear-rt | bore-rt | echo-rt [<release>]
 
 ./xm-kernels - list kernels and packages
 ./xm-purge   - purge packages
@@ -105,8 +104,8 @@ install the kernel.
 
 ```bash
 ./fetch-src
-./xm-build edge
-./xm-install edge
+./xm-build bore
+./xm-install bore
 sync
 ```
 
@@ -134,12 +133,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
+* org.clearlinux.xmbore.6.8.7-176
   org.clearlinux.xmclear.6.8.7-176
-* org.clearlinux.xmedge.6.8.7-176
 
 XM installed packages (excluding dev,extra,license)
+* linux-xmbore-6.8.7-176
   linux-xmclear-6.8.7-176
-* linux-xmedge-6.8.7-176
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -179,7 +178,7 @@ Set execute bits `chmod +x build` and run `./build`.
 
 ```bash
 #!/bin/bash
-time LOCALMODCONFIG=1 HZ=800 ./xm-build edge
+time LOCALMODCONFIG=1 HZ=800 ./xm-build bore
 ```
 
 Configuring PAM or security limits, allowing users to run commands with
