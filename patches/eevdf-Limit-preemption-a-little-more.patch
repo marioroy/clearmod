@@ -35,6 +35,27 @@ index 8880da0a1900d6..111b828d6c1dd1 100644
  		return false;
  
  	/*
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 64ce99cf04ec4e..2285dc30294c8b 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -5,10 +5,13 @@ SCHED_FEAT(PLACE_LAG, true)
+  */
+ SCHED_FEAT(PLACE_DEADLINE_INITIAL, true)
+ /*
+- * Inhibit (wakeup) preemption until the current task has either matched the
+- * 0-lag point or until is has exhausted it's slice.
++ * Inhibit (wakeup) preemption until the current task has exhausted its slice.
+  */
+-SCHED_FEAT(RUN_TO_PARITY, true)
++SCHED_FEAT(RESPECT_SLICE, true)
++/*
++ * Relax RESPECT_SLICE to allow preemption once current has reached 0-lag.
++ */
++SCHED_FEAT(RUN_TO_PARITY, false)
+ /*
+  * Allow tasks with a shorter slice to disregard RUN_TO_PARITY
+  */
 -- 
 cgit 1.2.3-korg
 

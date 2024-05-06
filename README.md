@@ -115,9 +115,9 @@ ever need are loaded. Keyboard modules for the `cpio` package, CD-ROM/DVD and
 EXFAT/NTFS3 filesystems, and NTSYNC are added in the SPEC files.
 
 The default timer frequency is `HZ_800`. To override, define `HZ=value` to
-`1000`, `800`, `625`, `500`, `300`, `250`, or `100`. A lower Hz value
+`100`, `250`, `300`, `500`, `625`, `800`, or `1000`. A lower Hz value
 may decrease power consumption or fan speed revving up and down.
-Unsure, the best Hz value for the desktop environment is 800 or 625.
+Unsure, a great Hz value for the desktop environment is 625 or 800.
 
 ```text
 ./fetch-src
@@ -133,12 +133,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-* org.clearlinux.xmbore.6.8.8-177
-  org.clearlinux.xmclear.6.8.8-177
+* org.clearlinux.xmbore.6.8.9-178
+  org.clearlinux.xmclear.6.8.9-178
 
 XM installed packages (excluding dev,extra,license)
-* linux-xmbore-6.8.8-177
-  linux-xmclear-6.8.8-177
+* linux-xmbore-6.8.9-178
+  linux-xmclear-6.8.9-178
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -147,8 +147,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 177
-Removing org.clearlinux.xmclear.6.8.8-177
+./xm-uninstall clear 178
+Removing org.clearlinux.xmclear.6.8.9-178
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.

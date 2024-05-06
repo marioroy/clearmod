@@ -1,17 +1,28 @@
-From feae72fd7f2403910c157dd679d6ec240ed1dfbf Mon Sep 17 00:00:00 2001
+From f6af4b49394acd466564c6881875642c2b51cafb Mon Sep 17 00:00:00 2001
 From: Masahito S <firelzrd@gmail.com>
-Date: Mon, 22 Apr 2024 04:12:58 +0900
-Subject: [PATCH] linux6.8.y-bore5.1.0
+Date: Tue, 30 Apr 2024 03:38:06 +0900
+Subject: [PATCH] linux6.8.y-bore5.2.0
+
+ClearMod project:
+
+1. The official BORE v5.2.0 includes sched-urgent fair.c updates only.
+   In ClearMod, the Linus sched urgent fixes (includes no_hz.rst and isolation.c)
+   are applied first via a separate patch file "sched-urgent-2024-04-28.patch"
+   (benefitting also, other flavors).
+
+2. The official BORE v5.2.0 includes EEVDF updates "Allow shorter slices to
+   wakeup preempt" and "Limit preemption a little more". These and applied
+   separately in ClearMod (benefitting also, clear and clear-rt flavors).
 
 ---
  include/linux/sched.h   |  10 ++
  init/Kconfig            |  17 +++
  kernel/sched/core.c     | 143 +++++++++++++++++++++++++
  kernel/sched/debug.c    |  60 ++++++++++-
- kernel/sched/fair.c     | 230 ++++++++++++++++++++++++++++++++++++++--
+ kernel/sched/fair.c     | 217 +++++++++++++++++++++++++++++++++++++-
  kernel/sched/features.h |   4 +
  kernel/sched/sched.h    |   7 ++
- 7 files changed, 462 insertions(+), 9 deletions(-)
+ 7 files changed, 455 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/sched.h b/include/linux/sched.h
 index ffe8f618ab..0ab0b04240 100644
@@ -231,7 +242,7 @@ index 9116bcc903..d1711f75f8 100644
  
 +#ifdef CONFIG_SCHED_BORE
 +	sched_init_bore();
-+	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification 5.1.0 by Masahito Suzuki");
++	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification 5.2.0 by Masahito Suzuki");
 +#endif // CONFIG_SCHED_BORE
 +
  	wait_bit_init();
@@ -578,16 +589,16 @@ index 533547e3c9..a2346b1b44 100644
  
  void __init sched_init_granularity(void)
  {
-@@ -704,6 +883,9 @@ static void update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 	lag = avg_vruntime(cfs_rq) - se->vruntime;
+@@ -702,6 +881,9 @@ static s64 entity_lag(u64 avruntime, struct sched_entity *se)
  
+ 	vlag = avruntime - se->vruntime;
  	limit = calc_delta_fair(max_t(u64, 2*se->slice, TICK_NSEC), se);
 +#ifdef CONFIG_SCHED_BORE
 +	limit >>= 1;
 +#endif // CONFIG_SCHED_BORE
- 	se->vlag = clamp(lag, -limit, limit);
- }
  
+ 	return clamp(vlag, -limit, limit);
+ }
 @@ -955,6 +1137,7 @@ struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
   * Scheduling class statistics methods:
   */
@@ -618,44 +629,6 @@ index 533547e3c9..a2346b1b44 100644
  	update_deadline(cfs_rq, curr);
  	update_min_vruntime(cfs_rq);
  
-@@ -3671,10 +3861,9 @@ dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
- #endif
- 
- static void reweight_eevdf(struct cfs_rq *cfs_rq, struct sched_entity *se,
--			   unsigned long weight)
-+			   unsigned long weight, u64 avruntime)
- {
- 	unsigned long old_weight = se->load.weight;
--	u64 avruntime = avg_vruntime(cfs_rq);
- 	s64 vlag, vslice;
- 
- 	/*
-@@ -3782,11 +3971,13 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
- {
- 	bool curr = cfs_rq->curr == se;
- 
-+	if (curr)
-+		update_curr(cfs_rq);
-+	u64 avruntime = avg_vruntime(cfs_rq);
-+
- 	if (se->on_rq) {
- 		/* commit outstanding execution time */
--		if (curr)
--			update_curr(cfs_rq);
--		else
-+		if (!curr)
- 			__dequeue_entity(cfs_rq, se);
- 		update_load_sub(&cfs_rq->load, se->load.weight);
- 	}
-@@ -3799,7 +3990,7 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
- 		 */
- 		se->vlag = div_s64(se->vlag * se->load.weight, weight);
- 	} else {
--		reweight_eevdf(cfs_rq, se, weight);
-+		reweight_eevdf(cfs_rq, se, weight, avruntime);
- 	}
- 
- 	update_load_set(&se->load, weight);
 @@ -5171,6 +5362,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
  	 *
  	 * EEVDF: placement strategy #1 / #2
@@ -721,18 +694,18 @@ diff --git a/kernel/sched/features.h b/kernel/sched/features.h
 index 143f55df89..3f0fe409f5 100644
 --- a/kernel/sched/features.h
 +++ b/kernel/sched/features.h
-@@ -6,7 +6,11 @@
-  */
- SCHED_FEAT(PLACE_LAG, true)
- SCHED_FEAT(PLACE_DEADLINE_INITIAL, true)
-+#ifdef CONFIG_SCHED_BORE
-+SCHED_FEAT(RUN_TO_PARITY, false)
-+#else // !CONFIG_SCHED_BORE
- SCHED_FEAT(RUN_TO_PARITY, true)
-+#endif // CONFIG_SCHED_BORE
- 
+@@ -12,7 +12,11 @@
  /*
-  * Prefer to schedule the task we woke last (assuming it failed
+  * Inhibit preemption until the current task has exhausted it's slice.
+  */
++#ifdef CONFIG_SCHED_BORE
++SCHED_FEAT(RESPECT_SLICE, false)
++#else // !CONFIG_SCHED_BORE
+ SCHED_FEAT(RESPECT_SLICE, true)
++#endif // CONFIG_SCHED_BORE
+ /*
+  * Relax RESPECT_SLICE and only protect current until 0-lag. Notably this can
+  * mean no protection at all if a newly placed task moves avg_vruntime left of
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
 index 001fe047bd..da3ad1d4e1 100644
 --- a/kernel/sched/sched.h

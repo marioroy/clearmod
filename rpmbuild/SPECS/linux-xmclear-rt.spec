@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmclear-rt
-Version:  6.8.8
-Release:  177
+Version:  6.8.9
+Release:  178
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -95,6 +95,11 @@ Patch2000: clear-kbuild-add-generic-x86_64-levels.patch
 # Realtime kernel patch set.
 Patch2002: 0001-linux6.8.y-rt-clearmod.patch
 
+# Sched/fair enhancements.
+Patch2004: eevdf-Add-feature-comments.patch
+Patch2005: eevdf-Allow-shorter-slices-to-wakeup-preempt.patch
+Patch2006: eevdf-Limit-preemption-a-little-more.patch
+
 # Add HZ_500, HZ_625, and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
 Patch2101: clear-hz-500-625-800-timer-frequencies.patch
@@ -104,13 +109,10 @@ Patch2101: clear-hz-500-625-800-timer-frequencies.patch
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
 Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
-# Sched fair/rt updates.
-Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
-Patch2104: eevdf-Allow-shorter-slices-to-wakeup-preempt1.patch
-Patch2105: eevdf-Allow-shorter-slices-to-wakeup-preempt2.patch
-Patch2106: eevdf-Limit-preemption-a-little-more1.patch
-Patch2107: eevdf-Limit-preemption-a-little-more2.patch
-Patch2108: eevdf-Fix-miscalculation-in-reweight_entity.patch
+# Scheduler updates.
+Patch2103: rcu-Provide-boot-time-param-to-control-lazy.patch
+Patch2104: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
+Patch2105: sched-urgent-2024-04-28.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -205,14 +207,14 @@ Linux kernel build files
 
 %patch -P 2000 -p1
 %patch -P 2002 -p1
+%patch -P 2004 -p1
+%patch -P 2005 -p1
+%patch -P 2006 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
 %patch -P 2104 -p1
 %patch -P 2105 -p1
-%patch -P 2106 -p1
-%patch -P 2107 -p1
-%patch -P 2108 -p1
 %patch -P 2201 -p1
 
 
@@ -222,57 +224,47 @@ cp %{SOURCE1} .config
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
-# Set timer frequency { 1000, 800, 625, 500, 300, 250, or 100 }.
+# Set timer frequency { 100, 250, 300, 500, 625, 800, or 1000 }.
 # Defaults to 800Hz tick rate.
 scripts/config -d HZ_1000
 scripts/config -e HZ_%{_hzval}
-
-# Override timer configs to match XanMod defaults.
-scripts/config -d NO_HZ_FULL
-scripts/config -d NO_HZ
-scripts/config -e NO_HZ_IDLE
-scripts/config -e TICK_CPU_ACCOUNTING
 
 # Default to maximum amount of ASLR bits.
 scripts/config --set-val ARCH_MMAP_RND_BITS 32
 scripts/config --set-val ARCH_MMAP_RND_COMPAT_BITS 16
 
 # Disable using efivars as a pstore backend by default.
-# https://github.com/clearlinux/distribution/issues/3042#issuecomment-1948714075
 scripts/config -m EFI_VARS_PSTORE
 scripts/config -e EFI_VARS_PSTORE_DEFAULT_DISABLE
 
+# Disable the kernel tracing infrastructure.
+scripts/config -d FTRACE
+
 # Disable debug.
 %if 1
+scripts/config -d GDB_SCRIPTS
+scripts/config -d DEBUG_BUGVERBOSE
 scripts/config -d DEBUG_INFO
 scripts/config -d DEBUG_INFO_BTF
 scripts/config -d DEBUG_INFO_BTF_MODULES
 scripts/config -d DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
 scripts/config -d DEBUG_INFO_DWARF4
 scripts/config -d DEBUG_INFO_DWARF5
+scripts/config -e DEBUG_INFO_NONE
 scripts/config -d DEBUG_LIST
+scripts/config -d DEBUG_PREEMPT
 scripts/config -d PAHOLE_HAS_SPLIT_BTF
 scripts/config -d SLUB_DEBUG
+scripts/config -d ACPI_DEBUG
 scripts/config -d PM_DEBUG
 scripts/config -d PM_ADVANCED_DEBUG
 scripts/config -d PM_SLEEP_DEBUG
-scripts/config -d ACPI_DEBUG
 scripts/config -d IRQ_TIME_ACCOUNTING
 scripts/config -d LATENCYTOP
 scripts/config -d PERF_EVENTS_AMD_POWER
-scripts/config -d DEBUG_BUGVERBOSE
-scripts/config -d DEBUG_PREEMPT
 scripts/config -d LOCK_TORTURE_TEST
 scripts/config -d RCU_TORTURE_TEST
-scripts/config -d TORTURE_TEST
 %endif
-
-# Disable tracers, XanMod default.
-scripts/config -d DMA_FENCE_TRACE
-scripts/config -d DRM_I915_DEBUG_RUNTIME_PM
-scripts/config -d DRM_I915_LOW_LEVEL_TRACEPOINTS
-scripts/config -d RCU_TRACE
-scripts/config -d FTRACE
 
 # NTFS3 is a kernel NTFS implementation, which offers much faster performance
 # than the NTFS-3G FUSE based implementation. Note: ntfs3 requires the file
@@ -288,15 +280,25 @@ scripts/config -e NTFS3_FS_POSIX_ACL
 # https://github.com/umlaeute/v4l2loopback
 scripts/config -m V4L2_LOOPBACK
 
-# Enable realtime preemption.
+# Enable realtime preemption. Boot time param "rcutree.enable_rcu_lazy=1"
+# can be used to switch RCU_LAZY on.
+scripts/config -e RCU_EXPERT
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
-scripts/config -d PREEMPT_VOLUNTARY_BUILD
+scripts/config -d PREEMPT
 scripts/config -e PREEMPT_RT
+scripts/config -e RCU_LAZY
+scripts/config -e RCU_LAZY_DEFAULT_OFF
+scripts/config --set-val RCU_FANOUT 32
+scripts/config --set-val RCU_FANOUT_LEAF 16
 scripts/config -e RCU_BOOST
-scripts/config -d RCU_LAZY
-scripts/config -d RCU_NOCB_CPU_CB_BOOST
+scripts/config --set-val RCU_BOOST_DELAY 500
 scripts/config -d RCU_EXP_KTHREAD
+scripts/config -e RCU_NOCB_CPU
+scripts/config -e RCU_NOCB_CPU_DEFAULT_ALL
+scripts/config -d RCU_NOCB_CPU_CB_BOOST
+scripts/config -d TASKS_TRACE_RCU_READ_MB
+scripts/config -e RCU_DOUBLE_CHECK_CB_TIME
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
 scripts/config -e SCHED_CLUSTER
@@ -373,7 +375,6 @@ BuildKernel() {
 BuildKernel %{ktarget}
 
 %install
-
 InstallKernel() {
 
     Target=$1
