@@ -116,8 +116,8 @@ EXFAT/NTFS3 filesystems, and NTSYNC are added in the SPEC files.
 
 The default timer frequency is `HZ_800`. To override, define `HZ=value` to
 `100`, `250`, `300`, `500`, `625`, `800`, or `1000`. A lower Hz value
-may decrease power consumption or fan speed revving up and down.
-Unsure, a great Hz value for the desktop environment is 625 or 800.
+may decrease power consumption or fan speed revving up and down. A great Hz
+value for the desktop environment is 800 or 1000.
 
 ```text
 ./fetch-src
