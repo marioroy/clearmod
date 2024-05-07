@@ -107,7 +107,6 @@ Patch2006: eevdf-Limit-preemption-a-little-more.patch
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
-# https://github.com/xanmod/linux/issues/333
 Patch2007: 0001-linux6.8.y-bore.patch
 
 # Add HZ_625 and HZ_800 timer-tick options.
@@ -290,7 +289,6 @@ scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
 
 # Enable NTSYNC driver for fast kernel-backed Wine.
-# https://github.com/xanmod/linux/issues/420
 scripts/config -m NTSYNC
 
 # Enable v4l2-loopback device.

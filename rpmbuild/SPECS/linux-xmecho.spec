@@ -277,7 +277,6 @@ scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
 
 # Enable NTSYNC driver for fast kernel-backed Wine.
-# https://github.com/xanmod/linux/issues/420
 scripts/config -m NTSYNC
 
 # Enable v4l2-loopback device.
