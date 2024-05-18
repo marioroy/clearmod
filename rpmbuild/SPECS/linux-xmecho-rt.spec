@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmecho-rt
-Version:  6.8.9
-Release:  178
+Version:  6.8.10
+Release:  179
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -122,6 +122,7 @@ Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 Patch2103: rcu-Provide-boot-time-param-to-control-lazy.patch
 Patch2104: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
 Patch2105: sched-urgent-2024-04-28.patch
+Patch2106: net-sched-Adjust-device-watchdog-timer.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -223,6 +224,7 @@ Linux kernel build files
 %patch -P 2103 -p1
 %patch -P 2104 -p1
 %patch -P 2105 -p1
+%patch -P 2106 -p1
 %patch -P 2201 -p1
 
 
@@ -245,8 +247,14 @@ scripts/config --set-val ARCH_MMAP_RND_COMPAT_BITS 16
 scripts/config -m EFI_VARS_PSTORE
 scripts/config -e EFI_VARS_PSTORE_DEFAULT_DISABLE
 
-# Disable the kernel tracing infrastructure.
+# The frame pointer unwinder degrades overall performance by roughly 5-10%.
+# Default to the ORC (Oops Rewind Capability) unwinder. (XanMod default)
+scripts/config -d UNWINDER_FRAME_POINTER
+scripts/config -e UNWINDER_ORC
+
+# Disable kernel tracing infrastructure and call depth tracking.
 scripts/config -d FTRACE
+scripts/config -d CALL_DEPTH_TRACKING
 
 # Disable debug.
 %if 1
@@ -312,7 +320,7 @@ scripts/config -d TASKS_TRACE_RCU_READ_MB
 scripts/config -e RCU_DOUBLE_CHECK_CB_TIME
 scripts/config -d RT_GROUP_SCHED
 scripts/config -e SCHED_OMIT_FRAME_POINTER
-scripts/config -e SCHED_CLUSTER
+scripts/config -d SCHED_CLUSTER
 
 mv .config config
 
