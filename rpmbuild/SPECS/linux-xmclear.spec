@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmclear
-Version:  6.8.10
-Release:  179
+Version:  6.9.1
+Release:  180
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -26,9 +26,6 @@ Requires: linux-xmclear-license = %{version}-%{release}
 %global __os_install_post %{nil}
 %define debug_package %{nil}
 %define __strip /bin/true
-
-#cve.start cve patches from 0001 to 050
-#cve.end
 
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
 #mainline.end
@@ -82,7 +79,6 @@ Patch0157: scale-net-alloc.patch
 Patch0158: 0158-clocksource-only-perform-extended-clocksource-checks.patch
 Patch0160: better_idle_balance.patch
 Patch0161: 0161-ACPI-align-slab-buffers-for-improved-memory-performa.patch
-Patch0162: 0162-extra-optmization-flags.patch
 Patch0163: 0163-thermal-intel-powerclamp-check-MWAIT-first-use-pr_wa.patch
 Patch0164: 0164-KVM-VMX-make-vmx-init-a-late-init-call-to-get-to-ini.patch
 Patch0165: slack.patch
@@ -90,12 +86,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 #Serie.end
 
 # x86/kconfig: add generic x86_64 levels
-Patch2000: clear-kbuild-add-generic-x86_64-levels.patch
-
-# Sched/fair enhancements.
-Patch2004: eevdf-Add-feature-comments.patch
-Patch2005: eevdf-Allow-shorter-slices-to-wakeup-preempt.patch
-Patch2006: eevdf-Limit-preemption-a-little-more.patch
+Patch2100: clear-kbuild-add-generic-x86_64-levels.patch
 
 # Add HZ_500, HZ_625, and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
@@ -107,10 +98,8 @@ Patch2101: clear-hz-500-625-800-timer-frequencies.patch
 Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
 # Scheduler updates.
-Patch2103: rcu-Provide-boot-time-param-to-control-lazy.patch
-Patch2104: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
-Patch2105: sched-urgent-2024-04-28.patch
-Patch2106: net-sched-Adjust-device-watchdog-timer.patch
+Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
+Patch2104: net-sched-Adjust-device-watchdog-timer.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -156,9 +145,6 @@ Linux kernel build files
 %prep
 %setup -q -n linux-%{version}
 
-#cve.patch.start cve patches
-#cve.patch.end
-
 #mainline.patch.start Mainline patches, upstream backport and fixes
 #mainline.patch.end
 
@@ -196,23 +182,17 @@ Linux kernel build files
 %patch -P 158 -p1
 %patch -P 160 -p1
 %patch -P 161 -p1
-%patch -P 162 -p1
 %patch -P 163 -p1
 %patch -P 164 -p1
 %patch -P 165 -p1
 %patch -P 166 -p1
 #Serie.patch.end
 
-%patch -P 2000 -p1
-%patch -P 2004 -p1
-%patch -P 2005 -p1
-%patch -P 2006 -p1
+%patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
 %patch -P 2104 -p1
-%patch -P 2105 -p1
-%patch -P 2106 -p1
 %patch -P 2201 -p1
 
 
@@ -240,9 +220,9 @@ scripts/config -e EFI_VARS_PSTORE_DEFAULT_DISABLE
 scripts/config -d UNWINDER_FRAME_POINTER
 scripts/config -e UNWINDER_ORC
 
-# Disable kernel tracing infrastructure and call depth tracking.
+# Disable kernel tracing infrastructure and call depth tracking. (XanMod default)
 scripts/config -d FTRACE
-scripts/config -d CALL_DEPTH_TRACKING
+scripts/config -d MITIGATION_CALL_DEPTH_TRACKING
 
 # Disable debug.
 %if 1

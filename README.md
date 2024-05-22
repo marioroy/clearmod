@@ -27,7 +27,7 @@ The `wget` command is used to fetch the source archive from the web.
 sudo swupd bundle-add \
 bc bison c-basic devpkg-gmp devpkg-elfutils devpkg-openssl flex \
 kernel-install linux-firmware lz4 make package-utils wget xz \
-hardware-uefi
+dkms hardware-uefi init-rdahead
 ```
 
 The power tweaks service is how Clear Linux sets reasonable power management
@@ -133,12 +133,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-* org.clearlinux.xmbore.6.8.10-179
-  org.clearlinux.xmclear.6.8.10-179
+* org.clearlinux.xmbore.6.9.1-180
+  org.clearlinux.xmclear.6.9.1-180
 
 XM installed packages (excluding dev,extra,license)
-* linux-xmbore-6.8.10-179
-  linux-xmclear-6.8.10-179
+* linux-xmbore-6.9.1-180
+  linux-xmclear-6.9.1-180
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -147,8 +147,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 179
-Removing org.clearlinux.xmclear.6.8.10-179
+./xm-uninstall clear 180
+Removing org.clearlinux.xmclear.6.9.1-180
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.
