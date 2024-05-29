@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmbore
-Version:  6.9.1
-Release:  180
+Version:  6.9.2
+Release:  181
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -285,6 +285,7 @@ scripts/config --set-val RCU_FANOUT 32
 scripts/config --set-val RCU_FANOUT_LEAF 16
 scripts/config -e RCU_BOOST
 scripts/config --set-val RCU_BOOST_DELAY 500
+scripts/config -d RCU_CPU_STALL_CPUTIME
 scripts/config -d RCU_EXP_KTHREAD
 scripts/config -e RCU_NOCB_CPU
 scripts/config -e RCU_NOCB_CPU_DEFAULT_ALL

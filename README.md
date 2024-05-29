@@ -133,12 +133,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-* org.clearlinux.xmbore.6.9.1-180
-  org.clearlinux.xmclear.6.9.1-180
+* org.clearlinux.xmbore.6.9.2-181
+  org.clearlinux.xmclear.6.9.2-181
 
 XM installed packages (excluding dev,extra,license)
-* linux-xmbore-6.9.1-180
-  linux-xmclear-6.9.1-180
+* linux-xmbore-6.9.2-181
+  linux-xmclear-6.9.2-181
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -147,8 +147,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 180
-Removing org.clearlinux.xmclear.6.9.1-180
+./xm-uninstall clear 181
+Removing org.clearlinux.xmclear.6.9.2-181
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.
