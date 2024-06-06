@@ -16,6 +16,18 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
+osver=$(source "/etc/os-release"; echo "$VERSION_ID")
+
+if [[ ${osver} -le 41840 ]]; then
+    echo "The Clear kernel config enables ZSTD module compression."
+    echo "https://github.com/clearlinux-pkgs/linux/commit/2918f672"
+    echo ""
+    echo "This requires OS update CL 41850 (or later) to continue"
+    echo "i.e. kmod, toolchain, and zstd updates."
+    echo ""
+    exit 1
+fi
+
 function xm_build {
     local variant="$1"
     echo "Building linux-${variant}"
