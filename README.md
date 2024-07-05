@@ -20,7 +20,7 @@ clear-rt, bore-rt, and echo-rt
 
 ## Preparation and configuration
 
-The Clear kernel config [enables](https://github.com/clearlinux-pkgs/linux/commit/2918f672) ZSTD module compression, since 41850. Thus, requires CL 41850 (or later) to continue i.e. kmod, toolchain, and zstd updates.
+The Clear kernel config [enables](https://github.com/clearlinux-pkgs/linux/commit/2918f672) ZSTD module compression, since 41850. Thus, installation requires CL 41850 (or later) to continue i.e. kmod, toolchain, and zstd updates.
 
 Install build-essential bundles or prerequisites for building the kernel.
 The `wget` command is used to fetch the source archive from the web.
@@ -135,12 +135,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-* org.clearlinux.xmbore.6.9.3-183
-  org.clearlinux.xmclear.6.9.3-183
+* org.clearlinux.xmbore.6.9.8-184
+  org.clearlinux.xmclear.6.9.8-184
 
 XM installed packages (excluding dev,extra,license)
-* linux-xmbore-6.9.3-183
-  linux-xmclear-6.9.3-183
+* linux-xmbore-6.9.8-184
+  linux-xmclear-6.9.8-184
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -149,8 +149,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 183
-Removing org.clearlinux.xmclear.6.9.3-183
+./xm-uninstall clear 184
+Removing org.clearlinux.xmclear.6.9.8-184
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.

@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmecho-rt
-Version:  6.9.3
-Release:  183
+Version:  6.9.8
+Release:  184
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -439,6 +439,9 @@ createCPIO() {
     cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-apple.ko.zst          cpiofile${ModDir}/kernel/drivers/hid
     cp %{buildroot}${ModDir}/modules.order   cpiofile${ModDir}
     cp %{buildroot}${ModDir}/modules.builtin cpiofile${ModDir}
+
+    # Decompress the modules for the cpio file
+    find cpiofile${ModDir} -name '*.ko.zst' -exec zstd -d --rm {} \;
 
     depmod -b cpiofile/usr ${Kversion}
 
