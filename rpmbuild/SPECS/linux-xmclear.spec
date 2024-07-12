@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmclear
-Version:  6.9.8
-Release:  185
+Version:  6.9.9
+Release:  186
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
