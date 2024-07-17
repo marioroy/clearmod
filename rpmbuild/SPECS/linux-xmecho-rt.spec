@@ -32,6 +32,7 @@ Requires: linux-xmecho-rt-license = %{version}-%{release}
 Patch0011: 0001-linux6.9.y-xanmod-pre-rt.patch
 Patch0012: 0001-linux6.9.y-rt5.patch
 Patch0013: 0001-linux6.9.y-xanmod-post-rt.patch
+Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
 #mainline.end
@@ -161,6 +162,7 @@ Linux kernel build files
 %patch -P 11 -p1
 %patch -P 12 -p1
 %patch -P 13 -p1
+%patch -P 14 -p1
 
 #mainline.patch.start Mainline patches, upstream backport and fixes
 #mainline.patch.end

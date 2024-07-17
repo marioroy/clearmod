@@ -29,6 +29,7 @@ Requires: linux-xmclear-rt-license = %{version}-%{release}
 
 # Realtime kernel patch set.
 Patch0012: 0001-linux6.9.y-rt5.patch
+Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
 #mainline.end
@@ -150,6 +151,7 @@ Linux kernel build files
 
 #realtime kernel patch set
 %patch -P 12 -p1
+%patch -P 14 -p1
 
 #mainline.patch.start Mainline patches, upstream backport and fixes
 #mainline.patch.end
