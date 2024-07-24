@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
-cl_rel="42070" cl_file="linux-6.9.10-1451.src.rpm"
+cl_rel="42090" cl_file="linux-6.9.10-1451.src.rpm"
 kn_file="linux-6.9.10.tar.xz"
 xm_file="6.9.10-xanmod1.tar.gz"
 

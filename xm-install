@@ -91,12 +91,11 @@ function xm_install {
 }
 
 case "$1" in
-    clear | clear-rt | bore | bore-rt | echo | echo-rt )
+    clear | clear-rt | bore | bore-rt )
         cd "rpmbuild/RPMS/x86_64" || exit 1
         xm_install "xm${1}" "$2"
         ;;
     * ) echo "synopsis"
-        echo "   $0 clear | bore | echo [<release>]"
-        echo "   $0 clear-rt | bore-rt | echo-rt [<release>]"
+        echo "   $0 clear | clear-rt | bore | bore-rt [<release>]"
 esac
 

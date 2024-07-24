@@ -2,20 +2,20 @@
 
 Run the [XanMod](https://github.com/xanmod) kernel on [Clear Linux](https://www.clearlinux.org) with ease.
 
-The motivation comes from liking the Clear and XanMod Linux kernels, and opportunity to run a preempt-enabled kernel patched with [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler, or [ECHO](https://github.com/hamadmarri/ECHO-CPU-Scheduler) (Enhanced CPU Handling Orchestrator). The kernels are configured to run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
+The motivation comes from liking the Clear and XanMod Linux kernels, and opportunity to run a preempt-enabled kernel patched with [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. The kernels are configured to run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 
-All variants include the v4l2-loopback patch. The XanMod kernel includes also, NTSync for fast kernel-backed Wine.
+All variants include the v4l2-loopback patch and NTSync for fast kernel-backed Wine.
 
 ```text
 clear - Clear native kernel + preemption
 bore  - XanMod kernel + preemption + BORE
-echo  - XanMod kernel + preemption + ECHO
 ```
 
 The `*-rt` variants include the Linux realtime patch set.
 
 ```text
-clear-rt, bore-rt, and echo-rt
+clear-rt
+bore-rt
 ```
 
 ## Preparation and configuration
@@ -41,14 +41,6 @@ the `clr-power` service, enabled by default.
 sudo cp share/clr-power-tweaks.conf /etc/.
 ```
 
-Do not tune or add `base_slice_ns` manually. Rather, let the kernel set the
-value automatically. The value differs between EEVDF/BORE (high number) and
-ECHO (low number).
-
-```text
-# /sys/kernel/debug/sched/base_slice_ns <value>
-```
-
 Set boot-timeout and system‐wide configuration to avoid `clr‐boot‐manager`
 changing efi variables.
 
@@ -60,6 +52,13 @@ EOF
 sudo tee "/etc/kernel/update_efi_vars" >/dev/null <<'EOF'
 false
 EOF
+```
+
+Copy the NTSync udev rule.
+
+```bash
+sudo mkdir -p /etc/udev/rules.d
+sudo cp share/99-ntsync.rules /etc/udev/rules.d/.
 ```
 
 ## Clone the repository
@@ -87,15 +86,10 @@ The 535 driver on RT may result in schedule/lock errors.
 ```bash
 ./fetch-src
 
-./xm-build clear | bore | echo
-./xm-build clear-rt | bore-rt | echo-rt
-
-./xm-install clear | bore | echo [<release>]
-./xm-install clear-rt | bore-rt | echo-rt [<release>]
-
+./xm-build clear | clear-rt | bore | bore-rt
+./xm-install clear | clear-rt | bore | bore-rt [<release>]
+./xm-uninstall clear | clear-rt | bore | bore-rt [<release>]
 ./xm-uninstall all
-./xm-uninstall clear | bore | echo [<release>]
-./xm-uninstall clear-rt | bore-rt | echo-rt [<release>]
 
 ./xm-kernels - list kernels and packages
 ./xm-purge   - purge packages
@@ -135,12 +129,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-* org.clearlinux.xmbore.6.9.10-187
-  org.clearlinux.xmclear.6.9.10-187
+* org.clearlinux.xmbore.6.9.10-188
+  org.clearlinux.xmclear.6.9.10-188
 
 XM installed packages (excluding dev,extra,license)
-* linux-xmbore-6.9.10-187
-  linux-xmclear-6.9.10-187
+* linux-xmbore-6.9.10-188
+  linux-xmclear-6.9.10-188
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -149,8 +143,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 187
-Removing org.clearlinux.xmclear.6.9.10-187
+./xm-uninstall clear 188
+Removing org.clearlinux.xmclear.6.9.10-188
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.

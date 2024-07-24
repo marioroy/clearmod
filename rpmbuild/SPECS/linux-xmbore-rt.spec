@@ -5,7 +5,7 @@
 
 Name:     linux-xmbore-rt
 Version:  6.9.10
-Release:  187
+Release:  188
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -30,7 +30,7 @@ Requires: linux-xmbore-rt-license = %{version}-%{release}
 
 # Realtime kernel patch set.
 Patch0011: 0001-linux6.9.y-xanmod-pre-rt.patch
-Patch0012: 0001-linux6.9.y-rt5.patch
+Patch0012: 0001-linux6.9.y-rt5-upd.patch
 Patch0013: 0001-linux6.9.y-xanmod-post-rt.patch
 Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 
@@ -113,9 +113,13 @@ Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 # Scheduler updates.
 Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
 Patch2104: net-sched-Adjust-device-watchdog-timer.patch
+Patch2105: sched_fair_make_SCHED_IDLE_be_preempted.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
+
+# XanMod NTSYNC update.
+Patch2202: xanmod-ntsync-update.patch
 
 %description
 The Linux kernel.
@@ -212,7 +216,9 @@ cat %{PATCH2000} | \
 %patch -P 2102 -p1
 %patch -P 2103 -p1
 %patch -P 2104 -p1
+%patch -P 2105 -p1
 %patch -P 2201 -p1
+%patch -P 2202 -p1
 
 
 cp %{SOURCE1} .config

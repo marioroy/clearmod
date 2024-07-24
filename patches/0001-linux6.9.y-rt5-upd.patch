@@ -3396,7 +3396,7 @@ index c8093bcc01fe6..99818b819e417 100644
  
  	/*
  	 * Since any dropped message was successfully output, reset the
-@@ -928,6 +1011,638 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
+@@ -928,6 +1011,639 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt)
  	return nbcon_context_exit_unsafe(ctxt);
  }
  
@@ -3506,6 +3506,7 @@ index c8093bcc01fe6..99818b819e417 100644
 +		}
 +
 +		console_srcu_read_unlock(cookie);
++		cond_resched();
 +
 +	} while (backlog);
 +

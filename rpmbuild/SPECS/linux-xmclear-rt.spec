@@ -4,7 +4,7 @@
 
 Name:     linux-xmclear-rt
 Version:  6.9.10
-Release:  187
+Release:  188
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -28,7 +28,7 @@ Requires: linux-xmclear-rt-license = %{version}-%{release}
 %define __strip /bin/true
 
 # Realtime kernel patch set.
-Patch0012: 0001-linux6.9.y-rt5.patch
+Patch0012: 0001-linux6.9.y-rt5-upd.patch
 Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
@@ -104,9 +104,13 @@ Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 # Scheduler updates.
 Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
 Patch2104: net-sched-Adjust-device-watchdog-timer.patch
+Patch2105: sched_fair_make_SCHED_IDLE_be_preempted.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
+
+# NTSYNC driver.
+Patch2202: vanilla-ntsync.patch
 
 %description
 The Linux kernel.
@@ -201,7 +205,9 @@ Linux kernel build files
 %patch -P 2102 -p1
 %patch -P 2103 -p1
 %patch -P 2104 -p1
+%patch -P 2105 -p1
 %patch -P 2201 -p1
+%patch -P 2202 -p1
 
 
 cp %{SOURCE1} .config
@@ -267,6 +273,9 @@ scripts/config -m NTFS3_FS
 scripts/config -d NTFS3_64BIT_CLUSTER
 scripts/config -e NTFS3_LZX_XPRESS
 scripts/config -e NTFS3_FS_POSIX_ACL
+
+# Enable NTSYNC driver for fast kernel-backed Wine.
+scripts/config -m NTSYNC
 
 # Enable v4l2-loopback device.
 # https://github.com/umlaeute/v4l2loopback
@@ -358,6 +367,7 @@ BuildKernel() {
       scripts/config --file ${Target}/.config -e NTFS3_FS_POSIX_ACL
 
       # Add optional modules.
+      scripts/config --file ${Target}/.config -m NTSYNC
 
     %endif
 

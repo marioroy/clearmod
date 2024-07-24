@@ -133,11 +133,11 @@ case "$1" in
         ;;
 
     * ) echo "synopsis"
+        echo "   $0 clear | clear | bore | bore-rt [<release>]"
         echo "   $0 all"
-        echo "   $0 clear | bore | echo [<release>]"
-        echo "   $0 clear-rt | bore-rt | echo-rt [<release>]"
         echo ""
         echo "deprecated"
+        echo "   $0 echo | echo-rt [<release>]"
         echo "   $0 clear-default | clear-preempt [<release>]"
         echo "   $0 edge-default | edge-preempt | edge | edge-rt [<release>]"
         echo "   $0 main-default | main-preempt [<release>]"
