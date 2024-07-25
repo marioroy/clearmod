@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmbore-rt
-Version:  6.9.10
-Release:  188
+Version:  6.9.11
+Release:  189
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
