@@ -1,14 +1,14 @@
 From    Mario Roy <>
-Subject Add v4l2loopback v0.13.1
+Subject Add v4l2loopback v0.13.2
 Source  https://github.com/umlaeute/v4l2loopback
 
 ---
  drivers/media/v4l2-core/Kconfig               |    5 +
  drivers/media/v4l2-core/Makefile              |    2 +
- drivers/media/v4l2-core/v4l2loopback.c        | 3165 +++++++++++++++++
+ drivers/media/v4l2-core/v4l2loopback.c        | 3184 +++++++++++++++++
  drivers/media/v4l2-core/v4l2loopback.h        |   98 +
  .../media/v4l2-core/v4l2loopback_formats.h    |  445 +++
- 5 files changed, 3715 insertions(+)
+ 5 files changed, 3734 insertions(+)
  create mode 100644 drivers/media/v4l2-core/v4l2loopback.c
  create mode 100644 drivers/media/v4l2-core/v4l2loopback.h
  create mode 100644 drivers/media/v4l2-core/v4l2loopback_formats.h
@@ -43,7 +43,7 @@ diff --git a/drivers/media/v4l2-core/v4l2loopback.c b/drivers/media/v4l2-core/v4
 new file mode 100644
 --- /dev/null
 +++ b/drivers/media/v4l2-core/v4l2loopback.c
-@@ -0,0 +1,3165 @@
+@@ -0,0 +1,3184 @@
 +/* -*- c-file-style: "linux" -*- */
 +/*
 + * v4l2loopback.c  --  video4linux2 loopback driver
@@ -151,6 +151,25 @@ new file mode 100644
 +	b->timestamp.tv_usec = (ts.tv_nsec / NSEC_PER_USEC);
 +	b->flags |= V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
 +}
++
++#if BITS_PER_LONG == 32
++#include <asm/div64.h> /* do_div() for 64bit division */
++static inline int v4l2l_mod64(const s64 A, const u32 B)
++{
++	u64 a = (u64)A;
++	u32 b = B;
++
++	if (A > 0)
++		return do_div(a, b);
++	a = -A;
++	return -do_div(a, b);
++}
++#else
++static inline int v4l2l_mod64(const s64 A, const u32 B)
++{
++	return A % B;
++}
++#endif
 +
 +#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 16, 0)
 +typedef unsigned __poll_t;
@@ -1644,7 +1663,7 @@ new file mode 100644
 +
 +			/* after we update dev->used_buffers, buffers in outbufs_list will
 +			 * correspond to dev->write_position + [0;b->count-1] range */
-+			i = dev->write_position % b->count;
++			i = v4l2l_mod64(dev->write_position, b->count);
 +			list_for_each_entry(pos, &dev->outbufs_list,
 +					    list_head) {
 +				dev->bufpos2index[i % b->count] =
@@ -1717,7 +1736,7 @@ new file mode 100644
 +	spin_unlock_bh(&dev->list_lock);
 +
 +	spin_lock_bh(&dev->lock);
-+	dev->bufpos2index[dev->write_position % dev->used_buffers] =
++	dev->bufpos2index[v4l2l_mod64(dev->write_position, dev->used_buffers)] =
 +		buf->buffer.index;
 +	++dev->write_position;
 +	dev->reread_count = 0;
@@ -1837,14 +1856,14 @@ new file mode 100644
 +		if (dev->reread_count > opener->reread_count + 2)
 +			opener->reread_count = dev->reread_count - 1;
 +		++opener->reread_count;
-+		pos = (opener->read_position + dev->used_buffers - 1) %
-+		      dev->used_buffers;
++		pos = v4l2l_mod64(opener->read_position + dev->used_buffers - 1,
++				  dev->used_buffers);
 +	} else {
 +		opener->reread_count = 0;
 +		if (dev->write_position >
 +		    opener->read_position + dev->used_buffers)
 +			opener->read_position = dev->write_position - 1;
-+		pos = opener->read_position % dev->used_buffers;
++		pos = v4l2l_mod64(opener->read_position, dev->used_buffers);
 +		++opener->read_position;
 +	}
 +	timeout_happened = dev->timeout_happened;
@@ -2370,7 +2389,7 @@ new file mode 100644
 +	if (count > dev->buffer_size)
 +		count = dev->buffer_size;
 +
-+	write_index = dev->write_position % dev->used_buffers;
++	write_index = v4l2l_mod64(dev->write_position, dev->used_buffers);
 +	b = &dev->buffers[write_index].buffer;
 +
 +	if (copy_from_user((void *)(dev->image + b->m.offset), (void *)buf,
@@ -3228,7 +3247,7 @@ new file mode 100644
 +
 +#define V4L2LOOPBACK_VERSION_MAJOR 0
 +#define V4L2LOOPBACK_VERSION_MINOR 13
-+#define V4L2LOOPBACK_VERSION_BUGFIX 1
++#define V4L2LOOPBACK_VERSION_BUGFIX 2
 +
 +/* /dev/v4l2loopback interface */
 +
