@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmbore
-Version:  6.9.12
-Release:  190
+Version:  6.10.2
+Release:  191
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -93,7 +93,7 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
-Patch2000: 0001-linux6.9.y-bore.patch
+Patch2000: 0001-linux6.10.y-bore.patch
 
 # Add HZ_625 and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
@@ -106,14 +106,10 @@ Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
 # Scheduler updates.
 Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
-Patch2104: net-sched-Adjust-device-watchdog-timer.patch
-Patch2105: sched_fair_make_SCHED_IDLE_be_preempted.patch
+Patch2104: sched_fair_make_SCHED_IDLE_be_preempted.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
-
-# XanMod NTSYNC update.
-Patch2202: xanmod-ntsync-update.patch
 
 %description
 The Linux kernel.
@@ -201,9 +197,7 @@ Linux kernel build files
 %patch -P 2102 -p1
 %patch -P 2103 -p1
 %patch -P 2104 -p1
-%patch -P 2105 -p1
 %patch -P 2201 -p1
-%patch -P 2202 -p1
 
 
 cp %{SOURCE1} .config

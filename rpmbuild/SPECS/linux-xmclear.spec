@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmclear
-Version:  6.9.12
-Release:  190
+Version:  6.10.2
+Release:  191
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -99,14 +99,13 @@ Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
 # Scheduler updates.
 Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
-Patch2104: net-sched-Adjust-device-watchdog-timer.patch
-Patch2105: sched_fair_make_SCHED_IDLE_be_preempted.patch
+Patch2104: sched_fair_make_SCHED_IDLE_be_preempted.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
 
 # NTSYNC driver.
-Patch2202: vanilla-ntsync.patch
+Patch2202: vanilla-ntsync-revert-mark-driver-as-broken.patch
 
 %description
 The Linux kernel.
@@ -197,7 +196,6 @@ Linux kernel build files
 %patch -P 2102 -p1
 %patch -P 2103 -p1
 %patch -P 2104 -p1
-%patch -P 2105 -p1
 %patch -P 2201 -p1
 %patch -P 2202 -p1
 
