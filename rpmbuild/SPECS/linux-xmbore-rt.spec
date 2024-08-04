@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmbore-rt
-Version:  6.10.2
-Release:  191
+Version:  6.10.3
+Release:  192
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -30,7 +30,7 @@ Requires: linux-xmbore-rt-license = %{version}-%{release}
 
 # Realtime kernel patch set.
 Patch0011: 0001-linux6.10.y-xanmod-pre-rt.patch
-Patch0012: 0001-linux6.10.y-rc6-rt11.patch
+Patch0012: 0001-linux6.10.3-rt14.patch
 Patch0013: 0001-linux6.10.y-xanmod-post-rt.patch
 Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 

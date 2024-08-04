@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmclear-rt
-Version:  6.10.2
-Release:  191
+Version:  6.10.3
+Release:  192
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -28,7 +28,7 @@ Requires: linux-xmclear-rt-license = %{version}-%{release}
 %define __strip /bin/true
 
 # Realtime kernel patch set.
-Patch0012: 0001-linux6.10.y-rc6-rt11.patch
+Patch0012: 0001-linux6.10.3-rt14.patch
 Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
