@@ -16,9 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
-cl_rel="42100" cl_file="linux-6.10.1-1453.src.rpm"
-kn_file="linux-6.10.3.tar.xz"
-xm_file="6.10.3-xanmod1.tar.gz"
+cl_rel="42160" cl_file="linux-6.10.4-1456.src.rpm"
+kn_file="linux-6.10.5.tar.xz"
+xm_file="6.10.5-xanmod1.tar.gz"
 
 cl_url="https://cdn.download.clearlinux.org/releases"
 kn_url="https://cdn.kernel.org/pub/linux/kernel/v6.x"

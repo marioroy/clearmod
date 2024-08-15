@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmclear
-Version:  6.10.3
-Release:  192
+Version:  6.10.5
+Release:  194
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -104,8 +104,10 @@ Patch2104: sched_fair_make_SCHED_IDLE_be_preempted.patch
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
 
-# NTSYNC driver.
-Patch2202: vanilla-ntsync-revert-mark-driver-as-broken.patch
+# CachyOS 6.10 fixes and NTSYNC update.
+Patch2202: 0006-fixes.patch
+Patch2203: 0009-ntsync.patch
+Patch2204: 0009-ntsync-revert-mark-driver-as-broken.patch
 
 %description
 The Linux kernel.
@@ -198,6 +200,8 @@ Linux kernel build files
 %patch -P 2104 -p1
 %patch -P 2201 -p1
 %patch -P 2202 -p1
+%patch -P 2203 -p1
+%patch -P 2204 -p1
 
 
 cp %{SOURCE1} .config
