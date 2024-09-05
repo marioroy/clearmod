@@ -1,8 +1,8 @@
 https://github.com/CachyOS/kernel-patches/blob/master/6.10/0009-ntsync.patch
 
-From 57e538ecc69f3cfdbc45e485af4e79aa33231809 Mon Sep 17 00:00:00 2001
+From 72f4582cee95c9d9c5763cb626a4b60594717cee Mon Sep 17 00:00:00 2001
 From: Peter Jung <admin@ptr1337.dev>
-Date: Sun, 11 Aug 2024 13:12:55 +0200
+Date: Wed, 4 Sep 2024 13:41:23 +0200
 Subject: [PATCH 09/12] ntsync
 
 Signed-off-by: Peter Jung <admin@ptr1337.dev>
