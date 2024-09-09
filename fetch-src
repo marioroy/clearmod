@@ -17,8 +17,8 @@
 # -----------------------------------------------------------------------
 
 cl_rel="42300" cl_file="linux-6.10.8-1461.src.rpm"
-kn_file="linux-6.10.8.tar.xz"
-xm_file="6.10.8-xanmod1.tar.gz"
+kn_file="linux-6.10.9.tar.xz"
+xm_file="6.10.9-xanmod1.tar.gz"
 
 cl_url="https://cdn.download.clearlinux.org/releases"
 kn_url="https://cdn.kernel.org/pub/linux/kernel/v6.x"

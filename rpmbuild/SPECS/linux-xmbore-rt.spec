@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmbore-rt
-Version:  6.10.8
-Release:  195
+Version:  6.10.9
+Release:  196
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -29,7 +29,7 @@ Requires: linux-xmbore-rt-license = %{version}-%{release}
 %define __strip /bin/true
 
 # Realtime kernel patch set.
-Patch0012: 0001-linux6.10.5-rt14.patch
+Patch0012: 0001-linux6.10.9-rt14.patch
 Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
