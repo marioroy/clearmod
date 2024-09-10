@@ -5,7 +5,7 @@
 
 Name:     linux-xmbore
 Version:  6.10.9
-Release:  196
+Release:  197
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -115,6 +115,9 @@ Patch2201: v4l2loopback.patch
 Patch2202: 0006-fixes.patch
 Patch2203: 0009-ntsync.patch
 
+# Revert soundwire stream fix.
+Patch2205: revert-soundwire-stream-fix.patch
+
 %description
 The Linux kernel.
 
@@ -204,6 +207,7 @@ Linux kernel build files
 %patch -P 2201 -p1
 %patch -P 2202 -p1
 %patch -P 2203 -p1
+%patch -P 2205 -p1
 
 
 cp %{SOURCE1} .config
