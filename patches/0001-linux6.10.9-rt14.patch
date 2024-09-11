@@ -7989,8 +7989,8 @@ diff -uNpar a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
 +	.bh_lock = INIT_LOCAL_LOCK(bh_lock),
 +};
  
- static u32 tcp_v4_init_seq(const struct sk_buff *skb)
- {
+ static DEFINE_MUTEX(tcp_exit_batch_mutex);
+ 
 @@ -880,7 +882,9 @@ static void tcp_v4_send_reset(const stru
  	arg.tos = ip_hdr(skb)->tos;
  	arg.uid = sock_net_uid(net, sk && sk_fullsock(sk) ? sk : NULL);
