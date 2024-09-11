@@ -18,7 +18,7 @@ diff --git a/include/linux/sched.h b/include/linux/sched.h
 index 829e50def9..87745c94d5 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -549,6 +549,16 @@ struct sched_entity {
+@@ -547,6 +547,16 @@ struct sched_entity {
  	u64				sum_exec_runtime;
  	u64				prev_sum_exec_runtime;
  	u64				vruntime;
@@ -39,7 +39,7 @@ diff --git a/init/Kconfig b/init/Kconfig
 index 3ba6142f2f..2966dec64d 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -1303,6 +1303,23 @@ config CHECKPOINT_RESTORE
+@@ -1283,6 +1283,23 @@ config CHECKPOINT_RESTORE
  
  	  If unsure, say N here.
  
@@ -67,8 +67,8 @@ diff --git a/kernel/Kconfig.hz b/kernel/Kconfig.hz
 index 0f78364efd..b50189ee5b 100644
 --- a/kernel/Kconfig.hz
 +++ b/kernel/Kconfig.hz
-@@ -79,5 +79,21 @@ config HZ
- 	default 750 if HZ_750
+@@ -63,5 +63,21 @@ config HZ
+ 	default 500 if HZ_500
  	default 1000 if HZ_1000
  
 +config MIN_BASE_SLICE_NS
@@ -93,7 +93,7 @@ diff --git a/kernel/sched/core.c b/kernel/sched/core.c
 index 410bb71277..283cc3b07f 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -4543,6 +4543,138 @@ int wake_up_state(struct task_struct *p, unsigned int state)
+@@ -4515,6 +4515,138 @@ int wake_up_state(struct task_struct *p, unsigned int state)
  	return try_to_wake_up(p, state, 0);
  }
  
@@ -232,7 +232,7 @@ index 410bb71277..283cc3b07f 100644
  /*
   * Perform scheduler related setup for a newly forked process p.
   * p is forked by current.
-@@ -4559,6 +4691,9 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
+@@ -4531,6 +4663,9 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
  	p->se.prev_sum_exec_runtime	= 0;
  	p->se.nr_migrations		= 0;
  	p->se.vruntime			= 0;
@@ -242,7 +242,7 @@ index 410bb71277..283cc3b07f 100644
  	p->se.vlag			= 0;
  	p->se.slice			= sysctl_sched_base_slice;
  	INIT_LIST_HEAD(&p->se.group_node);
-@@ -4893,6 +5028,9 @@ void sched_cancel_fork(struct task_struct *p)
+@@ -4846,6 +4981,9 @@ void sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs)
  
  void sched_post_fork(struct task_struct *p)
  {
@@ -250,10 +250,10 @@ index 410bb71277..283cc3b07f 100644
 +	sched_post_fork_bore(p);
 +#endif // CONFIG_SCHED_BORE
  	uclamp_post_fork(p);
- 	scx_post_fork(p);
  }
-@@ -10044,6 +10182,11 @@ void __init sched_init(void)
- 	BUG_ON(!sched_class_above(&ext_sched_class, &idle_sched_class));
+ 
+@@ -9933,6 +10071,11 @@ void __init sched_init(void)
+ 	BUG_ON(&dl_sched_class != &stop_sched_class + 1);
  #endif
  
 +#ifdef CONFIG_SCHED_BORE
@@ -906,7 +906,7 @@ diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
 index fbcd2ddbf8..e187aaa59b 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -2041,7 +2041,11 @@ static inline void dirty_sched_domain_sysctl(int cpu)
+@@ -1969,7 +1969,11 @@ static inline void dirty_sched_domain_sysctl(int cpu)
  }
  #endif
  
@@ -918,7 +918,7 @@ index fbcd2ddbf8..e187aaa59b 100644
  
  static inline const struct cpumask *task_user_cpus(struct task_struct *p)
  {
-@@ -2672,6 +2676,9 @@ extern const_debug unsigned int sysctl_sched_nr_migrate;
+@@ -2554,6 +2558,9 @@ extern const_debug unsigned int sysctl_sched_nr_migrate;
  extern const_debug unsigned int sysctl_sched_migration_cost;
  
  extern unsigned int sysctl_sched_base_slice;
