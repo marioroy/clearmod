@@ -1,21 +1,21 @@
-From f40ce04a34d2fef728c7c8763a45becf1ea3ad8e Mon Sep 17 00:00:00 2001
+From 86ca051c381f98e25068a752b94031d617e97c9e Mon Sep 17 00:00:00 2001
 From: Masahito S <firelzrd@gmail.com>
-Date: Wed, 31 Jul 2024 00:39:53 +0900
-Subject: [PATCH] linux6.10.y-bore5.2.8
+Date: Thu, 1 Aug 2024 02:38:58 +0900
+Subject: [PATCH] linux6.10.y-bore5.1.8
 
 ---
  include/linux/sched.h   |  10 ++
  init/Kconfig            |  17 +++
- kernel/Kconfig.hz       |  16 ++
- kernel/sched/core.c     | 143 ++++++++++++++++++
- kernel/sched/debug.c    |  60 +++++++-
- kernel/sched/fair.c     | 322 ++++++++++++++++++++++++++++++++++++++--
- kernel/sched/features.h |  22 ++-
- kernel/sched/sched.h    |   7 +
- 8 files changed, 583 insertions(+), 14 deletions(-)
+ kernel/Kconfig.hz       |  16 +++
+ kernel/sched/core.c     | 143 +++++++++++++++++++++
+ kernel/sched/debug.c    |  60 ++++++++-
+ kernel/sched/fair.c     | 270 +++++++++++++++++++++++++++++++++++++++-
+ kernel/sched/features.h |   4 +
+ kernel/sched/sched.h    |   7 ++
+ 8 files changed, 524 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 829e50def9..87745c94d5 100644
+index a5f4b48fca..df62c56b13 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
 @@ -547,6 +547,16 @@ struct sched_entity {
@@ -36,7 +36,7 @@ index 829e50def9..87745c94d5 100644
  	u64				slice;
  
 diff --git a/init/Kconfig b/init/Kconfig
-index 3ba6142f2f..2966dec64d 100644
+index febdea2afc..171b5d9955 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
 @@ -1283,6 +1283,23 @@ config CHECKPOINT_RESTORE
@@ -64,7 +64,7 @@ index 3ba6142f2f..2966dec64d 100644
  	bool "Automatic process group scheduling"
  	select CGROUPS
 diff --git a/kernel/Kconfig.hz b/kernel/Kconfig.hz
-index 0f78364efd..b50189ee5b 100644
+index 38ef6d0688..5f6eecd1e6 100644
 --- a/kernel/Kconfig.hz
 +++ b/kernel/Kconfig.hz
 @@ -63,5 +63,21 @@ config HZ
@@ -90,7 +90,7 @@ index 0f78364efd..b50189ee5b 100644
  config SCHED_HRTICK
  	def_bool HIGH_RES_TIMERS
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 410bb71277..283cc3b07f 100644
+index 59ce0841eb..2a188b0285 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
 @@ -4515,6 +4515,138 @@ int wake_up_state(struct task_struct *p, unsigned int state)
@@ -258,14 +258,14 @@ index 410bb71277..283cc3b07f 100644
  
 +#ifdef CONFIG_SCHED_BORE
 +	sched_init_bore();
-+	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification 5.2.8 by Masahito Suzuki");
++	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification 5.1.8 by Masahito Suzuki");
 +#endif // CONFIG_SCHED_BORE
 +
  	wait_bit_init();
  
  #ifdef CONFIG_FAIR_GROUP_SCHED
 diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index c057ef46c5..3cab39e348 100644
+index c1eb9a1afd..e2da8d7738 100644
 --- a/kernel/sched/debug.c
 +++ b/kernel/sched/debug.c
 @@ -167,7 +167,52 @@ static const struct file_operations sched_feat_fops = {
@@ -372,7 +372,7 @@ index c057ef46c5..3cab39e348 100644
  	P(se.avg.runnable_sum);
  	P(se.avg.util_sum);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ab17954001..5a75a61f00 100644
+index 24dda708b6..07e07a950b 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -19,6 +19,9 @@
@@ -659,83 +659,7 @@ index ab17954001..5a75a61f00 100644
  
  	return clamp(vlag, -limit, limit);
  }
-@@ -855,6 +1081,39 @@ struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
- 	return __node_2_se(left);
- }
- 
-+static inline bool pick_curr(struct cfs_rq *cfs_rq,
-+			     struct sched_entity *curr, struct sched_entity *wakee)
-+{
-+	/*
-+	 * Nothing to preserve...
-+	 */
-+	if (!curr || !sched_feat(RESPECT_SLICE))
-+		return false;
-+
-+	/*
-+	 * Allow preemption at the 0-lag point -- even if not all of the slice
-+	 * is consumed. Note: placement of positive lag can push V left and render
-+	 * @curr instantly ineligible irrespective the time on-cpu.
-+	 */
-+	if (sched_feat(RUN_TO_PARITY) && !entity_eligible(cfs_rq, curr))
-+		return false;
-+
-+	/*
-+	 * Don't preserve @curr when the @wakee has a shorter slice and earlier
-+	 * deadline. IOW, explicitly allow preemption.
-+	 */
-+	if (sched_feat(PREEMPT_SHORT) && wakee &&
-+	    wakee->slice < curr->slice &&
-+	    (s64)(wakee->deadline - curr->deadline) < 0)
-+		return false;
-+
-+	/*
-+	 * Preserve @curr to allow it to finish its first slice.
-+	 * See the HACK in set_next_entity().
-+	 */
-+	return curr->vlag == curr->deadline;
-+}
-+
- /*
-  * Earliest Eligible Virtual Deadline First
-  *
-@@ -874,28 +1133,27 @@ struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
-  *
-  * Which allows tree pruning through eligibility.
-  */
--static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
-+static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq, struct sched_entity *wakee)
- {
- 	struct rb_node *node = cfs_rq->tasks_timeline.rb_root.rb_node;
- 	struct sched_entity *se = __pick_first_entity(cfs_rq);
- 	struct sched_entity *curr = cfs_rq->curr;
- 	struct sched_entity *best = NULL;
- 
-+	if (curr && !curr->on_rq)
-+		curr = NULL;
-+
- 	/*
- 	 * We can safely skip eligibility check if there is only one entity
- 	 * in this cfs_rq, saving some cycles.
- 	 */
- 	if (cfs_rq->nr_running == 1)
--		return curr && curr->on_rq ? curr : se;
--
--	if (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
--		curr = NULL;
-+		return curr ?: se;
- 
- 	/*
--	 * Once selected, run a task until it either becomes non-eligible or
--	 * until it gets a new slice. See the HACK in set_next_entity().
-+	 * Preserve @curr to let it finish its slice.
- 	 */
--	if (sched_feat(RUN_TO_PARITY) && curr && curr->vlag == curr->deadline)
-+	if (pick_curr(cfs_rq, curr, wakee))
- 		return curr;
- 
- 	/* Pick the leftmost entity if it's eligible */
-@@ -954,6 +1212,7 @@ struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
+@@ -954,6 +1180,7 @@ struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
   * Scheduling class statistics methods:
   */
  #ifdef CONFIG_SMP
@@ -743,7 +667,7 @@ index ab17954001..5a75a61f00 100644
  int sched_update_scaling(void)
  {
  	unsigned int factor = get_update_sysctl_factor();
-@@ -965,6 +1224,7 @@ int sched_update_scaling(void)
+@@ -965,6 +1192,7 @@ int sched_update_scaling(void)
  
  	return 0;
  }
@@ -751,7 +675,7 @@ index ab17954001..5a75a61f00 100644
  #endif
  #endif
  
-@@ -1165,7 +1425,13 @@ static void update_curr(struct cfs_rq *cfs_rq)
+@@ -1165,7 +1393,13 @@ static void update_curr(struct cfs_rq *cfs_rq)
  	if (unlikely(delta_exec <= 0))
  		return;
  
@@ -765,7 +689,7 @@ index ab17954001..5a75a61f00 100644
  	update_deadline(cfs_rq, curr);
  	update_min_vruntime(cfs_rq);
  
-@@ -5180,6 +5446,11 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+@@ -5180,6 +5414,11 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
  	s64 lag = 0;
  
  	se->slice = sysctl_sched_base_slice;
@@ -777,7 +701,7 @@ index ab17954001..5a75a61f00 100644
  	vslice = calc_delta_fair(se->slice, se);
  
  	/*
-@@ -5190,6 +5461,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+@@ -5190,6 +5429,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
  	 *
  	 * EEVDF: placement strategy #1 / #2
  	 */
@@ -787,7 +711,7 @@ index ab17954001..5a75a61f00 100644
  	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running) {
  		struct sched_entity *curr = cfs_rq->curr;
  		unsigned long load;
-@@ -5265,7 +5539,11 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+@@ -5265,7 +5507,11 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
  	 * on average, halfway through their slice, as such start tasks
  	 * off with half a slice to ease into the competition.
  	 */
@@ -799,16 +723,7 @@ index ab17954001..5a75a61f00 100644
  		vslice /= 2;
  
  	/*
-@@ -5479,7 +5757,7 @@ pick_next_entity(struct cfs_rq *cfs_rq)
- 	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next))
- 		return cfs_rq->next;
- 
--	return pick_eevdf(cfs_rq);
-+	return pick_eevdf(cfs_rq, NULL);
- }
- 
- static bool check_cfs_rq_runtime(struct cfs_rq *cfs_rq);
-@@ -6847,6 +7125,14 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+@@ -6847,6 +7093,14 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  	bool was_sched_idle = sched_idle_rq(rq);
  
  	util_est_dequeue(&rq->cfs, p);
@@ -823,16 +738,7 @@ index ab17954001..5a75a61f00 100644
  
  	for_each_sched_entity(se) {
  		cfs_rq = cfs_rq_of(se);
-@@ -8415,7 +8701,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
- 	/*
- 	 * XXX pick_eevdf(cfs_rq) != se ?
- 	 */
--	if (pick_eevdf(cfs_rq) == pse)
-+	if (pick_eevdf(cfs_rq, pse) == pse)
- 		goto preempt;
- 
- 	return;
-@@ -8633,16 +8919,25 @@ static void yield_task_fair(struct rq *rq)
+@@ -8633,16 +8887,25 @@ static void yield_task_fair(struct rq *rq)
  	/*
  	 * Are we the only task in the tree?
  	 */
@@ -858,7 +764,7 @@ index ab17954001..5a75a61f00 100644
  	/*
  	 * Tell update_rq_clock() that we've just updated,
  	 * so we don't do microscopic update in schedule()
-@@ -12700,6 +12995,9 @@ static void task_fork_fair(struct task_struct *p)
+@@ -12710,6 +12973,9 @@ static void task_fork_fair(struct task_struct *p)
  	curr = cfs_rq->curr;
  	if (curr)
  		update_curr(cfs_rq);
@@ -869,41 +775,24 @@ index ab17954001..5a75a61f00 100644
  	rq_unlock(rq, &rf);
  }
 diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 143f55df89..3aad8900c3 100644
+index 143f55df89..1efe05a49a 100644
 --- a/kernel/sched/features.h
 +++ b/kernel/sched/features.h
-@@ -5,8 +5,28 @@
+@@ -5,8 +5,12 @@
   * sleep+wake cycles. EEVDF placement strategy #1, #2 if disabled.
   */
  SCHED_FEAT(PLACE_LAG, true)
-+/*
-+ * Give new tasks half a slice to ease into the competition.
-+ */
 +#if !defined(CONFIG_SCHED_BORE)
  SCHED_FEAT(PLACE_DEADLINE_INITIAL, true)
--SCHED_FEAT(RUN_TO_PARITY, true)
-+#endif // CONFIG_SCHED_BORE
-+/*
-+ * Inhibit (wakeup) preemption until the current task has exhausted its slice.
-+ */
-+#ifdef CONFIG_SCHED_BORE
-+SCHED_FEAT(RESPECT_SLICE, false)
-+#else // !CONFIG_SCHED_BORE
-+SCHED_FEAT(RESPECT_SLICE, true)
-+#endif // CONFIG_SCHED_BORE
-+/*
-+ * Relax RESPECT_SLICE to allow preemption once current has reached 0-lag.
-+ */
+ SCHED_FEAT(RUN_TO_PARITY, true)
++#else // CONFIG_SCHED_BORE
 +SCHED_FEAT(RUN_TO_PARITY, false)
-+/*
-+ * Allow tasks with a shorter slice to disregard RESPECT_SLICE
-+ */
-+SCHED_FEAT(PREEMPT_SHORT, true)
++#endif // CONFIG_SCHED_BORE
  
  /*
   * Prefer to schedule the task we woke last (assuming it failed
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index fbcd2ddbf8..e187aaa59b 100644
+index ef20c61004..deb748f319 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -1969,7 +1969,11 @@ static inline void dirty_sched_domain_sysctl(int cpu)
