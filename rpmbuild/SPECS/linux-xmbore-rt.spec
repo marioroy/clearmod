@@ -4,8 +4,8 @@
 %define   xm_customver 1
 
 Name:     linux-xmbore-rt
-Version:  6.10.9
-Release:  197
+Version:  6.10.11
+Release:  198
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -29,23 +29,11 @@ Requires: linux-xmbore-rt-license = %{version}-%{release}
 %define __strip /bin/true
 
 # Realtime kernel patch set.
-Patch0012: 0001-linux6.10.9-rt14.patch
+Patch0012: 0001-linux6.10.10-rt14.patch
 Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
 #mainline.end
-
-# Clear patches commented out or not patched in Clear's spec file.
-# 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch
-# 0113-print-fsync-count-for-bootchart.patch
-# 0118-add-scheduler-turbo3-patch.patch
-# 0132-prezero-20220308.patch
-# 0138-kdf-boottime.patch
-# 0139-adlrdt.patch
-# 0200-mm-lru_cache_disable-use-synchronize_rcu_expedited.patch
-
-# Clear patch omitted, due to higher latency regression.
-# 0167-net-sock-increase-default-number-of-_SK_MEM_PACKETS-.patch
 
 # Clear patches omitted, due to inclusion in the XanMod kernel.
 # 0109-initialize-ata-before-graphics.patch
@@ -53,9 +41,8 @@ Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 # 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
 # 0121-locking-rwsem-spin-faster.patch
 
-# Clear patches omitted, due to removal in the XanMod kernel.
-# 0001-sched-migrate.patch (reverted in 6.5.7)
-# 0002-sched-migrate.patch (reverted in 6.5.7, SIS_CURRENT feature)
+# Clear patch omitted, due to higher latency regression.
+# 0167-net-sock-increase-default-number-of-_SK_MEM_PACKETS-.patch
 
 #Serie.clr 01XX: Clear Linux patches
 Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
@@ -101,7 +88,7 @@ Patch2000: 0001-linux6.10.y-bore.patch
 
 # Add HZ_625 and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
-Patch2101: edge-hz-625-800-timer-frequencies.patch
+Patch2101: xanmod-hz-625-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
@@ -109,18 +96,14 @@ Patch2101: edge-hz-625-800-timer-frequencies.patch
 Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
 
 # Scheduler updates.
-Patch2103: sched_rt_redefine_rr_timeslice_to_100_msecs.patch
-Patch2104: sched_fair_make_SCHED_IDLE_be_preempted.patch
+Patch2103: sched_fair_make_SCHED_IDLE_be_preempted.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
 
 # CachyOS 6.10 fixes and NTSYNC update.
-Patch2202: 0006-fixes.patch
-Patch2203: 0009-ntsync.patch
-
-# Revert soundwire stream fix.
-Patch2205: revert-soundwire-stream-fix.patch
+Patch2202: 0006-linux6.10-fixes.patch
+Patch2203: 0009-linux6.10-ntsync.patch
 
 %description
 The Linux kernel.
@@ -208,17 +191,16 @@ Linux kernel build files
 #Serie.patch.end
 
 cat %{PATCH2000} | \
+  sed 's/scaling = SCHED_TUNABLESCALING_LOG/scaling = SCHED_TUNABLESCALING_NONE/' | \
   sed 's/update_deadline(cfs_rq, curr)/update_deadline(cfs_rq, curr, tick)/' | \
   patch --no-backup-if-mismatch -p1
 
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
-%patch -P 2104 -p1
 %patch -P 2201 -p1
 %patch -P 2202 -p1
 %patch -P 2203 -p1
-%patch -P 2205 -p1
 
 
 cp %{SOURCE1} .config

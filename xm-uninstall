@@ -18,26 +18,29 @@
 
 if [[ "$1" == "all" ]]; then
 
-   ## deprecated
-   #bash "$0" "clear-default" || exit $?
-   #bash "$0" "clear-preempt" || exit $?
-   #bash "$0" "edge-default"  || exit $?
-   #bash "$0" "edge-preempt"  || exit $?
-   #bash "$0" "edge-rt"       || exit $?
-   #bash "$0" "edge"          || exit $?
-   #bash "$0" "main-default"  || exit $?
-   #bash "$0" "main-preempt"  || exit $?
-   #bash "$0" "lts-default"   || exit $?
-   #bash "$0" "lts-preempt"   || exit $?
-   #bash "$0" "rt-preempt"    || exit $?
+    # deprecated
 
-    # since April 2024
-    bash "$0" "clear-rt"  || exit $?
-    bash "$0" "clear"     || exit $?
-    bash "$0" "bore-rt"   || exit $?
-    bash "$0" "bore"      || exit $?
-    bash "$0" "echo-rt"   || exit $?
-    bash "$0" "echo"      || exit $?
+    #bash "$0" "clear-default" || exit $?
+    #bash "$0" "clear-preempt" || exit $?
+    #bash "$0" "edge-default"  || exit $?
+    #bash "$0" "edge-preempt"  || exit $?
+    #bash "$0" "edge-rt"       || exit $?
+    #bash "$0" "edge"          || exit $?
+    #bash "$0" "main-default"  || exit $?
+    #bash "$0" "main-preempt"  || exit $?
+    #bash "$0" "lts-default"   || exit $?
+    #bash "$0" "lts-preempt"   || exit $?
+    #bash "$0" "rt-preempt"    || exit $?
+
+    bash "$0" "echo-rt"  || exit $?
+    bash "$0" "echo"     || exit $?
+
+    # since September 2024
+
+    bash "$0" "clear-rt" || exit $?
+    bash "$0" "clear"    || exit $?
+    bash "$0" "bore-rt"  || exit $?
+    bash "$0" "bore"     || exit $?
 
     exit 0
 fi
@@ -112,10 +115,13 @@ function xm_uninstall {
 }
 
 case "$1" in
-    clear | clear-rt | bore | bore-rt | echo | echo-rt )
+    clear | clear-rt | bore | bore-rt )
         xm_uninstall "xm${1}" "$2"
         ;;
     # deprecated
+    echo | echo-rt )
+        xm_uninstall "xm${1}" "$2"
+        ;;
     clear-default | clear-preempt )
         xm_uninstall "xm${1}" "$2"
         ;;
@@ -133,16 +139,16 @@ case "$1" in
         ;;
 
     * ) echo "synopsis"
-        echo "   $0 clear | clear | bore | bore-rt [<release>]"
+        echo "   $0 clear | clear-rt | bore | bore-rt [<rel>]"
         echo "   $0 all"
         echo ""
         echo "deprecated"
-        echo "   $0 echo | echo-rt [<release>]"
-        echo "   $0 clear-default | clear-preempt [<release>]"
-        echo "   $0 edge-default | edge-preempt | edge | edge-rt [<release>]"
-        echo "   $0 main-default | main-preempt [<release>]"
-        echo "   $0 lts-default | lts-preempt [<release>]"
-        echo "   $0 rt-preempt [<release>]"
+        echo "   $0 echo | echo-rt [<rel>]"
+        echo "   $0 clear-default | clear-preempt [<rel>]"
+        echo "   $0 edge-default | edge-preempt | edge | edge-rt [<rel>]"
+        echo "   $0 main-default | main-preempt [<rel>]"
+        echo "   $0 lts-default | lts-preempt [<rel>]"
+        echo "   $0 rt-preempt [<rel>]"
         echo ""
 esac
 

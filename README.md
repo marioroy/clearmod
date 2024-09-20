@@ -7,8 +7,8 @@ The motivation comes from liking the Clear and XanMod Linux kernels, and opportu
 All variants include the v4l2-loopback patch and NTSync for fast kernel-backed Wine.
 
 ```text
-clear - Clear native kernel + preemption
-bore  - XanMod kernel + preemption + BORE
+clear - Clear 6.10.y native kernel + preemption
+bore  - XanMod 6.10.y stable kernel + preemption + BORE
 ```
 
 The `*-rt` variants include the Linux realtime patch set.
@@ -81,14 +81,13 @@ Clear and XanMod, respectively. The optional release argument to `xm-install`
 and `xm-uninstall` is described below.
 
 Note: Running a realtime kernel using NVIDIA graphics requires 550 minimally.
-The 535 driver on RT may result in schedule/lock errors.
 
 ```bash
 ./fetch-src
 
 ./xm-build clear | clear-rt | bore | bore-rt
-./xm-install clear | clear-rt | bore | bore-rt [<release>]
-./xm-uninstall clear | clear-rt | bore | bore-rt [<release>]
+./xm-install clear | clear-rt | bore | bore-rt [<rel>]
+./xm-uninstall clear | clear-rt | bore | bore-rt [<rel>]
 ./xm-uninstall all
 
 ./xm-kernels - list kernels and packages
@@ -129,12 +128,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-* org.clearlinux.xmbore.6.10.9-197
-  org.clearlinux.xmclear.6.10.9-197
+* org.clearlinux.xmbore.6.10.11-198
+  org.clearlinux.xmclear.6.10.11-198
 
 XM installed packages (excluding dev,extra,license)
-* linux-xmbore-6.10.9-197
-  linux-xmclear-6.10.9-197
+* linux-xmbore-6.10.11-198
+  linux-xmclear-6.10.11-198
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -143,8 +142,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 197
-Removing org.clearlinux.xmclear.6.10.9-197
+./xm-uninstall clear 198
+Removing org.clearlinux.xmclear.6.10.11-198
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.
@@ -159,8 +158,7 @@ no longer present in `/lib/modules`.
 
 The `/boot` partition has limited space. So, no reason to install many kernels.
 Build the one you want and enjoy the Clear or XanMod kernel. If changing your
-mind later, remember to manage and uninstall any unused kernels. Important:
-Keep at least one Clear Linux kernel, installed with the OS or via `swupd`.
+mind later, remember to manage and uninstall any unused kernels.
 
 To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
 macro. Adjust the integer value to your liking.

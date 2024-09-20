@@ -7787,14 +7787,6 @@ diff -uNpar a/net/core/filter.c b/net/core/filter.c
  	if (unlikely(srh == NULL))
  		return -EINVAL;
  
-@@ -11047,7 +11054,6 @@ const struct bpf_verifier_ops lwt_seg6lo
- };
- 
- const struct bpf_prog_ops lwt_seg6local_prog_ops = {
--	.test_run		= bpf_prog_test_run_skb,
- };
- 
- const struct bpf_verifier_ops cg_sock_verifier_ops = {
 diff -uNpar a/net/core/lwt_bpf.c b/net/core/lwt_bpf.c
 --- a/net/core/lwt_bpf.c
 +++ b/net/core/lwt_bpf.c
@@ -7977,6 +7969,15 @@ diff -uNpar a/net/ipv4/inet_timewait_sock.c b/net/ipv4/inet_timewait_sock.c
  /*
   * Enter the time wait state. This is called with locally disabled BH.
   * Essentially we whip up a timewait bucket, copy the relevant info into it
+@@ -203,7 +208,7 @@ struct inet_timewait_sock *inet_twsk_alloc(const struct sock *sk,
+ 		tw->tw_prot         = sk->sk_prot_creator;
+ 		atomic64_set(&tw->tw_cookie, atomic64_read(&sk->sk_cookie));
+ 		twsk_net_set(tw, sock_net(sk));
+-		timer_setup(&tw->tw_timer, tw_timer_handler, TIMER_PINNED);
++		timer_setup(&tw->tw_timer, tw_timer_handler, 0);
+ 		/*
+ 		 * Because we use RCU lookups, we should not set tw_refcnt
+ 		 * to a non null value before everything is setup for this
 diff -uNpar a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
 --- a/net/ipv4/tcp_ipv4.c
 +++ b/net/ipv4/tcp_ipv4.c

@@ -96,6 +96,6 @@ case "$1" in
         xm_install "xm${1}" "$2"
         ;;
     * ) echo "synopsis"
-        echo "   $0 clear | clear-rt | bore | bore-rt [<release>]"
+        echo "   $0 clear | clear-rt | bore | bore-rt [<rel>]"
 esac
 
