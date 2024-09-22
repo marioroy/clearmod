@@ -1,11 +1,11 @@
-From e66589a1cf94d0421d378b7e2234bd1462afc232 Mon Sep 17 00:00:00 2001
+From 9992ad4712d0d623013ca301b4b62b0712717b02 Mon Sep 17 00:00:00 2001
 From: Masahito S <firelzrd@gmail.com>
-Date: Sun, 22 Sep 2024 04:13:28 +0900
-Subject: [PATCH] linux6.10.y-bore5.5.0-rc1
+Date: Sun, 22 Sep 2024 22:36:22 +0900
+Subject: [PATCH] linux6.10.y-bore5.5.0-rc2
 
 ---
  include/linux/sched.h      |  15 +-
- include/linux/sched/bore.h |  32 +++
+ include/linux/sched/bore.h |  35 ++++
  init/Kconfig               |  17 ++
  kernel/Kconfig.hz          |  16 ++
  kernel/fork.c              |   5 +
@@ -13,10 +13,10 @@ Subject: [PATCH] linux6.10.y-bore5.5.0-rc1
  kernel/sched/bore.c        | 400 +++++++++++++++++++++++++++++++++++++
  kernel/sched/core.c        |  11 +
  kernel/sched/debug.c       |  60 +++++-
- kernel/sched/fair.c        |  81 +++++++-
+ kernel/sched/fair.c        |  83 +++++++-
  kernel/sched/features.h    |   4 +
  kernel/sched/sched.h       |   7 +
- 12 files changed, 645 insertions(+), 4 deletions(-)
+ 12 files changed, 649 insertions(+), 5 deletions(-)
  create mode 100644 include/linux/sched/bore.h
  create mode 100644 kernel/sched/bore.c
 
@@ -53,10 +53,10 @@ index 76214d7c81..5ca1772374 100644
  
 diff --git a/include/linux/sched/bore.h b/include/linux/sched/bore.h
 new file mode 100644
-index 0000000000..2255040cd2
+index 0000000000..e98ea8c072
 --- /dev/null
 +++ b/include/linux/sched/bore.h
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,35 @@
 +
 +#include <linux/sched.h>
 +
@@ -83,10 +83,13 @@ index 0000000000..2255040cd2
 +extern void restart_burst_rescale_deadline(struct sched_entity *se);
 +
 +extern int sched_bore_update_handler(struct ctl_table *table, int write,
-+		void __user *buffer, size_t *lenp, loff_t *ppos);
++	void __user *buffer, size_t *lenp, loff_t *ppos);
 +
 +extern void sched_clone_bore(
 +	struct task_struct *p, struct task_struct *parent, u64 clone_flags);
++
++extern void reweight_entity(
++	struct cfs_rq *cfs_rq, struct sched_entity *se, unsigned long weight);
 +#endif // CONFIG_SCHED_BORE
 +#endif // _LINUX_SCHED_BORE_H
 diff --git a/init/Kconfig b/init/Kconfig
@@ -177,7 +180,7 @@ index 976092b7bd..293aad6754 100644
 +obj-y += bore.o
 diff --git a/kernel/sched/bore.c b/kernel/sched/bore.c
 new file mode 100644
-index 0000000000..225f048b5c
+index 0000000000..cd077f984f
 --- /dev/null
 +++ b/kernel/sched/bore.c
 @@ -0,0 +1,400 @@
@@ -233,9 +236,11 @@ index 0000000000..225f048b5c
 +}
 +
 +static void reweight_task_by_prio(struct task_struct *p, int prio) {
++	struct sched_entity *se = &p->se;
 +	unsigned long weight = scale_load(sched_prio_to_weight[prio]);
-+	struct load_weight lw = (struct load_weight){weight, 0};
-+	reweight_task(p, &lw);
++
++	reweight_entity(cfs_rq_of(se), se, weight);
++	se->load.inv_weight = sched_prio_to_wmult[prio];
 +}
 +
 +static inline u8 effective_prio(struct task_struct *p) {
@@ -341,16 +346,15 @@ index 0000000000..225f048b5c
 +
 +static void __update_child_burst_cache(
 +		struct task_struct *p, u32 cnt, u32 sum, u64 now) {
-+	u8 avg = 0;
-+	if (cnt) avg = sum / cnt;
++	u8 avg = cnt ? sum / cnt : 0;
 +	p->se.child_burst = max(avg, p->se.burst_penalty);
 +	p->se.child_burst_cnt = cnt;
 +	p->se.child_burst_last_cached = now;
 +}
 +
 +static inline void update_child_burst_direct(struct task_struct *p, u64 now) {
-+	struct task_struct *child;
 +	u32 cnt = 0, sum = 0;
++	struct task_struct *child;
 +
 +	list_for_each_entry(child, &p->children, sibling) {
 +		if (!task_burst_inheritable(child)) continue;
@@ -371,8 +375,8 @@ index 0000000000..225f048b5c
 +
 +static void update_child_burst_topological(
 +	struct task_struct *p, u64 now, u32 depth, u32 *acnt, u32 *asum) {
-+	struct task_struct *child, *dec;
 +	u32 cnt = 0, dcnt = 0, sum = 0;
++	struct task_struct *child, *dec;
 +
 +	list_for_each_entry(child, &p->children, sibling) {
 +		dec = child;
@@ -420,8 +424,7 @@ index 0000000000..225f048b5c
 +
 +static void __update_tg_burst_cache(
 +		struct task_struct *p, u32 cnt, u32 sum, u64 now) {
-+	u8 avg = 0;
-+	if (cnt) avg = sum / cnt;
++	u8 avg = cnt ? sum / cnt : 0;
 +	p->se.tg_burst = max(avg, p->se.burst_penalty);
 +	p->se.tg_burst_last_cached = now;
 +}
@@ -590,7 +593,7 @@ index 3e84a3b7b7..4546a3e531 100644
  #endif
  
 +#ifdef CONFIG_SCHED_BORE
-+	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification 5.5.0-rc1 by Masahito Suzuki");
++	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification 5.5.0-rc2 by Masahito Suzuki");
 +	init_task.se.burst_time = 0;
 +	init_task.se.prev_burst_penalty = 0;
 +	init_task.se.curr_burst_penalty = 0;
@@ -711,7 +714,7 @@ index c1eb9a1afd..e2da8d7738 100644
  	P(se.avg.runnable_sum);
  	P(se.avg.util_sum);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 483c137b9d..348027310f 100644
+index 483c137b9d..2328435a8e 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
 @@ -55,6 +55,8 @@
@@ -825,6 +828,15 @@ index 483c137b9d..348027310f 100644
  	curr->vruntime += calc_delta_fair(delta_exec, curr);
  	update_deadline(cfs_rq, curr);
  	update_min_vruntime(cfs_rq);
+@@ -3782,7 +3817,7 @@ static void reweight_eevdf(struct sched_entity *se, u64 avruntime,
+ 	se->deadline = avruntime + vslice;
+ }
+ 
+-static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
++void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+ 			    unsigned long weight)
+ {
+ 	bool curr = cfs_rq->curr == se;
 @@ -5189,6 +5224,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
  	 *
  	 * EEVDF: placement strategy #1 / #2
