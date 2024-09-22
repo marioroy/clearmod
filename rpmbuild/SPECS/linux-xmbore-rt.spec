@@ -86,6 +86,9 @@ Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 # https://github.com/firelzrd/bore-scheduler
 Patch2000: 0001-linux6.10.y-bore.patch
 
+# Revert yield_type sysctl to reduce or disable sched_yield.
+Patch2100: xanmod-revert-yield_type-sysctl.patch
+
 # Add HZ_625 and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
 Patch2101: xanmod-hz-625-800-timer-frequencies.patch
@@ -195,6 +198,7 @@ cat %{PATCH2000} | \
   sed 's/update_deadline(cfs_rq, curr)/update_deadline(cfs_rq, curr, tick)/' | \
   patch --no-backup-if-mismatch -p1
 
+%patch -P 2100 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1

@@ -1,0 +1,62 @@
+diff -uarp a/kernel/sched/core.c b/kernel/sched/core.c
+--- a/kernel/sched/core.c	2024-09-18 16:28:30.000000000 -0400
++++ b/kernel/sched/core.c	2024-09-21 18:44:33.279611910 -0400
+@@ -145,14 +145,6 @@ __read_mostly int sysctl_resched_latency
+ #endif /* CONFIG_SCHED_DEBUG */
+ 
+ /*
+- * Choose the yield level that will perform.
+- * 0: No yield.
+- * 1: Yield only to better priority/deadline tasks.
+- * 2: Re-queue current tasks. (default CFS)
+- */
+-__read_mostly int sysctl_sched_yield_type = 2;
+-
+-/*
+  * Number of tasks to iterate in a single balance run.
+  * Limited because this is done with IRQs disabled.
+  */
+@@ -8565,15 +8557,10 @@ static void do_sched_yield(void)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+-	if (!sysctl_sched_yield_type)
+-		return;
+-
+ 	rq = this_rq_lock_irq(&rf);
+ 
+ 	schedstat_inc(rq->yld_count);
+-
+-	if (sysctl_sched_yield_type > 1)
+-		current->sched_class->yield_task(rq);
++	current->sched_class->yield_task(rq);
+ 
+ 	preempt_disable();
+ 	rq_unlock_irq(rq, &rf);
+diff -uarp a/kernel/sysctl.c b/kernel/sysctl.c
+--- a/kernel/sysctl.c	2024-09-18 16:28:30.000000000 -0400
++++ b/kernel/sysctl.c	2024-09-21 18:45:36.146336542 -0400
+@@ -97,7 +97,6 @@ static const int six_hundred_forty_kb =
+ #endif
+ 
+ 
+-extern int sysctl_sched_yield_type;
+ static const int ngroups_max = NGROUPS_MAX;
+ static const int cap_last_cap = CAP_LAST_CAP;
+ 
+@@ -1628,15 +1627,6 @@ static struct ctl_table kern_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec,
+ 	},
+-	{
+-		.procname	= "yield_type",
+-		.data		= &sysctl_sched_yield_type,
+-		.maxlen		= sizeof (int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_TWO,
+-	},
+ #ifdef CONFIG_USER_NS
+ 	{
+ 		.procname	= "unprivileged_userns_clone",
