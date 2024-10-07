@@ -1,0 +1,54 @@
+
+sched/fair: Fix integer underflow
+https://lore.kernel.org/all/20241001134603.2758480-1-pierre.gondois@arm.com/
+
+
+From: Pierre Gondois <pierre.gondois@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Pierre Gondois <pierre.gondois@arm.com>,
+	stable@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Rik van Riel <riel@surriel.com>
+Subject: [PATCH v2] sched/fair: Fix integer underflow
+Date: Tue,  1 Oct 2024 15:46:03 +0200	[thread overview]
+Message-ID: <20241001134603.2758480-1-pierre.gondois@arm.com> (raw)
+
+(struct sg_lb_stats).idle_cpus is of type 'unsigned int'.
+(local->idle_cpus - busiest->idle_cpus) can underflow to UINT_MAX
+for instance, and max_t(long, 0, UINT_MAX) will output UINT_MAX.
+
+Use lsub_positive() instead of max_t().
+
+Fixes: 16b0a7a1a0af ("sched/fair: Ensure tasks spreading in LLC during LB")
+cc: stable@vger.kernel.org
+Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ kernel/sched/fair.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9057584ec06d..6d9124499f52 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -10775,8 +10775,8 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 			 * idle CPUs.
+ 			 */
+ 			env->migration_type = migrate_task;
+-			env->imbalance = max_t(long, 0,
+-					       (local->idle_cpus - busiest->idle_cpus));
++			env->imbalance = local->idle_cpus;
++			lsub_positive(&env->imbalance, busiest->idle_cpus);
+ 		}
+ 
+ #ifdef CONFIG_NUMA
+-- 
+2.25.1
+

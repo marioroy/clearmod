@@ -7,8 +7,7 @@ __xm-install()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     COMPREPLY=(
-        $(compgen -W 'clear    bore
-                      clear-rt bore-rt' -- "$cur")
+        $(compgen -W 'bore bore-rt' -- "$cur")
     )
 } &&
     complete -F __xm-install xm-install

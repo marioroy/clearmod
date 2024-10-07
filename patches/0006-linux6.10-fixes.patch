@@ -16,8 +16,7 @@ Signed-off-by: Peter Jung <admin@ptr1337.dev>
  drivers/gpu/drm/nouveau/nouveau_fence.c | 30 +------------------------
  drivers/gpu/drm/nouveau/nouveau_fence.h |  2 +-
  drivers/gpu/drm/nouveau/nouveau_gem.c   |  2 +-
- drivers/powercap/intel_rapl_common.c    |  1 +
- 10 files changed, 16 insertions(+), 37 deletions(-)
+ 9 files changed, 15 insertions(+), 37 deletions(-)
 
 diff --git a/arch/Kconfig b/arch/Kconfig
 index 975dd22a2dbd..de69b8f5b5be 100644
@@ -188,18 +187,6 @@ index 5a887d67dc0e..2e535caa7d6e 100644
  			if ((ret = dma_fence_get_status(&fence->base)) == 1)
  				ret = 0;
  		}
-diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
-index aac0744011a3..d51d4ec8d707 100644
---- a/drivers/powercap/intel_rapl_common.c
-+++ b/drivers/powercap/intel_rapl_common.c
-@@ -1285,6 +1285,7 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
- 
- 	X86_MATCH_VENDOR_FAM(AMD, 0x17, &rapl_defaults_amd),
- 	X86_MATCH_VENDOR_FAM(AMD, 0x19, &rapl_defaults_amd),
-+	X86_MATCH_VENDOR_FAM(AMD, 0x1A, &rapl_defaults_amd),
- 	X86_MATCH_VENDOR_FAM(HYGON, 0x18, &rapl_defaults_amd),
- 	{}
- };
 -- 
 2.46.0
 

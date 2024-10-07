@@ -1,8 +1,8 @@
 https://github.com/CachyOS/kernel-patches/blob/master/6.10/0009-ntsync.patch
 
-From 72f4582cee95c9d9c5763cb626a4b60594717cee Mon Sep 17 00:00:00 2001
+From 8fb09a4def39f91a1641028f6e03cdf8a35f8dae Mon Sep 17 00:00:00 2001
 From: Peter Jung <admin@ptr1337.dev>
-Date: Wed, 4 Sep 2024 13:41:23 +0200
+Date: Sun, 8 Sep 2024 10:21:31 +0200
 Subject: [PATCH 09/12] ntsync
 
 Signed-off-by: Peter Jung <admin@ptr1337.dev>
@@ -10,6 +10,7 @@ Signed-off-by: Peter Jung <admin@ptr1337.dev>
  Documentation/userspace-api/index.rst         |    1 +
  Documentation/userspace-api/ntsync.rst        |  398 +++++
  MAINTAINERS                                   |    9 +
+ drivers/misc/Kconfig                          |    1 -
  drivers/misc/ntsync.c                         |  989 +++++++++++-
  include/uapi/linux/ntsync.h                   |   39 +
  tools/testing/selftests/Makefile              |    1 +
@@ -17,7 +18,7 @@ Signed-off-by: Peter Jung <admin@ptr1337.dev>
  .../testing/selftests/drivers/ntsync/Makefile |    7 +
  tools/testing/selftests/drivers/ntsync/config |    1 +
  .../testing/selftests/drivers/ntsync/ntsync.c | 1407 +++++++++++++++++
- 10 files changed, 2850 insertions(+), 3 deletions(-)
+ 11 files changed, 2850 insertions(+), 4 deletions(-)
  create mode 100644 Documentation/userspace-api/ntsync.rst
  create mode 100644 tools/testing/selftests/drivers/ntsync/.gitignore
  create mode 100644 tools/testing/selftests/drivers/ntsync/Makefile
@@ -460,6 +461,18 @@ index b27470be2e6a..4112729fc23a 100644
  NUBUS SUBSYSTEM
  M:	Finn Thain <fthain@linux-m68k.org>
  L:	linux-m68k@lists.linux-m68k.org
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index faf983680040..2907b5c23368 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -507,7 +507,6 @@ config OPEN_DICE
+ 
+ config NTSYNC
+ 	tristate "NT synchronization primitive emulation"
+-	depends on BROKEN
+ 	help
+ 	  This module provides kernel support for emulation of Windows NT
+ 	  synchronization primitives. It is not a hardware driver.
 diff --git a/drivers/misc/ntsync.c b/drivers/misc/ntsync.c
 index 3c2f743c58b0..87a24798a5c7 100644
 --- a/drivers/misc/ntsync.c

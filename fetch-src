@@ -16,13 +16,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
-cl_rel="42390" cl_file="linux-6.10.11-1464.src.rpm"
-kn_file="linux-6.10.11.tar.xz"
-xm_file="6.10.11-xanmod1.tar.gz"
+cl_rel="42440" cl_file="linux-6.10.12-1467.src.rpm"
+kn_file="linux-6.10.13.tar.xz"
 
 cl_url="https://cdn.download.clearlinux.org/releases"
 kn_url="https://cdn.kernel.org/pub/linux/kernel/v6.x"
-xm_url="https://github.com/xanmod/linux/archive/refs/tags"
 
 function fetch {
     mkdir -p "SOURCES" && cd "SOURCES" || exit 1
@@ -39,11 +37,6 @@ function fetch {
     if [[ ! -s "$kn_file" ]]; then
         rm -f linux-[0-9]*.tar.xz
         wget "${kn_url}/${kn_file}" || exit 1
-    fi
-
-    if [[ ! -s "$xm_file" ]]; then
-        rm -f [0-9]*-xanmod*.tar.gz
-        wget "${xm_url}/${xm_file}" || exit 1
     fi
 }
 

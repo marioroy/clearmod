@@ -20,9 +20,9 @@
 
 # Capture the active kernel release, for safety to not replace self.
 
-kversion="$(uname -r)"       # e.g 6.1.54-100.xmclear
+kversion="$(uname -r)"       # e.g 6.1.54-100.xmbore
 kvariant="${kversion}"
-kvariant="${kvariant##*.}"   # xmclear
+kvariant="${kvariant##*.}"   # xmbore
 kversion="${kversion%.*}"    # 6.1.54-100
 
 function xm_install {
@@ -48,7 +48,7 @@ function xm_install {
         exit 2
     fi
     if [[ "$file2" == "linux-${kvariant}-${kversion}.x86_64.rpm" ]]; then
-        echo "Cannot replace live kernel ${file2//.x86_64.rpm/}"
+        echo "Cannot replace the live kernel ${file2//.x86_64.rpm/}"
         exit 0
     fi
 
@@ -70,7 +70,7 @@ function xm_install {
 
     if [[ -d "/var/lib/dkms/nvidia" ]]; then
         echo "Building kernel drivers for NVIDIA graphics"
-        xm_variant=${base_name#*-}  # i.e. xmclear
+        xm_variant=${base_name#*-}  # i.e. xmbore
 
         if [[ "$variant" == *"-rt"* ]]; then
             kernel=$(echo "${file2//.x86_64.rpm/}" | cut -d- -f4-).$xm_variant
@@ -82,7 +82,7 @@ function xm_install {
         sudo rm -fr /var/lib/dkms/*/*/${kernel}
 
         sudo CFLAGS="" CXXFLAGS="" IGNORE_PREEMPT_RT_PRESENCE=1 \
-             dkms autoinstall -k "$kernel" --force >/dev/null
+             nice -n 12 dkms autoinstall -k "$kernel" --force >/dev/null
 
         sudo depmod -A "$kernel"
     fi
@@ -91,11 +91,11 @@ function xm_install {
 }
 
 case "$1" in
-    clear | clear-rt | bore | bore-rt )
+    bore | bore-rt )
         cd "rpmbuild/RPMS/x86_64" || exit 1
         xm_install "xm${1}" "$2"
         ;;
     * ) echo "synopsis"
-        echo "   $0 clear | clear-rt | bore | bore-rt [<rel>]"
+        echo "   $0 bore | bore-rt [<rel>]"
 esac
 

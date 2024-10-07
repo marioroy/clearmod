@@ -1,16 +1,15 @@
 #
 # Linux releases need to be named 6.x.0 not 6.x or various things break.
 #
-%define   xm_customver 1
 
 Name:     linux-xmbore-rt
-Version:  6.10.11
-Release:  198
+Version:  6.10.13
+Release:  199
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
 Group:    kernel
-Source0:  https://github.com/xanmod/linux/archive/refs/tags/%{version}-xanmod%{xm_customver}.tar.gz
+Source0:  https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-%{version}.tar.xz
 Source1:  config
 Source2:  cmdline
 
@@ -35,15 +34,6 @@ Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
 #mainline.end
 
-# Clear patches omitted, due to inclusion in the XanMod kernel.
-# 0109-initialize-ata-before-graphics.patch
-# 0115-enable-stateless-firmware-loading.patch
-# 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
-# 0121-locking-rwsem-spin-faster.patch
-
-# Clear patch omitted, due to higher latency regression.
-# 0167-net-sock-increase-default-number-of-_SK_MEM_PACKETS-.patch
-
 #Serie.clr 01XX: Clear Linux patches
 Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
 Patch0102: 0102-increase-the-ext4-default-commit-age.patch
@@ -53,8 +43,11 @@ Patch0108: 0108-smpboot-reuse-timer-calibration.patch
 Patch0111: 0111-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch
 Patch0112: 0112-init-wait-for-partition-and-retry-scan.patch
 Patch0114: 0114-add-boot-option-to-allow-unsigned-modules.patch
+Patch0115: 0115-enable-stateless-firmware-loading.patch
 Patch0116: 0116-migrate-some-systemd-defaults-to-the-kernel-defaults.patch
 Patch0117: 0117-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch
+Patch0120: 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
+Patch0121: 0121-locking-rwsem-spin-faster.patch
 Patch0122: 0122-ata-libahci-ignore-staggered-spin-up.patch
 Patch0123: 0123-print-CPU-that-faults.patch
 Patch0125: 0125-nvme-workaround.patch
@@ -63,7 +56,7 @@ Patch0127: 0127-lib-raid6-add-patch.patch
 Patch0128: 0128-itmt_epb-use-epb-to-scale-itmt.patch
 Patch0130: 0130-itmt2-ADL-fixes.patch
 Patch0131: 0131-add-a-per-cpu-minimum-high-watermark-an-tune-batch-s.patch
-Patch0133: 0133-xm-novector.patch
+Patch0133: 0133-novector.patch
 Patch0134: 0134-md-raid6-algorithms-scale-test-duration-for-speedier.patch
 Patch0135: 0135-initcall-only-print-non-zero-initcall-debug-to-speed.patch
 Patch0137: libsgrowdown.patch
@@ -79,27 +72,39 @@ Patch0163: 0163-thermal-intel-powerclamp-check-MWAIT-first-use-pr_wa.patch
 Patch0164: 0164-KVM-VMX-make-vmx-init-a-late-init-call-to-get-to-ini.patch
 Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
+Patch0167: 0167-net-sock-increase-default-number-of-_SK_MEM_PACKETS-.patch
+Patch0168: revert-regression.patch
 #Serie.end
 
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
-Patch2000: 0001-linux6.10.y-bore.patch
+Patch2001: 0001-linux6.10.y-bore.patch
+Patch2002: 0001-linux6.10.y-bore-update.patch
 
-# Revert yield_type sysctl to reduce or disable sched_yield.
-Patch2100: xanmod-revert-yield_type-sysctl.patch
+# ClearMod tunables.
+Patch2003: clearmod-linux6.10.y-tweaks.patch
 
-# Add HZ_625 and HZ_800 timer-tick options.
+# x86/kconfig: add generic x86_64 levels
+Patch2004: clear-kbuild-add-generic-x86_64-levels.patch
+
+# Add HZ_500, HZ_625, and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
-Patch2101: xanmod-hz-625-800-timer-frequencies.patch
+Patch2005: clear-hz-500-625-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
 # https://bugzilla.kernel.org/show_bug.cgi?id=206543
-Patch2102: asus-prime-trx40-pro-s-mixer-def.patch
+Patch2006: asus-prime-trx40-pro-s-mixer-def.patch
 
 # Scheduler updates.
-Patch2103: sched_fair_make_SCHED_IDLE_be_preempted.patch
+Patch2101: sched_eevdf_add_features_comments.patch
+Patch2102: sched_eevdf_allow_shorter_slices_to_wakeup-preempt-rt.patch
+Patch2103: sched_eevdf_remove_min_vruntime_copy.patch
+Patch2104: sched_fair_cleanup_pick_task_fair_vs_throttle.patch
+Patch2105: sched_fair_unify_pick_next_task_fair.patch
+Patch2106: sched_fair_fix_integer_underflow.patch
+Patch2107: sched_fair_remove_the_DOUBLE_TICK_feature.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -147,7 +152,7 @@ Requires:       linux-xmbore-rt-license = %{version}-%{release}
 Linux kernel build files
 
 %prep
-%setup -q -n linux-%{version}-xanmod%{xm_customver}
+%setup -q -n linux-%{version}
 
 #realtime kernel patch set
 %patch -P 12 -p1
@@ -165,8 +170,11 @@ Linux kernel build files
 %patch -P 111 -p1
 %patch -P 112 -p1
 %patch -P 114 -p1
+%patch -P 115 -p1
 %patch -P 116 -p1
 %patch -P 117 -p1
+%patch -P 120 -p1
+%patch -P 121 -p1
 %patch -P 122 -p1
 %patch -P 123 -p1
 %patch -P 125 -p1
@@ -191,17 +199,26 @@ Linux kernel build files
 %patch -P 164 -p1
 %patch -P 165 -p1
 %patch -P 166 -p1
+%patch -P 167 -p1
+#patch -P 168 -p1
 #Serie.patch.end
 
-cat %{PATCH2000} | \
-  sed 's/scaling = SCHED_TUNABLESCALING_LOG/scaling = SCHED_TUNABLESCALING_NONE/' | \
+cat %{PATCH2001} | \
   sed 's/update_deadline(cfs_rq, curr)/update_deadline(cfs_rq, curr, tick)/' | \
   patch --no-backup-if-mismatch -p1
 
-%patch -P 2100 -p1
+%patch -P 2002 -p1
+%patch -P 2003 -p1
+%patch -P 2004 -p1
+%patch -P 2005 -p1
+%patch -P 2006 -p1
 %patch -P 2101 -p1
 %patch -P 2102 -p1
 %patch -P 2103 -p1
+%patch -P 2104 -p1
+%patch -P 2105 -p1
+%patch -P 2106 -p1
+%patch -P 2107 -p1
 %patch -P 2201 -p1
 %patch -P 2202 -p1
 %patch -P 2203 -p1
@@ -209,11 +226,19 @@ cat %{PATCH2000} | \
 
 cp %{SOURCE1} .config
 
+# Enable ClearMod tweaks.
+scripts/config -e CLEARMOD
+
+# Set the BORE minimal value for min_base_slice_ns. (ClearMod 2.5ms)
+# Computes to 1000Hz = 3.0ms, 800Hz = 2.5ms, 625Hz = 3.2ms, 500Hz = 4.0ms.
+# /sys/kernel/debug/sched/min_base_slice_ns
+scripts/config --set-val MIN_BASE_SLICE_NS 2500000
+
 # Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
-# Set timer frequency { 100, 250, 300, 500, 625, 800, or 1000 }.
+# Set timer frequency { 1000, 800, 625, or 500 }.
 # Defaults to 800Hz tick rate.
 scripts/config -d HZ_1000
 scripts/config -e HZ_%{_hzval}
@@ -278,13 +303,15 @@ scripts/config -m NTSYNC
 # https://github.com/umlaeute/v4l2loopback
 scripts/config -m V4L2_LOOPBACK
 
-# Enable realtime preemption. Boot time param "rcutree.enable_rcu_lazy=1"
-# can be used to switch RCU_LAZY on.
+# Enable realtime preemption.
 scripts/config -e RCU_EXPERT
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -d PREEMPT
 scripts/config -e PREEMPT_RT
+
+# Boot time param "rcutree.enable_rcu_lazy=1"
+# can be used to switch RCU_LAZY on.
 scripts/config -e RCU_LAZY
 scripts/config -e RCU_LAZY_DEFAULT_OFF
 scripts/config --set-val RCU_FANOUT 32
@@ -324,44 +351,38 @@ BuildKernel() {
       yes "" | make O=${Target} -s ARCH=${Arch} localmodconfig 2>&1 | grep -v "^nvidia"
 
       # Add keyboard modules for the cpio package (do not remove).
-      scripts/config --file ${Target}/.config -m SERIO_I8042
-      scripts/config --file ${Target}/.config -m SERIO_LIBPS2
-      scripts/config --file ${Target}/.config -m KEYBOARD_ATKBD
-      scripts/config --file ${Target}/.config -m HID_LOGITECH_DJ
-      scripts/config --file ${Target}/.config -m HID_LOGITECH_HIDPP
-      scripts/config --file ${Target}/.config -m HID_APPLE
+      scripts/config --file ${Target}/.config \
+          -m SERIO_I8042 -m SERIO_LIBPS2 -m KEYBOARD_ATKBD \
+          -m HID_LOGITECH_DJ -m HID_LOGITECH_HIDPP -m HID_APPLE
 
       # Add modules for File systems.
-      scripts/config --file ${Target}/.config -m CUSE
-      scripts/config --file ${Target}/.config -m VIRTIO_FS
-      scripts/config --file ${Target}/.config -e FUSE_DAX
-      scripts/config --file ${Target}/.config -m OVERLAY_FS
-      scripts/config --file ${Target}/.config -d OVERLAY_FS_REDIRECT_DIR
-      scripts/config --file ${Target}/.config -d OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW
-      scripts/config --file ${Target}/.config -d OVERLAY_FS_INDEX
-      scripts/config --file ${Target}/.config -d OVERLAY_FS_XINO_AUTO
-      scripts/config --file ${Target}/.config -d OVERLAY_FS_METACOPY
-      scripts/config --file ${Target}/.config -d OVERLAY_FS_DEBUG
+      scripts/config --file ${Target}/.config \
+          -m CUSE -m VIRTIO_FS -e FUSE_DAX -m OVERLAY_FS \
+          -d OVERLAY_FS_REDIRECT_DIR -d OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW \
+          -d OVERLAY_FS_INDEX -d OVERLAY_FS_XINO_AUTO -d OVERLAY_FS_METACOPY \
+          -d OVERLAY_FS_DEBUG
 
       # Add modules for Caches.
-      scripts/config --file ${Target}/.config -m NETFS_SUPPORT
-      scripts/config --file ${Target}/.config -d NETFS_STATS
-      scripts/config --file ${Target}/.config -m CACHEFILES
-      scripts/config --file ${Target}/.config -d CACHEFILES_DEBUG
-      scripts/config --file ${Target}/.config -d CACHEFILES_ERROR_INJECTION
-      scripts/config --file ${Target}/.config -d CACHEFILES_ONDEMAND
+      scripts/config --file ${Target}/.config \
+          -m NETFS_SUPPORT -d NETFS_STATS -m CACHEFILES -d CACHEFILES_DEBUG \
+          -d CACHEFILES_ERROR_INJECTION -d CACHEFILES_ONDEMAND
 
       # Add modules for CD-ROM/DVD and EXFAT/NTFS3 Filesystems.
-      scripts/config --file ${Target}/.config -m ISO9660_FS
-      scripts/config --file ${Target}/.config -e JOLIET
-      scripts/config --file ${Target}/.config -e ZISOFS
-      scripts/config --file ${Target}/.config -m UDF_FS
-      scripts/config --file ${Target}/.config -m EXFAT_FS
-      scripts/config --file ${Target}/.config --set-str EXFAT_DEFAULT_IOCHARSET "utf8"
-      scripts/config --file ${Target}/.config -m NTFS3_FS
-      scripts/config --file ${Target}/.config -d NTFS3_64BIT_CLUSTER
-      scripts/config --file ${Target}/.config -e NTFS3_LZX_XPRESS
-      scripts/config --file ${Target}/.config -e NTFS3_FS_POSIX_ACL
+      scripts/config --file ${Target}/.config \
+          -m ISO9660_FS -e JOLIET -e ZISOFS -m UDF_FS \
+          -m EXFAT_FS --set-str EXFAT_DEFAULT_IOCHARSET "utf8" \
+          -m NTFS3_FS -d NTFS3_64BIT_CLUSTER -e NTFS3_LZX_XPRESS \
+          -e NTFS3_FS_POSIX_ACL
+
+      # Add modules for sound.
+      scripts/config --file ${Target}/.config \
+          -m SOUND -m SND -m SND_TIMER -m SND_PCM -m SND_DMAENGINE_PCM \
+          -m SND_HWDEP -m SND_DMAENGINE_PCM -m SND_HWDEP -m SND_SEQ_DEVICE \
+          -m SND_RAWMIDI -m SND_UMP -m SND_COMPRESS_OFFLOAD -m SND_HRTIMER \
+          -e SND_USB -m SND_USB_AUDIO
+      scripts/config --file ${Target}/.config \
+          -m SND_HDA -m SND_HDA_INTEL -m SND_HDA_CORE -m INTEL_DSP_CONFIG \
+          -m SND_INTEL_SOUNDWIRE_ACPI -m MEDIA_SUPPORT
 
       # Add optional modules.
       scripts/config --file ${Target}/.config -m NTSYNC

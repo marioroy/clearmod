@@ -38,7 +38,7 @@ function xm_build {
     fi
     if [[ -n "$HZ" ]]; then
         case "$HZ" in
-            100|250|300|500|625|800|1000) # pass
+            1000|800|625|500) # pass
                ;;
             *) echo "HZ=$HZ is invalid; try again."
                exit 1
@@ -64,7 +64,7 @@ function xm_build {
     local topdir="/tmp/${variant}.$$"
     mkdir -p "$topdir"
 
-    ( rpmbuild -bb --clean "SPECS/linux-${variant}.spec" \
+    ( nice -n 12 rpmbuild -bb --clean "SPECS/linux-${variant}.spec" \
           --define "abi_package %{nil}" \
           --define "debug_package %{nil}" \
           --define "_buildhost $(hostname)" \
@@ -75,7 +75,10 @@ function xm_build {
           --define "_sourcedir ${PWD}/SOURCES" \
           --define "_source_payload w6T0.zstdio" \
           --define "_binary_payload w6T0.zstdio" \
+          --define "_build_id_flags -Wl,--build-id=none" \
+          --define "_build_id_links none" \
           --undefine "_disable_source_fetch" \
+          --undefine "_include_frame_pointers" \
       || { echo "Build failed"; kill $$; }
     ) 2>&1 | grep -Ev '^((chmod|find):.* No such file or directory|warning: Empty %files)'
 
@@ -87,12 +90,12 @@ function xm_build {
 }
 
 case "$1" in
-    clear | clear-rt | bore | bore-rt )
+    bore | bore-rt )
         ./fetch-src   || exit 1
         cd "rpmbuild" || exit 1
         xm_build "xm${1}"
         ;;
     * ) echo "synopsis"
-        echo "   $0 clear | clear-rt | bore | bore-rt"
+        echo "   $0 bore | bore-rt"
 esac
 

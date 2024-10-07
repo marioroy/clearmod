@@ -24,23 +24,21 @@ if [[ "$1" == "all" ]]; then
     #bash "$0" "clear-preempt" || exit $?
     #bash "$0" "edge-default"  || exit $?
     #bash "$0" "edge-preempt"  || exit $?
-    #bash "$0" "edge-rt"       || exit $?
-    #bash "$0" "edge"          || exit $?
     #bash "$0" "main-default"  || exit $?
     #bash "$0" "main-preempt"  || exit $?
     #bash "$0" "lts-default"   || exit $?
     #bash "$0" "lts-preempt"   || exit $?
     #bash "$0" "rt-preempt"    || exit $?
 
+    bash "$0" "clear-rt" || exit $?
+    bash "$0" "clear"    || exit $?
     bash "$0" "echo-rt"  || exit $?
     bash "$0" "echo"     || exit $?
 
     # since September 2024
 
-    bash "$0" "clear-rt" || exit $?
-    bash "$0" "clear"    || exit $?
-    bash "$0" "bore-rt"  || exit $?
-    bash "$0" "bore"     || exit $?
+    bash "$0" "bore-rt" || exit $?
+    bash "$0" "bore"    || exit $?
 
     exit 0
 fi
@@ -49,9 +47,9 @@ fi
 
 # Capture the live kernel release, for safety to not remove self.
 
-kversion="$(uname -r)"       # e.g 6.1.54-100.xmclear
+kversion="$(uname -r)"       # e.g 6.1.54-100.xmbore
 kvariant="${kversion}"
-kvariant="${kvariant##*.}"   # xmclear
+kvariant="${kvariant##*.}"   # xmbore
 kversion="${kversion%.*}"    # 6.1.54-100
 
 function xm_uninstall {
@@ -115,17 +113,17 @@ function xm_uninstall {
 }
 
 case "$1" in
-    clear | clear-rt | bore | bore-rt )
+    bore | bore-rt )
         xm_uninstall "xm${1}" "$2"
         ;;
     # deprecated
-    echo | echo-rt )
+    clear | clear-rt | echo | echo-rt )
         xm_uninstall "xm${1}" "$2"
         ;;
     clear-default | clear-preempt )
         xm_uninstall "xm${1}" "$2"
         ;;
-    edge-default | edge-preempt | edge | edge-rt )
+    edge-default | edge-preempt )
         xm_uninstall "xm${1}" "$2"
         ;;
     main-default | main-preempt )
@@ -139,13 +137,13 @@ case "$1" in
         ;;
 
     * ) echo "synopsis"
-        echo "   $0 clear | clear-rt | bore | bore-rt [<rel>]"
+        echo "   $0 bore | bore-rt [<rel>]"
         echo "   $0 all"
         echo ""
         echo "deprecated"
-        echo "   $0 echo | echo-rt [<rel>]"
+        echo "   $0 clear | clear-rt | echo | echo-rt [<rel>]"
         echo "   $0 clear-default | clear-preempt [<rel>]"
-        echo "   $0 edge-default | edge-preempt | edge | edge-rt [<rel>]"
+        echo "   $0 edge-default | edge-preempt [<rel>]"
         echo "   $0 main-default | main-preempt [<rel>]"
         echo "   $0 lts-default | lts-preempt [<rel>]"
         echo "   $0 rt-preempt [<rel>]"

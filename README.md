@@ -1,21 +1,16 @@
 # ClearMod
 
-Run the [XanMod](https://github.com/xanmod) kernel on [Clear Linux](https://www.clearlinux.org) with ease.
+Run a custom kernel on [Clear Linux](https://www.clearlinux.org) with ease.
 
-The motivation comes from liking the Clear and XanMod Linux kernels, and opportunity to run a preempt-enabled kernel patched with [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler. The kernels are configured to run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
+The motivation comes from wanting preempt-enabled kernels patched with [BORE](https://github.com/firelzrd/bore-scheduler) (Burst-Oriented Response Enhancer) CPU Scheduler.
 
-All variants include the v4l2-loopback patch and NTSync for fast kernel-backed Wine.
-
-```text
-clear - Clear 6.10.y native kernel + preemption
-bore  - XanMod 6.10.y stable kernel + preemption + BORE
-```
-
-The `*-rt` variants include the Linux realtime patch set.
+The kernels are configured to run equally well on all x86-64 CPUs with
+minimum support of x86-64-v3. They include the v4l2-loopback patch and
+NTSync for fast kernel-backed Wine.
 
 ```text
-clear-rt
-bore-rt
+bore - Clear 6.10.y native kernel + preemption + BORE
+bore-rt - Same features, plus the Linux realtime patch set
 ```
 
 ## Preparation and configuration
@@ -76,18 +71,16 @@ cp -a share/bash-completion/completions/* \
 
 ## Synopsis and simulation
 
-The `fetch-src` command (run first) fetches `*.src.rpm` and `*.tar.gz` from
-Clear and XanMod, respectively. The optional release argument to `xm-install`
-and `xm-uninstall` is described below.
+The `fetch-src` command (run first) fetches the source rpm and tar archive.
 
-Note: Running a realtime kernel using NVIDIA graphics requires 550 minimally.
+Running a realtime kernel using NVIDIA graphics requires 550 minimally.
 
 ```bash
 ./fetch-src
 
-./xm-build clear | clear-rt | bore | bore-rt
-./xm-install clear | clear-rt | bore | bore-rt [<rel>]
-./xm-uninstall clear | clear-rt | bore | bore-rt [<rel>]
+./xm-build bore | bore-rt
+./xm-install bore | bore-rt [<rel>]
+./xm-uninstall bore | bore-rt [<rel>]
 ./xm-uninstall all
 
 ./xm-kernels - list kernels and packages
@@ -110,14 +103,21 @@ ever need are loaded. Keyboard modules for the `cpio` package, CD-ROM/DVD and
 EXFAT/NTFS3 filesystems, and NTSYNC are added in the SPEC files.
 
 The default timer frequency is `HZ_800`. To override, define `HZ=value` to
-`100`, `250`, `300`, `500`, `625`, `800`, or `1000`. A lower Hz value
-may decrease power consumption or fan speed revving up and down. A great Hz
-value for the desktop environment is 800 or 1000.
+`1000`, `800`, `625`, or `500`. A lower Hz value may decrease power consumption
+or fan speed revving up and down. On a machine with more than 32 CPU threads,
+select `625` for smoother game play.
+
+The RT variants include the real-time patch set, useful for projects with
+hard or soft deadlines.
 
 ```text
 ./fetch-src
-LOCALMODCONFIG=1 HZ=800 ./xm-build clear
-./xm-install clear
+LOCALMODCONFIG=1 HZ=1000 ./xm-build bore
+LOCALMODCONFIG=1 HZ=1000 ./xm-build bore-rt
+
+./xm-install bore
+./xm-install bore-rt
+
 sync
 ```
 
@@ -128,12 +128,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-* org.clearlinux.xmbore.6.10.11-198
-  org.clearlinux.xmclear.6.10.11-198
+* org.clearlinux.xmbore.6.10.13-199
+  org.clearlinux.xmbore-rt.6.10.13-199
 
 XM installed packages (excluding dev,extra,license)
-* linux-xmbore-6.10.11-198
-  linux-xmclear-6.10.11-198
+* linux-xmbore-6.10.13-199
+  linux-xmbore-rt-6.10.13-199
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -142,8 +142,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall clear 198
-Removing org.clearlinux.xmclear.6.10.11-198
+./xm-uninstall bore-rt 199
+Removing org.clearlinux.xmbore-rt.6.10.13-199
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.
@@ -157,8 +157,8 @@ no longer present in `/lib/modules`.
 ## Epilogue
 
 The `/boot` partition has limited space. So, no reason to install many kernels.
-Build the one you want and enjoy the Clear or XanMod kernel. If changing your
-mind later, remember to manage and uninstall any unused kernels.
+Build the one you want and enjoy the Clear kernel. If changing your mind later,
+remember to manage and uninstall any unused kernels.
 
 To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
 macro. Adjust the integer value to your liking.
@@ -172,7 +172,7 @@ Set execute bits `chmod +x build` and run `./build`.
 
 ```bash
 #!/bin/bash
-time LOCALMODCONFIG=1 HZ=800 ./xm-build bore
+time LOCALMODCONFIG=1 HZ=1000 ./xm-build bore
 ```
 
 Configuring PAM or security limits, allowing users to run commands with
@@ -198,6 +198,5 @@ Aloha!
 * [Is chrt broken for normal users?](https://github.com/clearlinux/distribution/issues/2962)
 * [Testing various timer frequencies](https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf)
 * [Running four tasks concurrently](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/28?u=marioroy)
-* [Latency testing - 4 million pings](https://gist.github.com/marioroy/5b36c9b650cb2af42e702922a8466d69)
 * [Generic vs. Trimmed kernel build times](https://community.clearlinux.org/t/nvidia-and-xanmod-cl-updates/9299/15?u=marioroy)
 

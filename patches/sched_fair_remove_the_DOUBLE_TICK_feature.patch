@@ -1,0 +1,62 @@
+
+sched/fair: remove the DOUBLE_TICK feature
+https://lore.kernel.org/all/20241001065451.10356-1-shijie@os.amperecomputing.com/
+
+
+From git@z Thu Jan  1 00:00:00 1970
+Subject: [PATCH] sched/fair: remove the DOUBLE_TICK feature
+From: Huang Shijie <shijie@os.amperecomputing.com>
+Date: Tue, 01 Oct 2024 14:54:51 +0800
+Message-Id: <20241001065451.10356-1-shijie@os.amperecomputing.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+The patch "5e963f2bd46 sched/fair: Commit to EEVDF"
+removed the code following the DOUBLE_TICK:
+	-
+	-       if (!sched_feat(EEVDF) && cfs_rq->nr_running > 1)
+	-               check_preempt_tick(cfs_rq, curr);
+
+The DOUBLE_TICK feature becomes dead code now, so remove it.
+
+Reviewed-by: Christoph Lameter (Ampere) <cl@linux.com>
+Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
+Reviewed-by: Vishal Chourasia <vishalc@linux.ibm.com>
+---
+ kernel/sched/fair.c     | 6 ------
+ kernel/sched/features.h | 1 -
+ 2 files changed, 7 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 19afc2253c4d..1812c9cc079d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5680,12 +5680,6 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+ 		resched_curr(rq_of(cfs_rq));
+ 		return;
+ 	}
+-	/*
+-	 * don't let the period tick interfere with the hrtick preemption
+-	 */
+-	if (!sched_feat(DOUBLE_TICK) &&
+-			hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+-		return;
+ #endif
+ }
+ 
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 0ae351974e49..a3d331dd2d8f 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -56,7 +56,6 @@ SCHED_FEAT(WAKEUP_PREEMPTION, true)
+ 
+ SCHED_FEAT(HRTICK, false)
+ SCHED_FEAT(HRTICK_DL, false)
+-SCHED_FEAT(DOUBLE_TICK, false)
+ 
+ /*
+  * Decrement CPU capacity based on time not spent running tasks
+-- 
+2.40.1
+
