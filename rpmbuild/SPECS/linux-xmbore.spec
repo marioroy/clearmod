@@ -4,7 +4,7 @@
 
 Name:     linux-xmbore
 Version:  6.10.13
-Release:  199
+Release:  200
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -76,7 +76,6 @@ Patch0168: revert-regression.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 Patch2001: 0001-linux6.10.y-bore.patch
-Patch2002: 0001-linux6.10.y-bore-update.patch
 
 # ClearMod tunables.
 Patch2003: clearmod-linux6.10.y-tweaks.patch
@@ -195,8 +194,11 @@ Linux kernel build files
 #patch -P 168 -p1
 #Serie.patch.end
 
-%patch -P 2001 -p1
-%patch -P 2002 -p1
+# Default to BORE inherit_burst_direct.
+cat %{PATCH2001} | \
+  sed 's/\(__read_mostly sched_burst_fork_atavistic   =\) 2;/\1 0;/' | \
+  patch --no-backup-if-mismatch -p1
+
 %patch -P 2003 -p1
 %patch -P 2004 -p1
 %patch -P 2005 -p1
