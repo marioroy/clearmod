@@ -312,10 +312,10 @@ scripts/config -m NTSYNC
 # https://github.com/umlaeute/v4l2loopback
 scripts/config -m V4L2_LOOPBACK
 
-# Enable lazy preemption.
+# Default to full realtime preemption.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
-scripts/config -e PREEMPT_LAZIEST
+scripts/config -e PREEMPT
 scripts/config -e PREEMPT_RT
 scripts/config -e PREEMPT_DYNAMIC
 

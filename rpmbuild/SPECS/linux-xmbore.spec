@@ -312,10 +312,11 @@ scripts/config -m NTSYNC
 # https://github.com/umlaeute/v4l2loopback
 scripts/config -m V4L2_LOOPBACK
 
-# Enable lazy preemption.
+# Default to lazy non-RT preemption.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
 scripts/config -e PREEMPT_LAZY
+scripts/config -d PREEMPT_RT
 scripts/config -e PREEMPT_DYNAMIC
 
 # Boot time param "rcutree.enable_rcu_lazy=1"
