@@ -9,7 +9,7 @@ minimum support of x86-64-v3. They include the v4l2-loopback patch and
 NTSync for fast kernel-backed Wine.
 
 ```text
-bore - Clear 6.10.y native kernel + preemption + BORE
+bore - Clear 6.11.y native kernel + preemption + BORE
 bore-rt - Same features, plus the Linux realtime patch set
 ```
 
@@ -105,7 +105,7 @@ EXFAT/NTFS3 filesystems, and NTSYNC are added in the SPEC files.
 The default timer frequency is `HZ_800`. To override, define `HZ=value` to
 `1000`, `800`, `625`, or `500`. A lower Hz value may decrease power consumption
 or fan speed revving up and down. On a machine with more than 32 CPU threads,
-select `625` for smoother game play.
+select `800` or `625` for smoother game play.
 
 The RT variants include the real-time patch set, useful for projects with
 hard or soft deadlines.
@@ -128,12 +128,12 @@ Boot into another kernel before removal via `xm-uninstall`.
 ```bash
 ./xm-kernels 
 XM boot-manager entries
-* org.clearlinux.xmbore.6.10.13-200
-  org.clearlinux.xmbore-rt.6.10.13-200
+* org.clearlinux.xmbore.6.11.3-201
+  org.clearlinux.xmbore-rt.6.11.3-201
 
 XM installed packages (excluding dev,extra,license)
-* linux-xmbore-6.10.13-200
-  linux-xmbore-rt-6.10.13-200
+* linux-xmbore-6.11.3-201
+  linux-xmbore-rt-6.11.3-201
 ```
 
 The `xm-install` and `xm-uninstall` commands accept an optional argument to
@@ -142,8 +142,8 @@ build. Omitting the 2nd argument, `xm-uninstall` removes all releases.
 Though, skips the running kernel.
 
 ```bash
-./xm-uninstall bore-rt 200
-Removing org.clearlinux.xmbore-rt.6.10.13-200
+./xm-uninstall bore-rt 201
+Removing org.clearlinux.xmbore-rt.6.11.3-201
 ```
 
 The `clr-boot-manager update` command may remove older kernel versions.
@@ -158,7 +158,8 @@ no longer present in `/lib/modules`.
 
 The `/boot` partition has limited space. So, no reason to install many kernels.
 Build the one you want and enjoy the Clear kernel. If changing your mind later,
-remember to manage and uninstall any unused kernels.
+remember to manage and uninstall any unused kernels. Moreover, purge old files
+found under the `./rpmbuild/RPMS/x86_64/` folder to free up storage space.
 
 To limit the number of CPUs used by `rpmbuild`, override the `%_smp_mflags`
 macro. Adjust the integer value to your liking.
@@ -181,7 +182,7 @@ a copy of `chrt` and giving it `cap_sys_nice+ep` capabilities. The `+ep`
 indicate the capability sets effective and permitted.
 
 ```bash
-chrt -f 10 echo "Aloha!"
+chrt -f 1 echo "Aloha!"
 chrt: failed to set pid 0's policy: Operation not permitted
 
 sudo mkdir -p /usr/local/bin
@@ -189,7 +190,7 @@ sudo cp -a /usr/bin/chrt /usr/local/bin/.
 sudo setcap cap_sys_nice+ep /usr/local/bin/chrt
 
 # The path /usr/local/bin is searched before /usr/bin in $PATH env.
-chrt -f 10 echo "Aloha!"
+chrt -f 1 echo "Aloha!"
 Aloha!
 ```
 

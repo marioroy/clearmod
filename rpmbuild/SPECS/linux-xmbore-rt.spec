@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmbore-rt
-Version:  6.10.13
-Release:  200
+Version:  6.11.3
+Release:  201
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -28,7 +28,8 @@ Requires: linux-xmbore-rt-license = %{version}-%{release}
 %define __strip /bin/true
 
 # Realtime kernel patch set.
-Patch0012: 0001-linux6.10.10-rt14.patch
+Patch0012: 0001-linux6.11.2-rt7.patch
+Patch0013: 0001-linux6.11.2-rt7-update1.patch
 Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
@@ -63,7 +64,6 @@ Patch0137: libsgrowdown.patch
 Patch0141: epp-retune.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0154: 0136-crypto-kdf-make-the-module-init-call-a-late-init-cal.patch
-Patch0155: ratelimit-sched-yield.patch
 Patch0157: scale-net-alloc.patch
 Patch0158: 0158-clocksource-only-perform-extended-clocksource-checks.patch
 Patch0160: better_idle_balance.patch
@@ -79,10 +79,10 @@ Patch0168: revert-regression.patch
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
-Patch2001: 0001-linux6.10.y-bore.patch
+Patch2001: 0001-linux6.11.y-bore.patch
 
 # ClearMod tunables.
-Patch2003: clearmod-linux6.10.y-tweaks.patch
+Patch2003: clearmod-linux6.11.y-tweaks.patch
 
 # x86/kconfig: add generic x86_64 levels
 Patch2004: clear-kbuild-add-generic-x86_64-levels.patch
@@ -102,15 +102,18 @@ Patch2102: sched_eevdf_allow_shorter_slices_to_wakeup-preempt-rt.patch
 Patch2103: sched_eevdf_remove_min_vruntime_copy.patch
 Patch2104: sched_fair_cleanup_pick_task_fair_vs_throttle.patch
 Patch2105: sched_fair_unify_pick_next_task_fair.patch
-Patch2106: sched_fair_fix_integer_underflow.patch
-Patch2107: sched_fair_remove_the_DOUBLE_TICK_feature.patch
+Patch2106: sched_fair_remove_the_DOUBLE_TICK_feature.patch
+Patch2107: 0001-linux6.11.2-rt7-update2.patch
+Patch2108: 0001-linux6.11.2-rt7-update3.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
 
-# CachyOS 6.10 fixes and NTSYNC update.
-Patch2202: 0006-linux6.10-fixes.patch
-Patch2203: 0009-linux6.10-ntsync.patch
+# CachyOS kernel patches.
+Patch2202: 0003-linux6.11-bbr3.patch
+Patch2203: 0005-linux6.11-fixes.patch
+Patch2204: 0006-linux6.11-intel-pstate.patch
+Patch2205: 0008-linux6.11-ntsync.patch
 
 %description
 The Linux kernel.
@@ -155,6 +158,7 @@ Linux kernel build files
 
 #realtime kernel patch set
 %patch -P 12 -p1
+%patch -P 13 -p1
 %patch -P 14 -p1
 
 #mainline.patch.start Mainline patches, upstream backport and fixes
@@ -189,7 +193,6 @@ Linux kernel build files
 %patch -P 141 -p1
 %patch -P 148 -p1
 %patch -P 154 -p1
-%patch -P 155 -p1
 %patch -P 157 -p1
 %patch -P 158 -p1
 %patch -P 160 -p1
@@ -202,10 +205,13 @@ Linux kernel build files
 #patch -P 168 -p1
 #Serie.patch.end
 
-# Update for running on RT, and default to BORE inherit_burst_direct.
+# Configure BORE to run efficiently with SCHED_AUTOGROUP enabled.
+# Default to inherit_burst_direct versus inherit_burst_topological.
+# Obey RUN_TO_PARITY instead, for better throughput.
 cat %{PATCH2001} | \
   sed 's/update_deadline(cfs_rq, curr)/update_deadline(cfs_rq, curr, tick)/' | \
   sed 's/\(__read_mostly sched_burst_fork_atavistic   =\) 2;/\1 0;/' | \
+  sed 's/\(__read_mostly sched_burst_parity_threshold =\) 2;/\1 0;/' | \
   patch --no-backup-if-mismatch -p1
 
 %patch -P 2003 -p1
@@ -219,9 +225,12 @@ cat %{PATCH2001} | \
 %patch -P 2105 -p1
 %patch -P 2106 -p1
 %patch -P 2107 -p1
+%patch -P 2108 -p1
 %patch -P 2201 -p1
 %patch -P 2202 -p1
 %patch -P 2203 -p1
+%patch -P 2204 -p1
+%patch -P 2205 -p1
 
 
 cp %{SOURCE1} .config
@@ -303,15 +312,16 @@ scripts/config -m NTSYNC
 # https://github.com/umlaeute/v4l2loopback
 scripts/config -m V4L2_LOOPBACK
 
-# Enable realtime preemption.
-scripts/config -e RCU_EXPERT
+# Enable lazy preemption.
 scripts/config -d PREEMPT_NONE
 scripts/config -d PREEMPT_VOLUNTARY
-scripts/config -d PREEMPT
+scripts/config -e PREEMPT_LAZIEST
 scripts/config -e PREEMPT_RT
+scripts/config -e PREEMPT_DYNAMIC
 
 # Boot time param "rcutree.enable_rcu_lazy=1"
 # can be used to switch RCU_LAZY on.
+scripts/config -e RCU_EXPERT
 scripts/config -e RCU_LAZY
 scripts/config -e RCU_LAZY_DEFAULT_OFF
 scripts/config --set-val RCU_FANOUT 32
