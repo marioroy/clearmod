@@ -4,7 +4,7 @@
 
 Name:     linux-xmbore
 Version:  6.11.3
-Release:  201
+Release:  202
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -105,6 +105,7 @@ Patch2105: sched_fair_unify_pick_next_task_fair.patch
 Patch2106: sched_fair_remove_the_DOUBLE_TICK_feature.patch
 Patch2107: 0001-linux6.11.2-rt7-update2.patch
 Patch2108: 0001-linux6.11.2-rt7-update3.patch
+Patch2109: sched_deadline_use_hrtick_enabled_dl.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -226,6 +227,7 @@ cat %{PATCH2001} | \
 %patch -P 2106 -p1
 %patch -P 2107 -p1
 %patch -P 2108 -p1
+%patch -P 2109 -p1
 %patch -P 2201 -p1
 %patch -P 2202 -p1
 %patch -P 2203 -p1
@@ -239,9 +241,9 @@ cp %{SOURCE1} .config
 scripts/config -e CLEARMOD
 
 # Set the BORE minimal value for min_base_slice_ns. (ClearMod 2.5ms)
-# Computes to 1000Hz = 3.0ms, 800Hz = 2.5ms, 625Hz = 3.2ms, 500Hz = 4.0ms.
+# Computes to 1000Hz = 2.0ms, 800Hz = 2.5ms, 625Hz = 1.6ms, 500Hz = 2.0ms.
 # /sys/kernel/debug/sched/min_base_slice_ns
-scripts/config --set-val MIN_BASE_SLICE_NS 2500000
+scripts/config --set-val MIN_BASE_SLICE_NS 1600000
 
 # Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
 scripts/config -d MCORE2
