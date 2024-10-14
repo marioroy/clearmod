@@ -87,9 +87,9 @@ Patch2003: clearmod-linux6.11.y-tweaks.patch
 # x86/kconfig: add generic x86_64 levels
 Patch2004: clear-kbuild-add-generic-x86_64-levels.patch
 
-# Add HZ_500, HZ_625, and HZ_800 timer-tick options.
+# Add HZ_500, HZ_600, and HZ_800 timer-tick options.
 # https://gist.github.com/marioroy/f383f1e9f18498a251beb5c0a9f33dcf
-Patch2005: clear-hz-500-625-800-timer-frequencies.patch
+Patch2005: clear-hz-500-600-800-timer-frequencies.patch
 
 # Add "ASUS PRIME TRX40 PRO-S" entry to usbmix_ctl_maps.
 # To resolve "cannot get min/max values for control 12 (id 19)".
@@ -241,7 +241,7 @@ cp %{SOURCE1} .config
 scripts/config -e CLEARMOD
 
 # Set the BORE minimal value for min_base_slice_ns. (ClearMod 2.5ms)
-# Computes to 1000Hz = 2.0ms, 800Hz = 2.5ms, 625Hz = 1.6ms, 500Hz = 2.0ms.
+# Computes to 1000Hz = 2.0ms, 800Hz = 2.5ms, 600Hz = 1.6(6)ms, 500Hz = 2.0ms.
 # /sys/kernel/debug/sched/min_base_slice_ns
 scripts/config --set-val MIN_BASE_SLICE_NS 1600000
 
@@ -249,7 +249,7 @@ scripts/config --set-val MIN_BASE_SLICE_NS 1600000
 scripts/config -d MCORE2
 scripts/config -e GENERIC_CPU3
 
-# Set timer frequency { 1000, 800, 625, or 500 }.
+# Set timer frequency { 1000, 800, 600, or 500 }.
 # Defaults to 800Hz tick rate.
 scripts/config -d HZ_1000
 scripts/config -e HZ_%{_hzval}

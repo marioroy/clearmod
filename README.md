@@ -103,9 +103,9 @@ ever need are loaded. Keyboard modules for the `cpio` package, CD-ROM/DVD and
 EXFAT/NTFS3 filesystems, and NTSYNC are added in the SPEC files.
 
 The default timer frequency is `HZ_800`. To override, define `HZ=value` to
-`1000`, `800`, `625`, or `500`. A lower Hz value may decrease power consumption
+`1000`, `800`, `600`, or `500`. A lower Hz value may decrease power consumption
 or fan speed revving up and down. On a machine with more than 32 CPU threads,
-select `800` or `625` for smoother game play.
+select `800` or `600` for smoother game play.
 
 The RT variants include the real-time patch set, useful for projects with
 hard or soft deadlines.
