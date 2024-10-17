@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmbore-rt
-Version:  6.11.3
-Release:  202
+Version:  6.11.4
+Release:  203
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -111,10 +111,11 @@ Patch2109: sched_deadline_use_hrtick_enabled_dl.patch
 Patch2201: v4l2loopback.patch
 
 # CachyOS kernel patches.
-Patch2202: 0003-linux6.11-bbr3.patch
-Patch2203: 0005-linux6.11-fixes.patch
-Patch2204: 0006-linux6.11-intel-pstate.patch
-Patch2205: 0008-linux6.11-ntsync.patch
+Patch2202: 0003-linux6.11-amd-pstate.patch
+Patch2203: 0005-linux6.11-bbr3.patch
+Patch2204: 0007-linux6.11-fixes.patch
+Patch2205: 0008-linux6.11-intel-pstate.patch
+Patch2206: 0010-linux6.11-ntsync.patch
 
 %description
 The Linux kernel.
@@ -233,6 +234,7 @@ cat %{PATCH2001} | \
 %patch -P 2203 -p1
 %patch -P 2204 -p1
 %patch -P 2205 -p1
+%patch -P 2206 -p1
 
 
 cp %{SOURCE1} .config
@@ -240,7 +242,7 @@ cp %{SOURCE1} .config
 # Enable ClearMod tweaks.
 scripts/config -e CLEARMOD
 
-# Set the BORE minimal value for min_base_slice_ns. (ClearMod 2.5ms)
+# Set the BORE minimal value for min_base_slice_ns.
 # Computes to 1000Hz = 2.0ms, 800Hz = 2.5ms, 600Hz = 1.6(6)ms, 500Hz = 2.0ms.
 # /sys/kernel/debug/sched/min_base_slice_ns
 scripts/config --set-val MIN_BASE_SLICE_NS 1600000
