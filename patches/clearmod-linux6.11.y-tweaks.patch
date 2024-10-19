@@ -42,7 +42,7 @@ diff -uarp a/kernel/sched/sched.h b/kernel/sched/sched.h
 +#ifdef CONFIG_PREEMPT_RT
 +# define SCHED_NR_MIGRATE_BREAK 4
 +#else
-+# define SCHED_NR_MIGRATE_BREAK 16
++# define SCHED_NR_MIGRATE_BREAK 8
 +#endif
 +#else
  #ifdef CONFIG_PREEMPT_RT
