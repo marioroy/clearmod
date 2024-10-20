@@ -248,7 +248,7 @@ scripts/config -e CLEARMOD
 scripts/config --set-val MIN_BASE_SLICE_NS 1600000
 
 # Run equally well on all x86-64 CPUs with minimum support of x86-64-v3.
-scripts/config -d MCORE2
+scripts/config -d MCORE2 -d GENERIC_CPU -d GENERIC_CPU2 -d GENERIC_CPU4
 scripts/config -e GENERIC_CPU3
 
 # Set timer frequency { 1000, 800, 600, or 500 }.
@@ -328,7 +328,7 @@ scripts/config -e PREEMPT_DYNAMIC
 scripts/config -e RCU_EXPERT
 scripts/config -e RCU_LAZY
 scripts/config -e RCU_LAZY_DEFAULT_OFF
-scripts/config --set-val RCU_FANOUT 32
+scripts/config --set-val RCU_FANOUT 64
 scripts/config --set-val RCU_FANOUT_LEAF 16
 scripts/config -e RCU_BOOST
 scripts/config --set-val RCU_BOOST_DELAY 500
