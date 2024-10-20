@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
-cl_rel="42480" cl_file="linux-6.11.3-1472.src.rpm"
+cl_rel="42520" cl_file="linux-6.11.3-1472.src.rpm"
 kn_file="linux-6.11.4.tar.xz"
 
 cl_url="https://cdn.download.clearlinux.org/releases"
