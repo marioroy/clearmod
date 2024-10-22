@@ -17,7 +17,7 @@
 # -----------------------------------------------------------------------
 
 cl_rel="42520" cl_file="linux-6.11.3-1472.src.rpm"
-kn_file="linux-6.11.4.tar.xz"
+kn_file="linux-6.11.5.tar.xz"
 
 cl_url="https://cdn.download.clearlinux.org/releases"
 kn_url="https://cdn.kernel.org/pub/linux/kernel/v6.x"
