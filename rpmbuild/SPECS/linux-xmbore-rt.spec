@@ -35,6 +35,8 @@ Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
 #mainline.end
 
+# 0125-nvme-workaround.patch not applied due to idle +13 watts
+
 #Serie.clr 01XX: Clear Linux patches
 Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
 Patch0102: 0102-increase-the-ext4-default-commit-age.patch
@@ -51,7 +53,6 @@ Patch0120: 0120-do-accept-in-LIFO-order-for-cache-efficiency.patch
 Patch0121: 0121-locking-rwsem-spin-faster.patch
 Patch0122: 0122-ata-libahci-ignore-staggered-spin-up.patch
 Patch0123: 0123-print-CPU-that-faults.patch
-Patch0125: 0125-nvme-workaround.patch
 Patch0126: 0126-don-t-report-an-error-if-PowerClamp-run-on-other-CPU.patch
 Patch0127: 0127-lib-raid6-add-patch.patch
 Patch0128: 0128-itmt_epb-use-epb-to-scale-itmt.patch
@@ -182,7 +183,6 @@ Linux kernel build files
 %patch -P 121 -p1
 %patch -P 122 -p1
 %patch -P 123 -p1
-%patch -P 125 -p1
 %patch -P 126 -p1
 %patch -P 127 -p1
 %patch -P 128 -p1
