@@ -35,7 +35,8 @@ Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
 #mainline.end
 
-# 0125-nvme-workaround.patch not applied due to idle +13 watts
+# Patch0125: 0125-nvme-workaround.patch not applied due to idle +13 watts
+# Patch0160: better_idle_balance.patch also more idle watts for no gain 
 
 #Serie.clr 01XX: Clear Linux patches
 Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
@@ -67,7 +68,6 @@ Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0154: 0136-crypto-kdf-make-the-module-init-call-a-late-init-cal.patch
 Patch0157: scale-net-alloc.patch
 Patch0158: 0158-clocksource-only-perform-extended-clocksource-checks.patch
-Patch0160: better_idle_balance.patch
 Patch0161: 0161-ACPI-align-slab-buffers-for-improved-memory-performa.patch
 Patch0163: 0163-thermal-intel-powerclamp-check-MWAIT-first-use-pr_wa.patch
 Patch0164: 0164-KVM-VMX-make-vmx-init-a-late-init-call-to-get-to-ini.patch
@@ -197,7 +197,6 @@ Linux kernel build files
 %patch -P 154 -p1
 %patch -P 157 -p1
 %patch -P 158 -p1
-%patch -P 160 -p1
 %patch -P 161 -p1
 %patch -P 163 -p1
 %patch -P 164 -p1
@@ -208,11 +207,9 @@ Linux kernel build files
 #Serie.patch.end
 
 # Configure BORE to run efficiently with SCHED_AUTOGROUP enabled.
-# Default to inherit_burst_direct versus inherit_burst_topological.
 # Obey RUN_TO_PARITY instead, for better throughput.
 cat %{PATCH2001} | \
   sed 's/update_deadline(cfs_rq, curr)/update_deadline(cfs_rq, curr, tick)/' | \
-  sed 's/\(__read_mostly sched_burst_fork_atavistic   =\) 2;/\1 0;/' | \
   sed 's/\(__read_mostly sched_burst_parity_threshold =\) 2;/\1 0;/' | \
   patch --no-backup-if-mismatch -p1
 
