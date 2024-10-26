@@ -16,21 +16,6 @@ diff -uarp a/init/Kconfig b/init/Kconfig
  config INIT_ENV_ARG_LIMIT
  	int
  	default 32 if !UML
-diff -uarp a/kernel/sched/fair.c b/kernel/sched/fair.c
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -90,7 +90,11 @@ unsigned int sysctl_sched_base_slice			=
- static unsigned int normalized_sysctl_sched_base_slice	= 750000ULL;
- #endif // CONFIG_SCHED_BORE
- 
-+#ifdef CONFIG_CLEARMOD
-+const_debug unsigned int sysctl_sched_migration_cost	= 600000UL;
-+#else
- const_debug unsigned int sysctl_sched_migration_cost	= 500000UL;
-+#endif
- 
- static int __init setup_sched_thermal_decay_shift(char *str)
- {
 diff -uarp a/kernel/sched/sched.h b/kernel/sched/sched.h
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
