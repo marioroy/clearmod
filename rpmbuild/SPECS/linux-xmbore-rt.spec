@@ -4,7 +4,7 @@
 
 Name:     linux-xmbore-rt
 Version:  6.11.5
-Release:  204
+Release:  205
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -66,6 +66,7 @@ Patch0137: libsgrowdown.patch
 Patch0141: epp-retune.patch
 Patch0148: 0002-sched-core-add-some-branch-hints-based-on-gcov-analy.patch
 Patch0154: 0136-crypto-kdf-make-the-module-init-call-a-late-init-cal.patch
+Patch0156: ratelimit-sched-yield.patch
 Patch0157: scale-net-alloc.patch
 Patch0158: 0158-clocksource-only-perform-extended-clocksource-checks.patch
 Patch0161: 0161-ACPI-align-slab-buffers-for-improved-memory-performa.patch
@@ -106,7 +107,8 @@ Patch2105: sched_fair_unify_pick_next_task_fair.patch
 Patch2106: sched_fair_remove_the_DOUBLE_TICK_feature.patch
 Patch2107: 0001-linux6.11.2-rt7-update2.patch
 Patch2108: 0001-linux6.11.2-rt7-update3.patch
-Patch2109: sched_deadline_use_hrtick_enabled_dl.patch
+Patch2109: 0001-linux6.11.2-rt7-update4.patch
+Patch2110: sched_deadline_use_hrtick_enabled_dl.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -195,6 +197,7 @@ Linux kernel build files
 %patch -P 141 -p1
 %patch -P 148 -p1
 %patch -P 154 -p1
+%patch -P 156 -p1
 %patch -P 157 -p1
 %patch -P 158 -p1
 %patch -P 161 -p1
@@ -226,6 +229,7 @@ cat %{PATCH2001} | \
 %patch -P 2107 -p1
 %patch -P 2108 -p1
 %patch -P 2109 -p1
+%patch -P 2110 -p1
 %patch -P 2201 -p1
 %patch -P 2202 -p1
 %patch -P 2203 -p1
@@ -266,9 +270,8 @@ scripts/config -e EFI_VARS_PSTORE_DEFAULT_DISABLE
 scripts/config -d UNWINDER_FRAME_POINTER
 scripts/config -e UNWINDER_ORC
 
-# Disable kernel tracing infrastructure and call depth tracking. (XanMod default)
+# Disable kernel tracing infrastructure. (XanMod default)
 scripts/config -d FTRACE
-scripts/config -d MITIGATION_CALL_DEPTH_TRACKING
 
 # Disable debug.
 %if 1
