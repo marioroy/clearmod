@@ -1,11 +1,11 @@
-https://github.com/CachyOS/kernel-patches/blob/master/6.11/0010-ntsync.patch
+https://github.com/CachyOS/kernel-patches/blob/master/6.11/0009-ntsync.patch
 
-From 1c710b0efb6a923417af140e6c070b12fd06426e Mon Sep 17 00:00:00 2001
-From: Eric Naim <dnaim@cachyos.org>
-Date: Tue, 22 Oct 2024 22:53:03 +0800
-Subject: [PATCH 10/14] ntsync
+From 158da33c366749b2683ad766f0762766ad7be5a4 Mon Sep 17 00:00:00 2001
+From: Peter Jung <admin@ptr1337.dev>
+Date: Sun, 17 Nov 2024 15:23:39 +0100
+Subject: [PATCH 09/13] ntsync
 
-Signed-off-by: Eric Naim <dnaim@cachyos.org>
+Signed-off-by: Peter Jung <admin@ptr1337.dev>
 ---
  Documentation/userspace-api/index.rst         |    1 +
  Documentation/userspace-api/ntsync.rst        |  398 +++++
@@ -442,10 +442,10 @@ index 000000000000..767844637a7d
 +  ``objs`` and in ``alert``. If this is attempted, the function fails
 +  with ``EINVAL``.
 diff --git a/MAINTAINERS b/MAINTAINERS
-index c27b4e8f2129..84ad898cd8f8 100644
+index 2ba00c0cd701..0bcfbc58a9ab 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -16336,6 +16336,15 @@ T:	git https://github.com/Paragon-Software-Group/linux-ntfs3.git
+@@ -16327,6 +16327,15 @@ T:	git https://github.com/Paragon-Software-Group/linux-ntfs3.git
  F:	Documentation/filesystems/ntfs3.rst
  F:	fs/ntfs3/
  

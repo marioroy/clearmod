@@ -16,8 +16,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------
 
-cl_rel="42540" cl_file="linux-6.11.5-1475.src.rpm"
-kn_file="linux-6.11.5.tar.xz"
+cl_rel="42690" cl_file="linux-6.11.9-1491.src.rpm"
+kn_file="linux-6.11.9.tar.xz"
 
 cl_url="https://cdn.download.clearlinux.org/releases"
 kn_url="https://cdn.kernel.org/pub/linux/kernel/v6.x"

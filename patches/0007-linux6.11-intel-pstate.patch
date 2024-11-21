@@ -1,11 +1,11 @@
-https://github.com/CachyOS/kernel-patches/blob/master/6.11/0008-intel-pstate.patch
+https://github.com/CachyOS/kernel-patches/blob/master/6.11/0007-intel-pstate.patch
 
-From 234ada9d57a61746a48bc8db0b381589cb541880 Mon Sep 17 00:00:00 2001
-From: Eric Naim <dnaim@cachyos.org>
-Date: Tue, 22 Oct 2024 22:52:43 +0800
-Subject: [PATCH 08/14] intel-pstate
+From f053ac26181cc3093028a58c9e157db61948afd8 Mon Sep 17 00:00:00 2001
+From: Peter Jung <admin@ptr1337.dev>
+Date: Sun, 17 Nov 2024 15:23:12 +0100
+Subject: [PATCH 07/13] intel-pstate
 
-Signed-off-by: Eric Naim <dnaim@cachyos.org>
+Signed-off-by: Peter Jung <admin@ptr1337.dev>
 ---
  arch/x86/include/asm/topology.h  |  13 ++
  arch/x86/kernel/cpu/aperfmperf.c |  89 +++++++++++-
@@ -13,10 +13,10 @@ Signed-off-by: Eric Naim <dnaim@cachyos.org>
  3 files changed, 328 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-index 70ec19877f6e..5b344ff81219 100644
+index ea0b3fa8914e..7f6c39b3be7b 100644
 --- a/arch/x86/include/asm/topology.h
 +++ b/arch/x86/include/asm/topology.h
-@@ -290,9 +290,22 @@ static inline long arch_scale_freq_capacity(int cpu)
+@@ -291,9 +291,22 @@ static inline long arch_scale_freq_capacity(int cpu)
  }
  #define arch_scale_freq_capacity arch_scale_freq_capacity
  

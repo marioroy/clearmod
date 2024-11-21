@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmbore
-Version:  6.11.5
-Release:  205
+Version:  6.11.9
+Release:  206
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -33,6 +33,7 @@ Patch0013: 0001-linux6.11.2-rt7-update1.patch
 Patch0014: 0002-mm-kconfig-enable-rt-thp.patch
 
 #mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
+Patch0050: 0050-Revert-ext4-do-not-create-EA-inode-under-buffer-lock.patch
 #mainline.end
 
 # Patch0125: 0125-nvme-workaround.patch not applied due to idle +13 watts
@@ -75,7 +76,6 @@ Patch0164: 0164-KVM-VMX-make-vmx-init-a-late-init-call-to-get-to-ini.patch
 Patch0165: slack.patch
 Patch0166: 0166-sched-fair-remove-upper-limit-on-cpu-number.patch
 Patch0167: 0167-net-sock-increase-default-number-of-_SK_MEM_PACKETS-.patch
-Patch0168: revert-regression.patch
 #Serie.end
 
 # Burst-Oriented Response Enhancer (BORE) CPU Scheduler.
@@ -104,21 +104,20 @@ Patch2102: sched_eevdf_allow_shorter_slices_to_wakeup-preempt-rt.patch
 Patch2103: sched_eevdf_remove_min_vruntime_copy.patch
 Patch2104: sched_fair_cleanup_pick_task_fair_vs_throttle.patch
 Patch2105: sched_fair_unify_pick_next_task_fair.patch
-Patch2106: sched_fair_remove_the_DOUBLE_TICK_feature.patch
-Patch2107: 0001-linux6.11.2-rt7-update2.patch
-Patch2108: 0001-linux6.11.2-rt7-update3.patch
-Patch2109: 0001-linux6.11.2-rt7-update4.patch
-Patch2110: sched_deadline_use_hrtick_enabled_dl.patch
+Patch2106: 0001-linux6.11.2-rt7-update2.patch
+Patch2107: 0001-linux6.11.2-rt7-update3.patch
+Patch2108: 0001-linux6.11.2-rt7-update4.patch
+Patch2109: sched_deadline_use_hrtick_enabled_dl.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
 
 # CachyOS kernel patches.
 Patch2202: 0003-linux6.11-amd-pstate.patch
-Patch2203: 0005-linux6.11-bbr3.patch
-Patch2204: 0007-linux6.11-fixes.patch
-Patch2205: 0008-linux6.11-intel-pstate.patch
-Patch2206: 0010-linux6.11-ntsync.patch
+Patch2203: 0004-linux6.11-bbr3.patch
+Patch2204: 0006-linux6.11-fixes.patch
+Patch2205: 0007-linux6.11-intel-pstate.patch
+Patch2206: 0009-linux6.11-ntsync.patch
 
 %description
 The Linux kernel.
@@ -167,6 +166,7 @@ Linux kernel build files
 %patch -P 14 -p1
 
 #mainline.patch.start Mainline patches, upstream backport and fixes
+%patch -P 50 -p1
 #mainline.patch.end
 
 #Serie.patch.start Clear Linux patches
@@ -206,7 +206,6 @@ Linux kernel build files
 %patch -P 165 -p1
 %patch -P 166 -p1
 %patch -P 167 -p1
-#patch -P 168 -p1
 #Serie.patch.end
 
 # Configure BORE to run efficiently with SCHED_AUTOGROUP enabled.
@@ -229,7 +228,6 @@ cat %{PATCH2001} | \
 %patch -P 2107 -p1
 %patch -P 2108 -p1
 %patch -P 2109 -p1
-%patch -P 2110 -p1
 %patch -P 2201 -p1
 %patch -P 2202 -p1
 %patch -P 2203 -p1
@@ -292,9 +290,7 @@ scripts/config -d ACPI_DEBUG
 scripts/config -d PM_DEBUG
 scripts/config -d PM_ADVANCED_DEBUG
 scripts/config -d PM_SLEEP_DEBUG
-scripts/config -d IRQ_TIME_ACCOUNTING
 scripts/config -d LATENCYTOP
-scripts/config -d PERF_EVENTS_AMD_POWER
 scripts/config -d LOCK_TORTURE_TEST
 scripts/config -d RCU_TORTURE_TEST
 %endif
@@ -335,12 +331,12 @@ scripts/config --set-val RCU_BOOST_DELAY 500
 scripts/config -d RCU_CPU_STALL_CPUTIME
 scripts/config -d RCU_EXP_KTHREAD
 scripts/config -e RCU_NOCB_CPU
-scripts/config -e RCU_NOCB_CPU_DEFAULT_ALL
+scripts/config -d RCU_NOCB_CPU_DEFAULT_ALL
 scripts/config -d RCU_NOCB_CPU_CB_BOOST
 scripts/config -d TASKS_TRACE_RCU_READ_MB
 scripts/config -e RCU_DOUBLE_CHECK_CB_TIME
 scripts/config -d RT_GROUP_SCHED
-scripts/config -e SCHED_OMIT_FRAME_POINTER
+scripts/config -d SCHED_OMIT_FRAME_POINTER
 scripts/config -d SCHED_CLUSTER
 
 mv .config config
@@ -364,10 +360,10 @@ BuildKernel() {
       # NVIDIA modules are built separately. Filter nvidia not found messages.
       yes "" | make O=${Target} -s ARCH=${Arch} localmodconfig 2>&1 | grep -v "^nvidia"
 
-      # Add keyboard modules for the cpio package (do not remove).
-      scripts/config --file ${Target}/.config \
-          -m SERIO_I8042 -m SERIO_LIBPS2 -m KEYBOARD_ATKBD \
-          -m HID_LOGITECH_DJ -m HID_LOGITECH_HIDPP -m HID_APPLE
+#     # Add keyboard modules for the cpio package.
+#     scripts/config --file ${Target}/.config \
+#         -m SERIO_I8042 -m SERIO_LIBPS2 -m KEYBOARD_ATKBD \
+#         -m HID_LOGITECH_DJ -m HID_LOGITECH_HIDPP -m HID_APPLE
 
       # Add modules for File systems.
       scripts/config --file ${Target}/.config \
@@ -463,12 +459,12 @@ createCPIO() {
 
     mkdir -p cpiofile${ModDir}/kernel/drivers/input/{serio,keyboard}
     mkdir -p cpiofile${ModDir}/kernel/drivers/hid
-    cp %{buildroot}${ModDir}/kernel/drivers/input/serio/i8042.ko.zst      cpiofile${ModDir}/kernel/drivers/input/serio
-    cp %{buildroot}${ModDir}/kernel/drivers/input/serio/libps2.ko.zst     cpiofile${ModDir}/kernel/drivers/input/serio
-    cp %{buildroot}${ModDir}/kernel/drivers/input/keyboard/atkbd.ko.zst   cpiofile${ModDir}/kernel/drivers/input/keyboard
-    cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-logitech-dj.ko.zst    cpiofile${ModDir}/kernel/drivers/hid
-    cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-logitech-hidpp.ko.zst cpiofile${ModDir}/kernel/drivers/hid
-    cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-apple.ko.zst          cpiofile${ModDir}/kernel/drivers/hid
+#   cp %{buildroot}${ModDir}/kernel/drivers/input/serio/i8042.ko.zst      cpiofile${ModDir}/kernel/drivers/input/serio
+#   cp %{buildroot}${ModDir}/kernel/drivers/input/serio/libps2.ko.zst     cpiofile${ModDir}/kernel/drivers/input/serio
+#   cp %{buildroot}${ModDir}/kernel/drivers/input/keyboard/atkbd.ko.zst   cpiofile${ModDir}/kernel/drivers/input/keyboard
+#   cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-logitech-dj.ko.zst    cpiofile${ModDir}/kernel/drivers/hid
+#   cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-logitech-hidpp.ko.zst cpiofile${ModDir}/kernel/drivers/hid
+#   cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-apple.ko.zst          cpiofile${ModDir}/kernel/drivers/hid
     cp %{buildroot}${ModDir}/modules.order   cpiofile${ModDir}
     cp %{buildroot}${ModDir}/modules.builtin cpiofile${ModDir}
 

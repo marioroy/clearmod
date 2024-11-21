@@ -1,11 +1,11 @@
-https://github.com/CachyOS/kernel-patches/blob/master/6.11/0005-bbr3.patch
+https://github.com/CachyOS/kernel-patches/blob/master/6.11/0004-bbr3.patch
 
-From d9e873c5996dc87c29ce0ff7e954c472ccd2a369 Mon Sep 17 00:00:00 2001
-From: Eric Naim <dnaim@cachyos.org>
-Date: Tue, 22 Oct 2024 22:52:00 +0800
-Subject: [PATCH 05/14] bbr3
+From 98ed56d9bb29f55741b90c8604d18ca87e61f202 Mon Sep 17 00:00:00 2001
+From: Peter Jung <admin@ptr1337.dev>
+Date: Sun, 17 Nov 2024 15:21:47 +0100
+Subject: [PATCH 04/13] bbr3
 
-Signed-off-by: Eric Naim <dnaim@cachyos.org>
+Signed-off-by: Peter Jung <admin@ptr1337.dev>
 ---
  include/linux/tcp.h                |    4 +-
  include/net/inet_connection_sock.h |    4 +-
