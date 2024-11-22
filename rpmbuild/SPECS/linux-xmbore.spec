@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmbore
-Version:  6.11.9
-Release:  206
+Version:  6.11.10
+Release:  207
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
