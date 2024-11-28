@@ -4,7 +4,7 @@
 
 Name:     linux-xmbore
 Version:  6.11.10
-Release:  207
+Release:  208
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -339,6 +339,11 @@ scripts/config -d RT_GROUP_SCHED
 scripts/config -d SCHED_OMIT_FRAME_POINTER
 scripts/config -d SCHED_CLUSTER
 
+# Add keyboard modules for the cpio package.
+scripts/config \
+    -m SERIO_I8042 -m SERIO_LIBPS2 -m SERIO_GPIO_PS2 -m SERIO_SERPORT \
+    -m KEYBOARD_ATKBD -m HID_LOGITECH_DJ -m HID_LOGITECH_HIDPP -m HID_APPLE
+
 mv .config config
 
 %build
@@ -362,8 +367,8 @@ BuildKernel() {
 
 #     # Add keyboard modules for the cpio package.
 #     scripts/config --file ${Target}/.config \
-#         -m SERIO_I8042 -m SERIO_LIBPS2 -m KEYBOARD_ATKBD \
-#         -m HID_LOGITECH_DJ -m HID_LOGITECH_HIDPP -m HID_APPLE
+#         -m SERIO_I8042 -m SERIO_LIBPS2 -m SERIO_GPIO_PS2 -m SERIO_SERPORT \
+#         -m KEYBOARD_ATKBD -m HID_LOGITECH_DJ -m HID_LOGITECH_HIDPP -m HID_APPLE
 
       # Add modules for File systems.
       scripts/config --file ${Target}/.config \
@@ -440,7 +445,7 @@ InstallKernel() {
     cp -t ${DevDir}/include -pr ${Target}/include/*
     cp -t ${DevDir} --parents -pr scripts/*
     cp -t ${DevDir}/scripts -pr ${Target}/scripts/*
-    find  ${DevDir}/scripts -type f -name '*.[cho]' -exec rm -v {} +
+    find  ${DevDir}/scripts -type f -name '*.[o]' -exec rm -v {} +
     find  ${DevDir} -type f -name '*.cmd' -exec rm -v {} +
     # Cleanup any dangling links
     find ${DevDir} -type l -follow -exec rm -v {} +
@@ -459,12 +464,12 @@ createCPIO() {
 
     mkdir -p cpiofile${ModDir}/kernel/drivers/input/{serio,keyboard}
     mkdir -p cpiofile${ModDir}/kernel/drivers/hid
-#   cp %{buildroot}${ModDir}/kernel/drivers/input/serio/i8042.ko.zst      cpiofile${ModDir}/kernel/drivers/input/serio
-#   cp %{buildroot}${ModDir}/kernel/drivers/input/serio/libps2.ko.zst     cpiofile${ModDir}/kernel/drivers/input/serio
-#   cp %{buildroot}${ModDir}/kernel/drivers/input/keyboard/atkbd.ko.zst   cpiofile${ModDir}/kernel/drivers/input/keyboard
-#   cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-logitech-dj.ko.zst    cpiofile${ModDir}/kernel/drivers/hid
-#   cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-logitech-hidpp.ko.zst cpiofile${ModDir}/kernel/drivers/hid
-#   cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-apple.ko.zst          cpiofile${ModDir}/kernel/drivers/hid
+    cp %{buildroot}${ModDir}/kernel/drivers/input/serio/i8042.ko*      cpiofile${ModDir}/kernel/drivers/input/serio
+    cp %{buildroot}${ModDir}/kernel/drivers/input/serio/libps2.ko*     cpiofile${ModDir}/kernel/drivers/input/serio
+    cp %{buildroot}${ModDir}/kernel/drivers/input/keyboard/atkbd.ko*   cpiofile${ModDir}/kernel/drivers/input/keyboard
+    cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-logitech-dj.ko*    cpiofile${ModDir}/kernel/drivers/hid
+    cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-logitech-hidpp.ko* cpiofile${ModDir}/kernel/drivers/hid
+    cp %{buildroot}${ModDir}/kernel/drivers/hid/hid-apple.ko*          cpiofile${ModDir}/kernel/drivers/hid
     cp %{buildroot}${ModDir}/modules.order   cpiofile${ModDir}
     cp %{buildroot}${ModDir}/modules.builtin cpiofile${ModDir}
 
