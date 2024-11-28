@@ -365,10 +365,10 @@ BuildKernel() {
       # NVIDIA modules are built separately. Filter nvidia not found messages.
       yes "" | make O=${Target} -s ARCH=${Arch} localmodconfig 2>&1 | grep -v "^nvidia"
 
-#     # Add keyboard modules for the cpio package.
-#     scripts/config --file ${Target}/.config \
-#         -m SERIO_I8042 -m SERIO_LIBPS2 -m SERIO_GPIO_PS2 -m SERIO_SERPORT \
-#         -m KEYBOARD_ATKBD -m HID_LOGITECH_DJ -m HID_LOGITECH_HIDPP -m HID_APPLE
+      # Add keyboard modules for the cpio package.
+      scripts/config --file ${Target}/.config \
+          -m SERIO_I8042 -m SERIO_LIBPS2 -m SERIO_GPIO_PS2 -m SERIO_SERPORT \
+          -m KEYBOARD_ATKBD -m HID_LOGITECH_DJ -m HID_LOGITECH_HIDPP -m HID_APPLE
 
       # Add modules for File systems.
       scripts/config --file ${Target}/.config \
