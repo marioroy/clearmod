@@ -3,8 +3,8 @@
 #
 
 Name:     linux-xmbore
-Version:  6.11.10
-Release:  208
+Version:  6.11.11
+Release:  209
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -105,9 +105,8 @@ Patch2103: sched_eevdf_remove_min_vruntime_copy.patch
 Patch2104: sched_fair_cleanup_pick_task_fair_vs_throttle.patch
 Patch2105: sched_fair_unify_pick_next_task_fair.patch
 Patch2106: 0001-linux6.11.2-rt7-update2.patch
-Patch2107: 0001-linux6.11.2-rt7-update3.patch
-Patch2108: 0001-linux6.11.2-rt7-update4.patch
-Patch2109: sched_deadline_use_hrtick_enabled_dl.patch
+Patch2107: 0001-linux6.11.2-rt7-update4.patch
+Patch2108: sched_deadline_use_hrtick_enabled_dl.patch
 
 # v4l2-loopback device.
 Patch2201: v4l2loopback.patch
@@ -208,11 +207,9 @@ Linux kernel build files
 %patch -P 167 -p1
 #Serie.patch.end
 
-# Configure BORE to run efficiently with SCHED_AUTOGROUP enabled.
-# Obey RUN_TO_PARITY instead, for better throughput.
+# Add tick argument for applying BORE patch to RT patchset.
 cat %{PATCH2001} | \
   sed 's/update_deadline(cfs_rq, curr)/update_deadline(cfs_rq, curr, tick)/' | \
-  sed 's/\(__read_mostly sched_burst_parity_threshold =\) 2;/\1 0;/' | \
   patch --no-backup-if-mismatch -p1
 
 %patch -P 2003 -p1
@@ -227,7 +224,6 @@ cat %{PATCH2001} | \
 %patch -P 2106 -p1
 %patch -P 2107 -p1
 %patch -P 2108 -p1
-%patch -P 2109 -p1
 %patch -P 2201 -p1
 %patch -P 2202 -p1
 %patch -P 2203 -p1
@@ -445,7 +441,7 @@ InstallKernel() {
     cp -t ${DevDir}/include -pr ${Target}/include/*
     cp -t ${DevDir} --parents -pr scripts/*
     cp -t ${DevDir}/scripts -pr ${Target}/scripts/*
-    find  ${DevDir}/scripts -type f -name '*.[o]' -exec rm -v {} +
+    find  ${DevDir}/scripts -type f -name '*.[cho]' -exec rm -v {} +
     find  ${DevDir} -type f -name '*.cmd' -exec rm -v {} +
     # Cleanup any dangling links
     find ${DevDir} -type l -follow -exec rm -v {} +
