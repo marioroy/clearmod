@@ -4,7 +4,7 @@
 
 Name:     linux-xmbore
 Version:  6.11.11
-Release:  209
+Release:  210
 License:  GPL-2.0
 Summary:  The Linux kernel
 Url:      http://www.kernel.org/
@@ -82,6 +82,7 @@ Patch0167: 0167-net-sock-increase-default-number-of-_SK_MEM_PACKETS-.patch
 # The CONFIG_SCHED_BORE knob is enabled by default.
 # https://github.com/firelzrd/bore-scheduler
 Patch2001: 0001-linux6.11.y-bore.patch
+Patch2002: 0001-linux6.11.y-boreupd.patch
 
 # ClearMod tunables.
 Patch2003: clearmod-linux6.11.y-tweaks.patch
@@ -212,6 +213,7 @@ cat %{PATCH2001} | \
   sed 's/update_deadline(cfs_rq, curr)/update_deadline(cfs_rq, curr, tick)/' | \
   patch --no-backup-if-mismatch -p1
 
+%patch -P 2002 -p1
 %patch -P 2003 -p1
 %patch -P 2004 -p1
 %patch -P 2005 -p1
